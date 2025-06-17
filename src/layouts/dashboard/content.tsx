@@ -19,7 +19,7 @@ export function DashboardContent({
   children,
   className,
   disablePadding,
-  maxWidth = 'lg',
+  maxWidth = false,
   layoutQuery = 'lg',
   ...other
 }: DashboardContentProps) {
@@ -27,11 +27,13 @@ export function DashboardContent({
     <Container
       className={mergeClasses([layoutClasses.content, className])}
       maxWidth={maxWidth}
+      disableGutters
       sx={[
         (theme) => ({
           display: 'flex',
           flex: '1 1 auto',
           flexDirection: 'column',
+          width: '100%',
           pt: 'var(--layout-dashboard-content-pt)',
           pb: 'var(--layout-dashboard-content-pb)',
           [theme.breakpoints.up(layoutQuery)]: {

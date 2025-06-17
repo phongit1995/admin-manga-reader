@@ -1,48 +1,116 @@
-## Minimal UI ([Free version](https://free.minimals.cc/))
+# Manga Reader Admin Dashboard
 
-![license](https://img.shields.io/badge/license-MIT-blue.svg)
+A modern, feature-rich administrative dashboard for managing a manga reader social platform. Built with React, TypeScript, and Material UI.
 
-![preview](public/assets/images/minimal-free-preview.jpg)
+![Admin Dashboard](https://i.imgur.com/example.png)
 
-> Free React Admin Dashboard made with Material-UI components and React + Vite.js.
+## Features
 
-## Pages
+- **Modern UI** - Clean, responsive interface built with Material UI
+- **Manga Management** - Upload, edit, and organize manga content
+- **Chapter Management** - Manage individual chapters with image uploads
+- **User Management** - View, edit, and moderate user accounts
+- **Analytics Dashboard** - Track views, users, uploads, and engagement
+- **Responsive Design** - Optimized for desktop and mobile devices
 
-- [Dashboard](https://free.minimals.cc/)
-- [Users](https://free.minimals.cc/user)
-- [Products](https://free.minimals.cc/products)
-- [Blog](https://free.minimals.cc/blog)
-- [Sign in](https://free.minimals.cc/sign-in)
-- [Not found](https://free.minimals.cc/404)
+## Technology Stack
 
-## Quick start
+- **Frontend**: React 19, TypeScript
+- **UI Framework**: Material UI 7
+- **Routing**: React Router 7
+- **State Management**: React Context API
+- **Styling**: CSS-in-JS with Emotion
+- **Build Tools**: Vite 6
 
-- Clone the repo: `git clone https://github.com/minimal-ui-kit/material-kit-react.git`
-- Recommended: `Node.js v20.x`
-- **Install:** `npm i` or `yarn install`
-- **Start:** `npm run dev` or `yarn dev`
-- **Build:** `npm run build` or `yarn build`
-- Open browser: `http://localhost:3039`
+## Getting Started
 
-## Upgrade to PRO Version
+### Prerequisites
 
-| Minimal Free                | [Minimal Pro](https://material-ui.com/store/items/minimal-dashboard/)                                   |
-| :-------------------------- | :------------------------------------------------------------------------------------------------------ |
-| **6** Pages                 | **70+** Pages                                                                                           |
-| **Partial** theme customize | **Fully** theme customize                                                                               |
-| -                           | **Next.js** version                                                                                     |
-| -                           | **TypeScript** version (Standard Plus and Extended license)                                             |
-| -                           | Design **Figma** file (Standard Plus and Extended license)                                              |
-| -                           | Authentication with **Amplify**, **Auth0**, **JWT**, **Firebase** and **Supabase**                      |
-| -                           | Light/dark mode, right-to-left, form validation... ([+more components](https://minimals.cc/components)) |
-| -                           | Complete users flows                                                                                    |
-| -                           | 1 year of free updates / 6 months of technical support                                                  |
-| -                           | Learn more: [Package & license](https://docs.minimals.cc/package)                                       |
+- Node.js 20.x or higher
+- Yarn 1.22.x or npm 10.x
+
+### Installation
+
+1. Clone the repository
+```bash
+git clone https://github.com/yourusername/admin-manga-reader.git
+cd admin-manga-reader
+```
+
+2. Install dependencies
+```bash
+yarn install
+# or
+npm install
+```
+
+3. Start the development server
+```bash
+yarn dev
+# or
+npm run dev
+```
+
+4. Open your browser and navigate to `http://localhost:5173`
+
+## Project Structure
+
+```
+admin-manga-reader/
+├── public/               # Static files
+├── src/
+│   ├── components/       # Reusable UI components
+│   ├── layouts/          # Layout components
+│   ├── pages/            # Page components
+│   ├── routes/           # Routing configuration
+│   ├── sections/         # Feature-specific components
+│   ├── theme/            # Theme configuration
+│   ├── utils/            # Utility functions
+│   ├── App.tsx           # Main application component
+│   └── main.tsx          # Entry point
+├── .gitignore            # Git ignore file
+├── index.html            # HTML template
+├── package.json          # Project dependencies
+├── tsconfig.json         # TypeScript configuration
+└── vite.config.ts        # Vite configuration
+```
+
+## Key Features
+
+### Dashboard Overview
+- Statistics cards with key metrics
+- Popular manga charts and tables
+- Recent activities feed
+- Quick action buttons
+
+### Manga Management
+- Comprehensive manga listing with search and filters
+- Metadata editor for manga details
+- Category and tag management
+- Cover image uploads
+
+### Chapter Management
+- Chapter listing for each manga
+- Bulk chapter uploads
+- Page reordering and management
+- Publishing controls
+
+### User Management
+- User listing with search and filters
+- User profile editing
+- Permission and role management
+- Activity logs
 
 ## License
 
-Distributed under the [MIT](https://github.com/minimal-ui-kit/minimal.free/blob/main/LICENSE.md) license.
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-## Contact us
+## Acknowledgements
 
-Email: support@minimals.cc
+- Material UI for the component library
+- Vite team for the build tooling
+- All contributors and maintainers
+
+---
+
+Made with ❤️ by Phong Nguyen
