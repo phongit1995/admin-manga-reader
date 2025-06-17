@@ -1,4 +1,5 @@
 import type { Theme, SxProps } from '@mui/material/styles';
+// @ts-expect-error simplebar-react module resolution issue
 import type { Props as SimplebarProps } from 'simplebar-react';
 
 // ----------------------------------------------------------------------

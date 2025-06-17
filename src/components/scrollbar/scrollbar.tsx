@@ -1,3 +1,4 @@
+// @ts-expect-error simplebar-react module resolution issue
 import SimpleBar from 'simplebar-react';
 import { mergeClasses } from 'minimal-shared/utils';
 
