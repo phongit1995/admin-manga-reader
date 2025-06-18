@@ -1,6 +1,8 @@
 export enum ERouterConfig {
     MANGA = '/manga',
     CATEGORY = '/category',
+    CONFIG_SOURCE = '/config-source',
+    IN_APP_PURCHASE = '/in-app-purchase',
     USER = '/user',
     PRODUCT = '/product',
     BLOG = '/blog',

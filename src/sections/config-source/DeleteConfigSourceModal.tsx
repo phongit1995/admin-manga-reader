@@ -11,26 +11,26 @@ import {
   Divider
 } from '@mui/material';
 import { toast } from 'react-toastify';
-import { ICategoryModel } from '@src/types/category.type';
-import { CategoryService } from '@src/services/category.service';
+import { IConfigSourceModel } from '@src/types/config-source.type';
+import { ConfigSourceService } from '@services/config-source.service';
 import { Iconify } from "src/components/iconify";
 
-interface DeleteCategoryModalProps {
+interface DeleteConfigSourceModalProps {
   open: boolean;
   onClose: () => void;
-  category: ICategoryModel | null;
+  configSource: IConfigSourceModel | null;
   onSuccess: () => void; 
 }
 
-export default function DeleteCategoryModal({
+export default function DeleteConfigSourceModal({
   open,
   onClose,
-  category,
+  configSource,
   onSuccess
-}: DeleteCategoryModalProps) {
+}: DeleteConfigSourceModalProps) {
   const [loading, setLoading] = useState(false);
 
-  if (!category) {
+  if (!configSource) {
     return null;
   }
 
@@ -38,18 +38,18 @@ export default function DeleteCategoryModal({
     try {
       setLoading(true);
       
-      const response = await CategoryService.deleteCategory(category._id);
+      const response = await ConfigSourceService.deleteConfigSource(configSource._id);
       
       if (response) {
         onClose();
         onSuccess();
-        toast.success('Category deleted successfully');
+        toast.success('Config Source deleted successfully');
       } else {
-        toast.error(response?.message || 'Failed to delete category');
+        toast.error(response?.message || 'Failed to delete config source');
       }
     } catch (error) {
-      console.error('Error deleting category:', error);
-      toast.error('Failed to delete category');
+      console.error('Error deleting config source:', error);
+      toast.error('Failed to delete config source');
     } finally {
       setLoading(false);
     }
@@ -75,7 +75,7 @@ export default function DeleteCategoryModal({
       }}
     >
       <DialogTitle sx={{ textAlign: 'center', pb: 1 }}>
-        Delete Category
+        Delete Config Source
       </DialogTitle>
       
       <Divider />
@@ -91,7 +91,14 @@ export default function DeleteCategoryModal({
             color="error.main"
             sx={{ mt: 2 }}
           >
-            {category.name}
+            {configSource.name}
+          </Typography>
+          <Typography 
+            variant="subtitle2" 
+            color="text.secondary"
+            sx={{ mt: 1 }}
+          >
+            Key: {configSource.key}
           </Typography>
         </Box>
       </DialogContent>
@@ -122,4 +129,4 @@ export default function DeleteCategoryModal({
       </DialogActions>
     </Dialog>
   );
-}
+} 

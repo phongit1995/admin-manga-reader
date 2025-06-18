@@ -7,35 +7,38 @@ import {
   Button,
   Box,
   Stack,
-  CircularProgress
+  CircularProgress,
+  Switch,
+  FormControlLabel
 } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { ICreateCategoryRequest } from '@src/types/category.type';
-import { CategoryService } from "@src/services/category.service";
+import { ICreateConfigSourceRequest } from '@src/types/config-source.type';
+import { ConfigSourceService } from "@services/config-source.service";
 import { toast } from "react-toastify";
 import { useState, useEffect } from 'react';
 
 // Define validation schema
 const schema = yup.object({
   name: yup.string().required('Name is required'),
-  image: yup.string().required('Image URL is required'),
+  key: yup.string().required('Key is required'),
   index: yup
     .number()
     .transform(value => (isNaN(value) ? undefined : value))
     .typeError('Index must be a number')
     .required('Index is required')
-    .min(0, 'Index must be a positive number')
+    .min(0, 'Index must be a positive number'),
+  enable: yup.boolean().default(true)
 }).required();
 
-interface AddCategoryProps {
+interface AddConfigSourceModalProps {
   open: boolean;
   onClose: () => void;
-  onSuccess: () => void; // Callback to refresh the category list
+  onSuccess: () => void; // Callback to refresh the config source list
 }
 
-export default function AddCategory({ open, onClose, onSuccess }: AddCategoryProps) {
+export default function AddConfigSourceModal({ open, onClose, onSuccess }: AddConfigSourceModalProps) {
   const [loading, setLoading] = useState(false);
 
   const { 
@@ -43,12 +46,13 @@ export default function AddCategory({ open, onClose, onSuccess }: AddCategoryPro
     handleSubmit, 
     reset,
     formState: { errors },
-  } = useForm<ICreateCategoryRequest>({
+  } = useForm<ICreateConfigSourceRequest>({
     resolver: yupResolver(schema),
     defaultValues: {
       name: '',
-      image: '',
-      index: 0
+      key: '',
+      index: 0,
+      enable: true
     },
     mode: 'onChange' // Validate on change for better UX
   });
@@ -57,33 +61,33 @@ export default function AddCategory({ open, onClose, onSuccess }: AddCategoryPro
     if (open) {
       reset({
         name: '',
-        image: '',
-        index: 0
+        key: '',
+        index: 0,
+        enable: true
       });
     }
   }, [open, reset]);
 
-  const handleAddCategory = async (data: ICreateCategoryRequest) => {
-    console.log('data', data);
+  const handleAddConfigSource = async (data: ICreateConfigSourceRequest) => {
     try {
       setLoading(true);
-      const categoryData = {
+      const configSourceData = {
         ...data,
         index: Number(data.index)
       };
 
-      const response = await CategoryService.createCategory(categoryData);
+      const response = await ConfigSourceService.createConfigSource(configSourceData);
       if (response && response.data) {
         reset();
         onClose(); 
         onSuccess(); 
-        toast.success('Category added successfully');
+        toast.success('Config Source added successfully');
       } else {
-        toast.error(response?.message || 'Failed to add category');
+        toast.error(response?.message || 'Failed to add config source');
       }
     } catch (error) {
-      console.error('Error creating category:', error);
-      toast.error('Failed to add category');
+      console.error('Error creating config source:', error);
+      toast.error('Failed to add config source');
     } finally {
       setLoading(false);
     }
@@ -110,9 +114,8 @@ export default function AddCategory({ open, onClose, onSuccess }: AddCategoryPro
       fullWidth 
       maxWidth="sm"
       disableEscapeKeyDown={loading}
-
     >
-      <DialogTitle>Add New Category</DialogTitle>
+      <DialogTitle>Add New Config Source</DialogTitle>
       <DialogContent>
         <Box component="form" sx={{ pt: 2 }} noValidate>
           <Stack spacing={3}>
@@ -132,14 +135,14 @@ export default function AddCategory({ open, onClose, onSuccess }: AddCategoryPro
             />
             
             <Controller
-              name="image"
+              name="key"
               control={control}
               render={({ field }) => (
                 <TextField
                   fullWidth
-                  label="Image URL"
-                  error={!!errors.image}
-                  helperText={errors.image?.message}
+                  label="Key"
+                  error={!!errors.key}
+                  helperText={errors.key?.message}
                   disabled={loading}
                   {...field}
                 />
@@ -166,6 +169,23 @@ export default function AddCategory({ open, onClose, onSuccess }: AddCategoryPro
                 />
               )}
             />
+
+            <Controller
+              name="enable"
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={value}
+                      onChange={(e) => onChange(e.target.checked)}
+                      disabled={loading}
+                    />
+                  }
+                  label="Enable"
+                />
+              )}
+            />
           </Stack>
         </Box>
       </DialogContent>
@@ -173,7 +193,7 @@ export default function AddCategory({ open, onClose, onSuccess }: AddCategoryPro
         <Button onClick={handleClose} disabled={loading}>Cancel</Button>
         <Button 
           variant="contained" 
-          onClick={handleSubmit(handleAddCategory)}
+          onClick={handleSubmit(handleAddConfigSource)}
           disabled={loading}
           startIcon={loading && <CircularProgress size={16} color="inherit" />}
         >
@@ -182,4 +202,4 @@ export default function AddCategory({ open, onClose, onSuccess }: AddCategoryPro
       </DialogActions>
     </Dialog>
   );
-}
+} 

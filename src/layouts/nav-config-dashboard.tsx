@@ -35,6 +35,18 @@ export const navData = [
     activeIcon: <Icon icon="material-symbols:category" width={24} height={24} />,
   },
   {
+    title: 'Config Source',
+    path: ERouterConfig.CONFIG_SOURCE,
+    icon: <Icon icon="material-symbols:settings-outline" width={24} height={24} />,
+    activeIcon: <Icon icon="material-symbols:settings" width={24} height={24} />,
+  },
+  {
+    title: 'InApp Purchase',
+    path: ERouterConfig.IN_APP_PURCHASE,
+    icon: <Icon icon="material-symbols:payments-outline" width={24} height={24} />,
+    activeIcon: <Icon icon="material-symbols:payments" width={24} height={24} />,
+  },
+  {
     title: 'User',
     path: ERouterConfig.USER,
     icon: icon('ic-user'),

@@ -19,6 +19,7 @@ export const SignInPage = lazy(() => import('src/pages/sign-in'));
 export const ProductsPage = lazy(() => import('src/pages/products'));
 export const MangaPage = lazy(() => import('src/pages/manga/MangaPage'));
 export const CategoryPage = lazy(() => import('src/pages/category/CategoryPage'));
+export const ConfigSourcePage = lazy(() => import('src/pages/config-source'));
 export const Page404 = lazy(() => import('src/pages/page-not-found'));
 
 const renderFallback = () => (
@@ -57,6 +58,7 @@ export const routesSection: RouteObject[] = [
       { path: ERouterConfig.BLOG, element: <BlogPage /> },
       { path: ERouterConfig.MANGA, element: <MangaPage /> },
       { path: ERouterConfig.CATEGORY, element: <CategoryPage /> },
+      { path: ERouterConfig.CONFIG_SOURCE, element: <ConfigSourcePage /> },
     ],
   },
   {

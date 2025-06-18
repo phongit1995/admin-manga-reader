@@ -2,7 +2,7 @@ import type { IMangaModel, IResponsePage } from "src/types";
 
 import { useEffect, useState, useCallback, ChangeEvent } from "react";
 
-import { MangaService } from "@services/manga-service";
+import { MangaService } from "@src/services/manga.service";
 
 import {
   Box,

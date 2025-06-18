@@ -10,22 +10,20 @@ import {
   TableHead,
   TableRow,
   TableCell,
-  Checkbox,
-  Stack,
-  Avatar,
   IconButton,
   Button,
+  Switch,
 } from "@mui/material";
 import { DashboardContent } from "src/layouts/dashboard";
-import { ICategoryModel } from "@src/types/category.type";
-import { CategoryService } from "@src/services/category.service";
+import { IConfigSourceModel } from "@src/types/config-source.type";
+import { ConfigSourceService } from "@services/config-source.service";
 import { Iconify } from "src/components/iconify";
-import AddCategory from "./AddCategoryModal";
-import DeleteCategoryModal from "./DeleteCategoryModal";
 import { toast } from "react-toastify";
+import AddConfigSourceModal from "./AddConfigSourceModal";
+import DeleteConfigSourceModal from "./DeleteConfigSourceModal";
 
 // Table components
-interface CategoryTableHeadProps {
+interface ConfigSourceTableHeadProps {
   headLabel: {
     id: string;
     label: string;
@@ -35,13 +33,9 @@ interface CategoryTableHeadProps {
   }[];
 }
 
-const CategoryTableHead = ({ headLabel }: CategoryTableHeadProps) => (
+const ConfigSourceTableHead = ({ headLabel }: ConfigSourceTableHeadProps) => (
   <TableHead>
     <TableRow>
-      <TableCell padding="checkbox">
-        <Checkbox />
-      </TableCell>
-      
       {headLabel.map((headCell) => (
         <TableCell
           key={headCell.id}
@@ -55,42 +49,27 @@ const CategoryTableHead = ({ headLabel }: CategoryTableHeadProps) => (
   </TableHead>
 );
 
-interface CategoryTableRowProps {
-  row: ICategoryModel;
-  selected: boolean;
-  onSelectRow: () => void;
-  onDeleteClick: (category: ICategoryModel) => void;
+interface ConfigSourceTableRowProps {
+  row: IConfigSourceModel;
+  onDeleteClick: (configSource: IConfigSourceModel) => void;
 }
 
-const CategoryTableRow = ({ row, selected, onSelectRow, onDeleteClick }: CategoryTableRowProps) => (
-  <TableRow hover selected={selected}>
-    <TableCell padding="checkbox">
-      <Checkbox checked={selected} onClick={onSelectRow} />
+const ConfigSourceTableRow = ({ row, onDeleteClick }: ConfigSourceTableRowProps) => (
+  <TableRow hover>
+    <TableCell>
+      <Typography variant="subtitle2">{row.name}</Typography>
     </TableCell>
     
     <TableCell>
-      <Stack direction="row" alignItems="center" spacing={2}>
-        <Avatar alt={row.name} src={row.image} />
-        <Typography variant="subtitle2">{row.name}</Typography>
-      </Stack>
+      <Typography variant="body2">{row.key}</Typography>
     </TableCell>
     
-    <TableCell>
-      <Box
-        component="img"
-        src={row.image}
-        alt={row.name}
-        sx={{
-          width: 64,
-          height: 64,
-          borderRadius: 1,
-          objectFit: 'cover',
-        }}
-      />
+    <TableCell align="center">
+      <Switch checked={row.enable} disabled />
     </TableCell>
     
-    <TableCell align="center">{row.enable ? 'Yes' : 'No'}</TableCell>
-    
+    <TableCell align="center">{row.index}</TableCell>
+
     <TableCell>
       {new Date(row.createdAt).toLocaleDateString()}
     </TableCell>
@@ -98,8 +77,6 @@ const CategoryTableRow = ({ row, selected, onSelectRow, onDeleteClick }: Categor
     <TableCell>
       {new Date(row.updatedAt).toLocaleDateString()}
     </TableCell>
-
-    <TableCell align="center">{row.index}</TableCell>
     
     <TableCell align="right">
       <IconButton onClick={() => onDeleteClick(row)}>
@@ -112,62 +89,45 @@ const CategoryTableRow = ({ row, selected, onSelectRow, onDeleteClick }: Categor
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'name', label: 'Name', width: 280 },
-  { id: 'image', label: 'Image', width: 100 },
+  { id: 'name', label: 'Name', width: 180 },
+  { id: 'key', label: 'Key', width: 150 },
   { id: 'enable', label: 'Enable', align: 'center' as const },
+  { id: 'index', label: 'Index', align: 'center' as const, width: 80 },
   { id: 'createdAt', label: 'Created At' },
   { id: 'updatedAt', label: 'Updated At' },
-  { id: 'index', label: 'Index', align: 'center' as const, width: 80 },
   { id: '', label: '' },
 ];
 
 // ----------------------------------------------------------------------
 
-export const CategoryView = () => {
-  const [selected, setSelected] = useState<string[]>([]);
-  const [categoryList, setCategoryList] = useState<ICategoryModel[]>([]);
+export const ConfigSourceView = () => {
+  const [configSourceList, setConfigSourceList] = useState<IConfigSourceModel[]>([]);
   const [loading, setLoading] = useState(false);
   const [openAddModal, setOpenAddModal] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<ICategoryModel | null>(null);
+  const [selectedConfigSource, setSelectedConfigSource] = useState<IConfigSourceModel | null>(null);
 
-  const fetchCategoryList = useCallback(async () => {
+  const fetchConfigSourceList = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await CategoryService.getListCategory();
-      if (response && response.data && Array.isArray(response.data)) {
-        setCategoryList(response.data);
+      const response = await ConfigSourceService.getListConfigSource({
+        page: 1,
+        pageSize: 100,
+      });
+      if (response && response.data?.data) {
+        setConfigSourceList(response.data.data);
       }
     } catch (error) {
-      console.error('Error fetching category list:', error);
-      toast.error('Failed to fetch categories');
+      console.error('Error fetching config source list:', error);
+      toast.error('Failed to fetch config sources');
     } finally {
       setLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    fetchCategoryList();
-  }, [fetchCategoryList]);
-
-  const handleSelectRow = (id: string) => {
-    const selectedIndex = selected.indexOf(id);
-    let newSelected: string[] = [];
-
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, id);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
-      );
-    }
-    setSelected(newSelected);
-  };
+    fetchConfigSourceList();
+  }, [fetchConfigSourceList]);
 
   const handleOpenAddModal = () => {
     setOpenAddModal(true);
@@ -177,14 +137,14 @@ export const CategoryView = () => {
     setOpenAddModal(false);
   };
 
-  const handleDeleteClick = (category: ICategoryModel) => {
-    setSelectedCategory(category);
+  const handleDeleteClick = (configSource: IConfigSourceModel) => {
+    setSelectedConfigSource(configSource);
     setOpenDeleteModal(true);
   };
 
   const handleCloseDeleteModal = () => {
     setOpenDeleteModal(false);
-    setSelectedCategory(null);
+    setSelectedConfigSource(null);
   };
 
   return (
@@ -194,21 +154,22 @@ export const CategoryView = () => {
           mb: 5,
           display: 'flex',
           alignItems: 'center',
+          justifyContent: 'space-between',
         }}
       >
-        <Typography variant="h4" sx={{ flexGrow: 1 }}>
-          Categories
+        <Typography variant="h4">
+          Config Sources
         </Typography>
         <Button 
           variant="contained" 
           startIcon={<Iconify icon="solar:pen-bold" />}
           onClick={handleOpenAddModal}
         >
-          Add Category
+          Add Config Source
         </Button>
       </Box>
 
-      <Card>
+      <Card> 
         <TableContainer sx={{ position: 'relative', overflow: 'unset', minHeight: 200 }}>
           {loading && (
             <Box
@@ -230,29 +191,27 @@ export const CategoryView = () => {
           )}
           
           <Table sx={{ minWidth: 800 }}>
-            <CategoryTableHead
+            <ConfigSourceTableHead
               headLabel={TABLE_HEAD}
             />
             <TableBody>
-              {categoryList.map((row) => (
-                <CategoryTableRow
+              {configSourceList.map((row) => (
+                <ConfigSourceTableRow
                   key={row._id}
                   row={row}
-                  selected={selected.includes(row._id)}
-                  onSelectRow={() => handleSelectRow(row._id)}
                   onDeleteClick={handleDeleteClick}
                 />
               ))}
 
-              {!categoryList.length && !loading && (
+              {!configSourceList.length && !loading && (
                 <TableRow>
-                  <TableCell colSpan={8}>
+                  <TableCell colSpan={7}>
                     <Box sx={{ py: 3, textAlign: 'center' }}>
                       <Typography variant="h6" sx={{ mb: 1 }}>
-                        No Categories Found
+                        No Config Sources Found
                       </Typography>
                       <Typography variant="body2">
-                        No categories available. Add a new category to get started.
+                        Add a new config source to get started.
                       </Typography>
                     </Box>
                   </TableCell>
@@ -263,17 +222,17 @@ export const CategoryView = () => {
         </TableContainer>
       </Card>
 
-      <AddCategory 
+      <AddConfigSourceModal
         open={openAddModal}
         onClose={handleCloseAddModal}
-        onSuccess={fetchCategoryList}
+        onSuccess={fetchConfigSourceList}
       />
 
-      <DeleteCategoryModal
+      <DeleteConfigSourceModal
         open={openDeleteModal}
         onClose={handleCloseDeleteModal}
-        category={selectedCategory}
-        onSuccess={fetchCategoryList}
+        configSource={selectedConfigSource}
+        onSuccess={fetchConfigSourceList}
       />
     </DashboardContent>
   );
