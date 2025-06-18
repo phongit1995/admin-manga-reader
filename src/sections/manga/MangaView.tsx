@@ -8,10 +8,8 @@ import { DashboardContent } from "src/layouts/dashboard";
 import { Iconify } from "src/components/iconify";
 
 export default function MangaView() {
-
   useEffect(() => {
-    MangaService.getListManga().then((res) => {
-      console.log(res);
+    MangaService.getListManga({ page: 1, pageSize: 10 }).then((res) => {
     });
   }, []);
     return (
@@ -24,15 +22,8 @@ export default function MangaView() {
         }}
       >
         <Typography variant="h4" sx={{ flexGrow: 1 }}>
-          Users
+          Manga List
         </Typography>
-        <Button
-          variant="contained"
-          color="inherit"
-          startIcon={<Iconify icon="mingcute:add-line" />}
-        >
-          New user
-        </Button>
       </Box>
         </DashboardContent>
     )

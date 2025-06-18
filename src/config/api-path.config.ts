@@ -1,10 +1,10 @@
 export const API_PATH_CONFIG = {
-    MANGA: 'v1/manga',
-    CATEGORY: 'v1/category',
-    CHAPTER: 'v1/chapter',
-    SOURCE: 'v1/source',
-    SEARCH: 'v1/search',
-    GENRE: 'v1/genre',
-    AUTHOR: 'v1/author',
+    MANGA: 'v1/admin/manga',
+    CATEGORY: 'v1/admin/category',
+    CHAPTER: 'v1/admin/chapter',
+    SOURCE: 'v1/admin/source',
+    SEARCH: 'v1/admin/search',
+    GENRE: 'v1/admin/genre',
+    AUTHOR: 'v1/admin/author',
     
 }
