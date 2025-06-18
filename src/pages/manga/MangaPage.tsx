@@ -1,9 +1,12 @@
 import React from "react";
 
+import MangaView from "src/sections/manga/MangaView";
+
 export default function MangaPage() {
     return (
-        <div>
-            <h1>Manga</h1>
-        </div>
+        <>
+        <title>Manga List</title>
+        <MangaView />
+      </>
     )
 }

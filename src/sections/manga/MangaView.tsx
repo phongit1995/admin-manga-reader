@@ -1,0 +1,39 @@
+import { useEffect } from "react";
+import { MangaService } from "@services/manga-service";
+
+import { Box , Button , Typography } from "@mui/material";
+
+import { DashboardContent } from "src/layouts/dashboard";
+
+import { Iconify } from "src/components/iconify";
+
+export default function MangaView() {
+
+  useEffect(() => {
+    MangaService.getListManga().then((res) => {
+      console.log(res);
+    });
+  }, []);
+    return (
+        <DashboardContent>
+            <Box
+        sx={{
+          mb: 5,
+          display: 'flex',
+          alignItems: 'center',
+        }}
+      >
+        <Typography variant="h4" sx={{ flexGrow: 1 }}>
+          Users
+        </Typography>
+        <Button
+          variant="contained"
+          color="inherit"
+          startIcon={<Iconify icon="mingcute:add-line" />}
+        >
+          New user
+        </Button>
+      </Box>
+        </DashboardContent>
+    )
+}
