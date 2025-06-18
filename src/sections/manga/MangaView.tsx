@@ -10,8 +10,8 @@ import {
   Table,
   TableBody,
   TableContainer,
-  TablePagination,
   Typography,
+  CircularProgress,
 } from "@mui/material";
 
 import { DashboardContent } from "src/layouts/dashboard";
@@ -27,32 +27,33 @@ import { MangaTableToolbar } from "./manga-table-toolbar";
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'name', label: 'Name' },
-  { id: 'author', label: 'Author' },
-  { id: 'genres', label: 'Genres' },
+  { id: 'name', label: 'Name', width: 280 },
+  { id: 'genres', label: 'Genres', width: 120 },
   { id: 'totalChapters', label: 'Chapters', align: 'center' as const },
   { id: 'views', label: 'Views', align: 'center' as const },
+  { id: 'chapterUpdate', label: 'Last Updated', align: 'center' as const },
   { id: 'status', label: 'Status' },
+  { id: 'enable', label: 'Enable', align: 'center' as const },
   { id: '', label: '' },
 ];
 
 // ----------------------------------------------------------------------
 
 export default function MangaView() {
-  const [page, setPage] = useState(0);
   const [order, setOrder] = useState<'asc' | 'desc'>('asc');
   const [selected, setSelected] = useState<string[]>([]);
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
-  const [rowsPerPage, setRowsPerPage] = useState(5);
   const [mangaList, setMangaList] = useState<IMangaModel[]>([]);
   const [mangaData, setMangaData] = useState<IResponsePage<IMangaModel> | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const fetchMangaList = useCallback(async () => {
     try {
+      setLoading(true);
       const response = await MangaService.getListManga({ 
-        page: page + 1, 
-        pageSize: rowsPerPage,
+        page: 1, 
+        pageSize: 10,
         search: filterName || undefined 
       });
       
@@ -62,8 +63,10 @@ export default function MangaView() {
       }
     } catch (error) {
       console.error('Error fetching manga list:', error);
+    } finally {
+      setLoading(false);
     }
-  }, [page, rowsPerPage, filterName]);
+  }, [filterName]);
 
   useEffect(() => {
     fetchMangaList();
@@ -103,17 +106,7 @@ export default function MangaView() {
     setSelected(newSelected);
   }, [selected]);
 
-  const handleChangePage = useCallback((event: unknown, newPage: number) => {
-    setPage(newPage);
-  }, []);
-
-  const handleChangeRowsPerPage = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-    setPage(0);
-    setRowsPerPage(parseInt(event.target.value, 10));
-  }, []);
-
   const handleFilterByName = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-    setPage(0);
     setFilterName(event.target.value);
   }, []);
 
@@ -124,7 +117,7 @@ export default function MangaView() {
   });
 
   const notFound = !dataFiltered.length && !!filterName;
-  const emptyRowsCount = emptyRows(page, rowsPerPage, mangaData?.total || 0);
+  const emptyRowsCount = emptyRows(0, 10, mangaData?.total || 0);
 
   return (
     <DashboardContent>
@@ -147,7 +140,26 @@ export default function MangaView() {
           onFilterName={handleFilterByName} 
         />
 
-        <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
+        <TableContainer sx={{ position: 'relative', overflow: 'unset', minHeight: 200 }}>
+          {loading && (
+            <Box
+              sx={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                zIndex: 2,
+              }}
+            >
+              <CircularProgress />
+            </Box>
+          )}
+          
           <Table sx={{ minWidth: 800 }}>
             <MangaTableHead
               order={order}
@@ -174,16 +186,6 @@ export default function MangaView() {
             </TableBody>
           </Table>
         </TableContainer>
-
-        <TablePagination
-          page={page}
-          component="div"
-          count={mangaData?.total || 0}
-          rowsPerPage={rowsPerPage}
-          onPageChange={handleChangePage}
-          rowsPerPageOptions={[5, 10, 25]}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
       </Card>
     </DashboardContent>
   );

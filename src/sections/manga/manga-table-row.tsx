@@ -1,7 +1,5 @@
 import { useState, useCallback } from 'react';
 
-import Avatar from '@mui/material/Avatar';
-import Box from '@mui/material/Box';
 import Checkbox from '@mui/material/Checkbox';
 import IconButton from '@mui/material/IconButton';
 import MenuItem, { menuItemClasses } from '@mui/material/MenuItem';
@@ -50,6 +48,16 @@ export function MangaTableRow({ row, selected, onSelectRow }: MangaTableRowProps
   };
 
   const statusColor = row.status === 1 ? 'success' : row.status === 0 ? 'warning' : 'error';
+  
+  // Format date for chapterUpdate
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return new Intl.DateTimeFormat('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    }).format(date);
+  };
 
   return (
     <>
@@ -58,32 +66,31 @@ export function MangaTableRow({ row, selected, onSelectRow }: MangaTableRowProps
           <Checkbox disableRipple checked={selected} onChange={onSelectRow} />
         </TableCell>
 
-        <TableCell component="th" scope="row">
-          <Box
-            sx={{
-              gap: 2,
-              display: 'flex',
-              alignItems: 'center',
-            }}
-          >
-            <Avatar alt={row.name} src={row.image} variant="rounded" sx={{ width: 48, height: 48 }} />
-            <Typography variant="subtitle2">{row.name}</Typography>
-          </Box>
+        <TableCell component="th" scope="row" sx={{ maxWidth: 280 }}>
+          <Typography variant="subtitle2" noWrap>{row.name}</Typography>
         </TableCell>
 
-        <TableCell>{row.author || 'Unknown'}</TableCell>
-
-        <TableCell>
-          {row.genres.slice(0, 2).join(', ')}
-          {row.genres.length > 2 && '...'}
+        <TableCell sx={{ maxWidth: 120 }}>
+          <Typography variant="body2" noWrap>
+            {row.genres.slice(0, 2).join(', ')}
+            {row.genres.length > 2 && '...'}
+          </Typography>
         </TableCell>
 
         <TableCell align="center">{row.totalChapters}</TableCell>
 
         <TableCell align="center">{row.views.toLocaleString()}</TableCell>
+        
+        <TableCell align="center">{formatDate(row.chapterUpdate)}</TableCell>
 
         <TableCell>
           <Label color={statusColor}>{getStatus(row.status)}</Label>
+        </TableCell>
+        
+        <TableCell align="center">
+          <Label color={row.enable ? 'success' : 'error'}>
+            {row.enable ? 'Yes' : 'No'}
+          </Label>
         </TableCell>
 
         <TableCell align="right">
