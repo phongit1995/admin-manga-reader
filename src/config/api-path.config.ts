@@ -3,6 +3,7 @@ export const API_PATH_CONFIG = {
     CATEGORY: 'v1/admin/category',
     CHAPTER: 'v1/admin/chapter',
     SOURCE_CONFIG: 'v1/admin/source-config',
+    IN_APP_PURCHASE: 'v1/admin/in-app-purchase',
     SOURCE: 'v1/admin/source',
     SEARCH: 'v1/admin/search',
     GENRE: 'v1/admin/genre',
