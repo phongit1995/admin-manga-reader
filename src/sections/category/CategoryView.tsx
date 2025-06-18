@@ -15,14 +15,14 @@ import {
   Avatar,
   IconButton,
   Button,
-  Snackbar,
-  Alert,
 } from "@mui/material";
 import { DashboardContent } from "src/layouts/dashboard";
-import { ICategoryModel, ICreateCategoryRequest } from "@src/types/category.type";
+import { ICategoryModel } from "@src/types/category.type";
 import { CategoryService } from "@services/category-service";
 import { Iconify } from "src/components/iconify";
 import AddCategory from "./AddCategoryModal";
+import DeleteCategoryModal from "./DeleteCategoryModal";
+import { toast } from "react-toastify";
 
 // Table components
 interface CategoryTableHeadProps {
@@ -59,9 +59,10 @@ interface CategoryTableRowProps {
   row: ICategoryModel;
   selected: boolean;
   onSelectRow: () => void;
+  onDeleteClick: (category: ICategoryModel) => void;
 }
 
-const CategoryTableRow = ({ row, selected, onSelectRow }: CategoryTableRowProps) => (
+const CategoryTableRow = ({ row, selected, onSelectRow, onDeleteClick }: CategoryTableRowProps) => (
   <TableRow hover selected={selected}>
     <TableCell padding="checkbox">
       <Checkbox checked={selected} onClick={onSelectRow} />
@@ -101,7 +102,7 @@ const CategoryTableRow = ({ row, selected, onSelectRow }: CategoryTableRowProps)
     <TableCell align="center">{row.index}</TableCell>
     
     <TableCell align="right">
-      <IconButton>
+      <IconButton onClick={() => onDeleteClick(row)}>
         <Iconify icon="solar:trash-bin-trash-bold" sx={{ color: 'error.main' }} />
       </IconButton>
     </TableCell>
@@ -127,11 +128,8 @@ export const CategoryView = () => {
   const [categoryList, setCategoryList] = useState<ICategoryModel[]>([]);
   const [loading, setLoading] = useState(false);
   const [openAddModal, setOpenAddModal] = useState(false);
-  const [snackbar, setSnackbar] = useState({
-    open: false,
-    message: '',
-    severity: 'success' as 'success' | 'error'
-  });
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<ICategoryModel | null>(null);
 
   const fetchCategoryList = useCallback(async () => {
     try {
@@ -142,7 +140,7 @@ export const CategoryView = () => {
       }
     } catch (error) {
       console.error('Error fetching category list:', error);
-      showSnackbar('Failed to fetch categories', 'error');
+      toast.error('Failed to fetch categories');
     } finally {
       setLoading(false);
     }
@@ -179,41 +177,14 @@ export const CategoryView = () => {
     setOpenAddModal(false);
   };
 
-  const showSnackbar = (message: string, severity: 'success' | 'error') => {
-    setSnackbar({ open: true, message, severity });
+  const handleDeleteClick = (category: ICategoryModel) => {
+    setSelectedCategory(category);
+    setOpenDeleteModal(true);
   };
 
-  const handleCloseSnackbar = () => {
-    setSnackbar({ ...snackbar, open: false });
-  };
-
-  const handleAddCategory = async (data: ICreateCategoryRequest) => {
-    try {
-      setLoading(true);
-      // Ensure index is a number
-      const categoryData = {
-        ...data,
-        index: Number(data.index)
-      };
-
-      const response = await CategoryService.createCategory(categoryData);
-      
-      if (response && response.status) {
-        // Successfully added
-        showSnackbar('Category added successfully', 'success');
-        setOpenAddModal(false);
-        // Refresh the list
-        fetchCategoryList();
-      } else {
-        // API returned but with error status
-        showSnackbar(response?.message || 'Failed to add category', 'error');
-      }
-    } catch (error) {
-      console.error('Error creating category:', error);
-      showSnackbar('Failed to add category', 'error');
-    } finally {
-      setLoading(false);
-    }
+  const handleCloseDeleteModal = () => {
+    setOpenDeleteModal(false);
+    setSelectedCategory(null);
   };
 
   return (
@@ -269,6 +240,7 @@ export const CategoryView = () => {
                   row={row}
                   selected={selected.includes(row._id)}
                   onSelectRow={() => handleSelectRow(row._id)}
+                  onDeleteClick={handleDeleteClick}
                 />
               ))}
 
@@ -294,23 +266,15 @@ export const CategoryView = () => {
       <AddCategory 
         open={openAddModal}
         onClose={handleCloseAddModal}
-        onAdd={handleAddCategory}
+        onSuccess={fetchCategoryList}
       />
 
-      <Snackbar 
-        open={snackbar.open} 
-        autoHideDuration={6000} 
-        onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-      >
-        <Alert 
-          onClose={handleCloseSnackbar} 
-          severity={snackbar.severity}
-          sx={{ width: '100%' }}
-        >
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
+      <DeleteCategoryModal
+        open={openDeleteModal}
+        onClose={handleCloseDeleteModal}
+        category={selectedCategory}
+        onSuccess={fetchCategoryList}
+      />
     </DashboardContent>
   );
 };

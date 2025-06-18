@@ -1,4 +1,4 @@
-import type { IApiResponse, IApiResponsePage } from "src/types";
+import type { IApiResponse } from "src/types";
 
 import { api } from "@api/api";
 import { API_PATH_CONFIG } from "@config/api-path.config";
@@ -16,7 +16,7 @@ export class CategoryService {
     }
 
     static deleteCategory = async (id: string) => {
-        const response = await api.delete<IApiResponsePage<ICategoryModel>>(API_PATH_CONFIG.CATEGORY + "/" + id);
+        const response = await api.delete(API_PATH_CONFIG.CATEGORY + "/" + id);
         return response.data;
     }
 

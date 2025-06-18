@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 import { usePathname } from 'src/routes/hooks';
 
 import { ThemeProvider } from 'src/theme/theme-provider';
+import { ToastContainer } from 'react-toastify';
 
 
 // ----------------------------------------------------------------------
@@ -19,6 +20,7 @@ export default function App({ children }: AppProps) {
   return (
     <ThemeProvider>
       {children}
+      <ToastContainer />
     </ThemeProvider>
   );
 }

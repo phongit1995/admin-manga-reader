@@ -18,8 +18,8 @@ jobs:
           cache: 'yarn'
       - name: Install dependencies
         run: yarn install --frozen-lockfile
-      - name: Create .env file from .env.development
-        run: cp .env.development .env
+      - name: Create .env file from env.development
+        run: cp env.development .env
       - name: Build
         run: yarn build
       - uses: FirebaseExtended/action-hosting-deploy@v0

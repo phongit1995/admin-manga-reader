@@ -48,6 +48,7 @@
     "react-dom": "^19.1.0",
     "react-hook-form": "^7.58.1",
     "react-router-dom": "^7.4.1",
+    "react-toastify": "^11.0.5",
     "simplebar-react": "^3.3.0",
     "tailwindcss": "^4.1.10",
     "yup": "^1.6.1"
