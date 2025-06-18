@@ -5,6 +5,7 @@ export interface IListMangaQuery extends IApiPageQuery {
     type?: number;
     sort?: number;
     search?: string;
+    status?: number;
 }
 
 export interface IMangaModel {

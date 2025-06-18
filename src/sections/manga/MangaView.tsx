@@ -1,8 +1,10 @@
-import type { IMangaModel, IResponsePage } from "src/types";
+import type { IMangaModel, IResponsePage, IApiResponse } from "src/types";
+import type { ICategoryModel } from "@src/types/category.type";
 
 import { useEffect, useState, useCallback, ChangeEvent } from "react";
 
 import { MangaService } from "@src/services/manga.service";
+import { CategoryService } from "@src/services/category.service";
 
 import {
   Box,
@@ -24,7 +26,6 @@ import { DashboardContent } from "src/layouts/dashboard";
 
 import { TableEmptyRows } from "src/sections/user/table-empty-rows";
 import { TableNoData } from "src/sections/user/table-no-data";
-import { emptyRows, applyFilter, getComparator } from "./utils";
 
 import { MangaTableHead } from "./manga-table-head";
 import { MangaTableRow } from "./manga-table-row";
@@ -50,20 +51,49 @@ export default function MangaView() {
   const [selected, setSelected] = useState<string[]>([]);
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedStatus, setSelectedStatus] = useState<number | ''>('');
   const [mangaList, setMangaList] = useState<IMangaModel[]>([]);
   const [mangaData, setMangaData] = useState<IResponsePage<IMangaModel> | null>(null);
   const [loading, setLoading] = useState(false);
+  const [categories, setCategories] = useState<ICategoryModel[]>([]);
   const [page, setPage] = useState(0);
-  const [goToPage, setGoToPage] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  // Fetch categories
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await CategoryService.getListCategory();
+        if (response && Array.isArray(response.data)) {
+          setCategories(response.data);
+        }
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   const fetchMangaList = useCallback(async (currentPage: number, pageSize: number) => {
     try {
       setLoading(true);
+      
+      let selectedCategoryName = '';
+      if (selectedCategory) {
+        const category = categories.find(cat => cat._id === selectedCategory);
+        if (category) {
+          selectedCategoryName = category.name;
+        }
+      }
+      
       const response = await MangaService.getListManga({ 
-        page: currentPage + 1, // API uses 1-based indexing
+        page: currentPage + 1,
         pageSize,
-        search: filterName || undefined 
+        search: filterName || undefined,
+        genres: selectedCategoryName || undefined,
+        status: selectedStatus !== '' ? selectedStatus : undefined,
       });
       
       if (response.data) {
@@ -75,7 +105,7 @@ export default function MangaView() {
     } finally {
       setLoading(false);
     }
-  }, [filterName]);
+  }, [filterName, selectedCategory, categories, selectedStatus]);
 
   useEffect(() => {
     fetchMangaList(page, rowsPerPage);
@@ -117,30 +147,23 @@ export default function MangaView() {
 
   const handleFilterByName = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     setFilterName(event.target.value);
-    setPage(0); // Reset to first page when filtering
+    setPage(0);
+  }, []);
+
+  const handleCategoryChange = useCallback((categoryId: string) => {
+    setSelectedCategory(categoryId);
+    setPage(0);
+  }, []);
+
+  const handleStatusChange = useCallback((status: number | '') => {
+    setSelectedStatus(status);
+    setPage(0);
   }, []);
 
   const handleChangePage = useCallback((event: React.ChangeEvent<unknown>, newPage: number) => {
-    setPage(newPage - 1); // Pagination component is 1-indexed, but our state is 0-indexed
+    setPage(newPage - 1);
   }, []);
 
-  const handleGoToPageChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-    setGoToPage(event.target.value);
-  }, []);
-
-  const handleGoToPageSubmit = useCallback(() => {
-    const pageNumber = parseInt(goToPage, 10);
-    if (
-      !isNaN(pageNumber) && 
-      pageNumber > 0 && 
-      pageNumber <= Math.ceil((mangaData?.total || 0) / rowsPerPage)
-    ) {
-      setPage(pageNumber - 1); // Convert to 0-indexed
-      setGoToPage(''); // Clear input after navigation
-    }
-  }, [goToPage, mangaData?.total, rowsPerPage]);
-
-  // We're not applying client-side filtering for pagination since we're using server pagination
   const dataFiltered = mangaList;
   const notFound = !dataFiltered.length && !!filterName;
   const emptyRowsCount = mangaList.length === 0 ? rowsPerPage : 0;
@@ -164,7 +187,12 @@ export default function MangaView() {
         <MangaTableToolbar 
           numSelected={selected.length} 
           filterName={filterName} 
-          onFilterName={handleFilterByName} 
+          onFilterName={handleFilterByName}
+          categories={categories}
+          selectedCategory={selectedCategory}
+          onCategoryChange={handleCategoryChange}
+          selectedStatus={selectedStatus}
+          onStatusChange={handleStatusChange}
         />
 
         <TableContainer sx={{ position: 'relative', overflow: 'unset', minHeight: 200 }}>
@@ -243,27 +271,6 @@ export default function MangaView() {
               showFirstButton 
               showLastButton
             />
-            
-            {/* Go to Page functionality */}
-            <Stack direction="row" spacing={1} alignItems="center">
-              <TextField
-                label="Go to"
-                size="small"
-                value={goToPage}
-                onChange={handleGoToPageChange}
-                type="number"
-                InputProps={{ inputProps: { min: 1, max: totalPages } }}
-                sx={{ width: 80 }}
-              />
-              <Button 
-                variant="contained" 
-                size="small" 
-                onClick={handleGoToPageSubmit}
-                disabled={!goToPage}
-              >
-                Go
-              </Button>
-            </Stack>
           </Stack>
         </Box>
       </Card>
