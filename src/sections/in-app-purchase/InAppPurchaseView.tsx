@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, ChangeEvent } from "react";
 import {
   Box,
   Card,
@@ -10,8 +10,9 @@ import {
   TableHead,
   TableRow,
   TableCell,
-  Checkbox,
   IconButton,
+  Stack,
+  Pagination,
 } from "@mui/material";
 import { DashboardContent } from "src/layouts/dashboard";
 import { IInAppPurchaseModel } from "@src/types/in-app-purchase.type";
@@ -34,10 +35,6 @@ interface InAppPurchaseTableHeadProps {
 const InAppPurchaseTableHead = ({ headLabel }: InAppPurchaseTableHeadProps) => (
   <TableHead>
     <TableRow>
-      <TableCell padding="checkbox">
-        <Checkbox />
-      </TableCell>
-      
       {headLabel.map((headCell) => (
         <TableCell
           key={headCell.id}
@@ -53,17 +50,11 @@ const InAppPurchaseTableHead = ({ headLabel }: InAppPurchaseTableHeadProps) => (
 
 interface InAppPurchaseTableRowProps {
   row: IInAppPurchaseModel;
-  selected: boolean;
-  onSelectRow: () => void;
   onDeleteClick: (purchase: IInAppPurchaseModel) => void;
 }
 
-const InAppPurchaseTableRow = ({ row, selected, onSelectRow, onDeleteClick }: InAppPurchaseTableRowProps) => (
-  <TableRow hover selected={selected}>
-    <TableCell padding="checkbox">
-      <Checkbox checked={selected} onClick={onSelectRow} />
-    </TableCell>
-    
+const InAppPurchaseTableRow = ({ row, onDeleteClick }: InAppPurchaseTableRowProps) => (
+  <TableRow hover>
     <TableCell>
       <Typography variant="body2">{row.source}</Typography>
     </TableCell>
@@ -77,7 +68,15 @@ const InAppPurchaseTableRow = ({ row, selected, onSelectRow, onDeleteClick }: In
     </TableCell>
     
     <TableCell>
-      {new Date(row.purchaseDate).toLocaleDateString()}
+      {new Date(row.purchaseDate).toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      })} {new Date(row.purchaseDate).toLocaleTimeString('en-GB', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      })}
     </TableCell>
     
     <TableCell align="right">
@@ -106,18 +105,34 @@ const TABLE_HEAD = [
 // ----------------------------------------------------------------------
 
 export default function InAppPurchaseView() {
-  const [selected, setSelected] = useState<string[]>([]);
   const [purchaseList, setPurchaseList] = useState<IInAppPurchaseModel[]>([]);
   const [loading, setLoading] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [selectedPurchase, setSelectedPurchase] = useState<IInAppPurchaseModel | null>(null);
+  
+  // Pagination states
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [purchaseData, setPurchaseData] = useState<{total: number; data: IInAppPurchaseModel[]} | null>(null);
 
-  const fetchPurchaseList = useCallback(async () => {
+  const fetchPurchaseList = useCallback(async (currentPage: number, pageSize: number) => {
     try {
       setLoading(true);
-      const response = await InAppPurchaseService.getListInAppPurchase({page: 1, pageSize: 10});
-      if (response && response.data && Array.isArray(response.data)) {
-        setPurchaseList(response.data);
+      const response = await InAppPurchaseService.getListInAppPurchase({
+        page: currentPage + 1, // API uses 1-based indexing
+        pageSize
+      });
+      
+      if (response && response.data) {
+        if (Array.isArray(response.data)) {
+          setPurchaseList(response.data);
+          // If API doesn't return total, we'll just use the array length
+          setPurchaseData({ total: response.data.length, data: response.data });
+        } else if (response.data.data) {
+          // Handle paginated response format
+          setPurchaseList(response.data.data);
+          setPurchaseData(response.data);
+        }
       }
     } catch (error) {
       console.error('Error fetching in-app purchase list:', error);
@@ -128,27 +143,8 @@ export default function InAppPurchaseView() {
   }, []);
 
   useEffect(() => {
-    fetchPurchaseList();
-  }, [fetchPurchaseList]);
-
-  const handleSelectRow = (id: string) => {
-    const selectedIndex = selected.indexOf(id);
-    let newSelected: string[] = [];
-
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, id);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
-      );
-    }
-    setSelected(newSelected);
-  };
+    fetchPurchaseList(page, rowsPerPage);
+  }, [fetchPurchaseList, page, rowsPerPage]);
 
   const handleDeleteClick = (purchase: IInAppPurchaseModel) => {
     setSelectedPurchase(purchase);
@@ -159,6 +155,13 @@ export default function InAppPurchaseView() {
     setOpenDeleteModal(false);
     setSelectedPurchase(null);
   };
+
+  // Pagination handlers
+  const handleChangePage = useCallback((event: React.ChangeEvent<unknown>, newPage: number) => {
+    setPage(newPage - 1); // Pagination component is 1-indexed, but our state is 0-indexed
+  }, []);
+
+  const totalPages = Math.ceil((purchaseData?.total || 0) / rowsPerPage);
 
   return (
     <DashboardContent>
@@ -204,15 +207,13 @@ export default function InAppPurchaseView() {
                 <InAppPurchaseTableRow
                   key={row._id}
                   row={row}
-                  selected={selected.includes(row._id)}
-                  onSelectRow={() => handleSelectRow(row._id)}
                   onDeleteClick={handleDeleteClick}
                 />
               ))}
 
               {!purchaseList.length && !loading && (
                 <TableRow>
-                  <TableCell colSpan={7}>
+                  <TableCell colSpan={6}>
                     <Box sx={{ py: 3, textAlign: 'center' }}>
                       <Typography variant="h6" sx={{ mb: 1 }}>
                         No In-App Purchases Found
@@ -227,13 +228,44 @@ export default function InAppPurchaseView() {
             </TableBody>
           </Table>
         </TableContainer>
+
+        {/* Pagination controls */}
+        <Box
+          sx={{
+            p: 2,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: 2,
+          }}
+        >
+          {/* Show items information */}
+          <Box>
+            <Typography variant="body2" component="span">
+              {`${page * rowsPerPage + 1} - ${Math.min((page + 1) * rowsPerPage, purchaseData?.total || 0)} of ${purchaseData?.total || 0} items`}
+            </Typography>
+          </Box>
+          
+          {/* Main pagination component */}
+          <Pagination 
+            page={page + 1} 
+            count={totalPages}
+            onChange={handleChangePage}
+            color="primary"
+            siblingCount={2}
+            boundaryCount={1}
+            showFirstButton 
+            showLastButton
+          />
+        </Box>
       </Card>
 
       <DeleteInAppPurchaseModal
         open={openDeleteModal}
         onClose={handleCloseDeleteModal}
         purchase={selectedPurchase}
-        onSuccess={fetchPurchaseList}
+        onSuccess={() => fetchPurchaseList(page, rowsPerPage)}
       />
     </DashboardContent>
   );
