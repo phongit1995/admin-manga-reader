@@ -9,7 +9,7 @@ import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgr
 
 import { AuthLayout } from 'src/layouts/auth';
 import { DashboardLayout } from 'src/layouts/dashboard';
-
+import { ERouterConfig } from 'src/config/router.config';
 // ----------------------------------------------------------------------
 
 export const DashboardPage = lazy(() => import('src/pages/dashboard'));
@@ -17,6 +17,8 @@ export const BlogPage = lazy(() => import('src/pages/blog'));
 export const UserPage = lazy(() => import('src/pages/user'));
 export const SignInPage = lazy(() => import('src/pages/sign-in'));
 export const ProductsPage = lazy(() => import('src/pages/products'));
+export const MangaPage = lazy(() => import('src/pages/manga/MangaPage'));
+export const CategoryPage = lazy(() => import('src/pages/category/CategoryPage'));
 export const Page404 = lazy(() => import('src/pages/page-not-found'));
 
 const renderFallback = () => (
@@ -50,13 +52,15 @@ export const routesSection: RouteObject[] = [
     ),
     children: [
       { index: true, element: <DashboardPage /> },
-      { path: 'user', element: <UserPage /> },
-      { path: 'products', element: <ProductsPage /> },
-      { path: 'blog', element: <BlogPage /> },
+      { path: ERouterConfig.USER, element: <UserPage /> },
+      { path: ERouterConfig.PRODUCT, element: <ProductsPage /> },
+      { path: ERouterConfig.BLOG, element: <BlogPage /> },
+      { path: ERouterConfig.MANGA, element: <MangaPage /> },
+      { path: ERouterConfig.CATEGORY, element: <CategoryPage /> },
     ],
   },
   {
-    path: 'sign-in',
+    path: ERouterConfig.SIGN_IN,
     element: (
       <AuthLayout>
         <SignInPage />
@@ -64,7 +68,7 @@ export const routesSection: RouteObject[] = [
     ),
   },
   {
-    path: '404',
+    path: ERouterConfig.PAGE_404,
     element: <Page404 />,
   },
   { path: '*', element: <Page404 /> },

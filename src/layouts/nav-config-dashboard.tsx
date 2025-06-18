@@ -1,5 +1,7 @@
 import { Icon } from '@iconify/react';
 
+import { ERouterConfig } from 'src/config/router.config'; 
+
 import { SvgColor } from 'src/components/svg-color';
 
 // ----------------------------------------------------------------------
@@ -22,39 +24,39 @@ export const navData = [
   },
   {
     title: 'Manga',
-    path: '/manga',
+    path: ERouterConfig.MANGA,
     icon: <Icon icon="material-symbols:menu-book-outline" width={24} height={24} />,
     activeIcon: <Icon icon="material-symbols:menu-book" width={24} height={24} />,
   },
   {
     title: 'Category',
-    path: '/category',
+    path: ERouterConfig.CATEGORY,
     icon: <Icon icon="material-symbols:category-outline" width={24} height={24} />,
     activeIcon: <Icon icon="material-symbols:category" width={24} height={24} />,
   },
   {
     title: 'User',
-    path: '/user',
+    path: ERouterConfig.USER,
     icon: icon('ic-user'),
   },
   {
     title: 'Product',
-    path: '/products',
+    path: ERouterConfig.PRODUCT,
     icon: icon('ic-cart'),
   },
   {
     title: 'Blog',
-    path: '/blog',
+    path: ERouterConfig.BLOG,
     icon: icon('ic-blog'),
   },
   {
     title: 'Sign in',
-    path: '/sign-in',
+    path: ERouterConfig.SIGN_IN,
     icon: icon('ic-lock'),
   },
   {
     title: 'Not found',
-    path: '/404',
+    path: ERouterConfig.PAGE_404,
     icon: icon('ic-disabled'),
   },
 ];

@@ -1,0 +1,1 @@
+export { default as MangaPage } from './MangaPage';
