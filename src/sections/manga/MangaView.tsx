@@ -1,6 +1,6 @@
 import type { IMangaModel, IResponsePage } from "src/types";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, ChangeEvent } from "react";
 
 import { MangaService } from "@services/manga-service";
 
@@ -12,6 +12,12 @@ import {
   TableContainer,
   Typography,
   CircularProgress,
+  TablePagination,
+  TextField,
+  Button,
+  Stack,
+  Pagination,
+  PaginationItem,
 } from "@mui/material";
 
 import { DashboardContent } from "src/layouts/dashboard";
@@ -47,13 +53,16 @@ export default function MangaView() {
   const [mangaList, setMangaList] = useState<IMangaModel[]>([]);
   const [mangaData, setMangaData] = useState<IResponsePage<IMangaModel> | null>(null);
   const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(0);
+  const [goToPage, setGoToPage] = useState('');
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  const fetchMangaList = useCallback(async () => {
+  const fetchMangaList = useCallback(async (currentPage: number, pageSize: number) => {
     try {
       setLoading(true);
       const response = await MangaService.getListManga({ 
-        page: 1, 
-        pageSize: 10,
+        page: currentPage + 1, // API uses 1-based indexing
+        pageSize: pageSize,
         search: filterName || undefined 
       });
       
@@ -69,8 +78,8 @@ export default function MangaView() {
   }, [filterName]);
 
   useEffect(() => {
-    fetchMangaList();
-  }, [fetchMangaList]);
+    fetchMangaList(page, rowsPerPage);
+  }, [fetchMangaList, page, rowsPerPage]);
 
   const handleSort = useCallback((id: string) => {
     const isAsc = orderBy === id && order === 'asc';
@@ -108,16 +117,34 @@ export default function MangaView() {
 
   const handleFilterByName = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     setFilterName(event.target.value);
+    setPage(0); // Reset to first page when filtering
   }, []);
 
-  const dataFiltered = applyFilter({
-    inputData: mangaList,
-    comparator: getComparator(order, orderBy),
-    filterName,
-  });
+  const handleChangePage = useCallback((event: React.ChangeEvent<unknown>, newPage: number) => {
+    setPage(newPage - 1); // Pagination component is 1-indexed, but our state is 0-indexed
+  }, []);
 
+  const handleGoToPageChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    setGoToPage(event.target.value);
+  }, []);
+
+  const handleGoToPageSubmit = useCallback(() => {
+    const pageNumber = parseInt(goToPage, 10);
+    if (
+      !isNaN(pageNumber) && 
+      pageNumber > 0 && 
+      pageNumber <= Math.ceil((mangaData?.total || 0) / rowsPerPage)
+    ) {
+      setPage(pageNumber - 1); // Convert to 0-indexed
+      setGoToPage(''); // Clear input after navigation
+    }
+  }, [goToPage, mangaData?.total, rowsPerPage]);
+
+  // We're not applying client-side filtering for pagination since we're using server pagination
+  const dataFiltered = mangaList;
   const notFound = !dataFiltered.length && !!filterName;
-  const emptyRowsCount = emptyRows(0, 10, mangaData?.total || 0);
+  const emptyRowsCount = mangaList.length === 0 ? rowsPerPage : 0;
+  const totalPages = Math.ceil((mangaData?.total || 0) / rowsPerPage);
 
   return (
     <DashboardContent>
@@ -186,6 +213,59 @@ export default function MangaView() {
             </TableBody>
           </Table>
         </TableContainer>
+
+        <Box
+          sx={{
+            p: 2,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: 2,
+          }}
+        >
+          {/* Show items information */}
+          <Box>
+            <Typography variant="body2" component="span">
+              {`${page * rowsPerPage + 1} - ${Math.min((page + 1) * rowsPerPage, mangaData?.total || 0)} of ${mangaData?.total || 0} items`}
+            </Typography>
+          </Box>
+          
+          {/* Main pagination component */}
+          <Stack direction="row" spacing={2} alignItems="center">
+            <Pagination 
+              page={page + 1} 
+              count={totalPages}
+              onChange={handleChangePage}
+              color="primary"
+              siblingCount={2} // Show more siblings
+              boundaryCount={1} // Show boundary pages
+              showFirstButton 
+              showLastButton
+            />
+            
+            {/* Go to Page functionality */}
+            <Stack direction="row" spacing={1} alignItems="center">
+              <TextField
+                label="Go to"
+                size="small"
+                value={goToPage}
+                onChange={handleGoToPageChange}
+                type="number"
+                InputProps={{ inputProps: { min: 1, max: totalPages } }}
+                sx={{ width: 80 }}
+              />
+              <Button 
+                variant="contained" 
+                size="small" 
+                onClick={handleGoToPageSubmit}
+                disabled={!goToPage}
+              >
+                Go
+              </Button>
+            </Stack>
+          </Stack>
+        </Box>
       </Card>
     </DashboardContent>
   );
