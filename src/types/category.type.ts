@@ -13,3 +13,9 @@ export interface ICategoryModel {
     updatedAt: string;
     __v: number;
 }
+
+export interface ICreateCategoryRequest {
+    name: string;
+    image: string;
+    index: number;
+}

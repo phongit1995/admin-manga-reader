@@ -15,13 +15,14 @@ import {
   Avatar,
   IconButton,
   Button,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import { DashboardContent } from "src/layouts/dashboard";
-import { ICategoryModel } from "@src/types/category.type";
+import { ICategoryModel, ICreateCategoryRequest } from "@src/types/category.type";
 import { CategoryService } from "@services/category-service";
-import { TableNoData } from "src/sections/user/table-no-data";
 import { Iconify } from "src/components/iconify";
-import { IApiResponse } from "src/types/api.type";
+import AddCategory from "./AddCategoryModal";
 
 // Table components
 interface CategoryTableHeadProps {
@@ -73,6 +74,20 @@ const CategoryTableRow = ({ row, selected, onSelectRow }: CategoryTableRowProps)
       </Stack>
     </TableCell>
     
+    <TableCell>
+      <Box
+        component="img"
+        src={row.image}
+        alt={row.name}
+        sx={{
+          width: 64,
+          height: 64,
+          borderRadius: 1,
+          objectFit: 'cover',
+        }}
+      />
+    </TableCell>
+    
     <TableCell align="center">{row.enable ? 'Yes' : 'No'}</TableCell>
     
     <TableCell>
@@ -97,6 +112,7 @@ const CategoryTableRow = ({ row, selected, onSelectRow }: CategoryTableRowProps)
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Name', width: 280 },
+  { id: 'image', label: 'Image', width: 100 },
   { id: 'enable', label: 'Enable', align: 'center' as const },
   { id: 'createdAt', label: 'Created At' },
   { id: 'updatedAt', label: 'Updated At' },
@@ -110,6 +126,12 @@ export const CategoryView = () => {
   const [selected, setSelected] = useState<string[]>([]);
   const [categoryList, setCategoryList] = useState<ICategoryModel[]>([]);
   const [loading, setLoading] = useState(false);
+  const [openAddModal, setOpenAddModal] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: '',
+    severity: 'success' as 'success' | 'error'
+  });
 
   const fetchCategoryList = useCallback(async () => {
     try {
@@ -120,6 +142,7 @@ export const CategoryView = () => {
       }
     } catch (error) {
       console.error('Error fetching category list:', error);
+      showSnackbar('Failed to fetch categories', 'error');
     } finally {
       setLoading(false);
     }
@@ -148,8 +171,49 @@ export const CategoryView = () => {
     setSelected(newSelected);
   };
 
-  const handleAddCategory = () => {
-    console.log('Add new category');
+  const handleOpenAddModal = () => {
+    setOpenAddModal(true);
+  };
+
+  const handleCloseAddModal = () => {
+    setOpenAddModal(false);
+  };
+
+  const showSnackbar = (message: string, severity: 'success' | 'error') => {
+    setSnackbar({ open: true, message, severity });
+  };
+
+  const handleCloseSnackbar = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
+
+  const handleAddCategory = async (data: ICreateCategoryRequest) => {
+    try {
+      setLoading(true);
+      // Ensure index is a number
+      const categoryData = {
+        ...data,
+        index: Number(data.index)
+      };
+
+      const response = await CategoryService.createCategory(categoryData);
+      
+      if (response && response.status) {
+        // Successfully added
+        showSnackbar('Category added successfully', 'success');
+        setOpenAddModal(false);
+        // Refresh the list
+        fetchCategoryList();
+      } else {
+        // API returned but with error status
+        showSnackbar(response?.message || 'Failed to add category', 'error');
+      }
+    } catch (error) {
+      console.error('Error creating category:', error);
+      showSnackbar('Failed to add category', 'error');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -167,7 +231,7 @@ export const CategoryView = () => {
         <Button 
           variant="contained" 
           startIcon={<Iconify icon="solar:pen-bold" />}
-          onClick={handleAddCategory}
+          onClick={handleOpenAddModal}
         >
           Add Category
         </Button>
@@ -210,7 +274,7 @@ export const CategoryView = () => {
 
               {!categoryList.length && !loading && (
                 <TableRow>
-                  <TableCell colSpan={7}>
+                  <TableCell colSpan={8}>
                     <Box sx={{ py: 3, textAlign: 'center' }}>
                       <Typography variant="h6" sx={{ mb: 1 }}>
                         No Categories Found
@@ -226,6 +290,27 @@ export const CategoryView = () => {
           </Table>
         </TableContainer>
       </Card>
+
+      <AddCategory 
+        open={openAddModal}
+        onClose={handleCloseAddModal}
+        onAdd={handleAddCategory}
+      />
+
+      <Snackbar 
+        open={snackbar.open} 
+        autoHideDuration={6000} 
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+      >
+        <Alert 
+          onClose={handleCloseSnackbar} 
+          severity={snackbar.severity}
+          sx={{ width: '100%' }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </DashboardContent>
   );
 };
