@@ -1,4 +1,5 @@
-import { Label } from 'src/components/label';
+import { Icon } from '@iconify/react';
+
 import { SvgColor } from 'src/components/svg-color';
 
 // ----------------------------------------------------------------------
@@ -10,6 +11,7 @@ export type NavItem = {
   path: string;
   icon: React.ReactNode;
   info?: React.ReactNode;
+  activeIcon?: React.ReactNode;
 };
 
 export const navData = [
@@ -17,6 +19,18 @@ export const navData = [
     title: 'Dashboard',
     path: '/',
     icon: icon('ic-analytics'),
+  },
+  {
+    title: 'Manga',
+    path: '/manga',
+    icon: <Icon icon="material-symbols:menu-book-outline" width={24} height={24} />,
+    activeIcon: <Icon icon="material-symbols:menu-book" width={24} height={24} />,
+  },
+  {
+    title: 'Category',
+    path: '/category',
+    icon: <Icon icon="material-symbols:category-outline" width={24} height={24} />,
+    activeIcon: <Icon icon="material-symbols:category" width={24} height={24} />,
   },
   {
     title: 'User',
@@ -27,11 +41,6 @@ export const navData = [
     title: 'Product',
     path: '/products',
     icon: icon('ic-cart'),
-    info: (
-      <Label color="error" variant="inverted">
-        +3
-      </Label>
-    ),
   },
   {
     title: 'Blog',
