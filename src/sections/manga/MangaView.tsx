@@ -1,20 +1,134 @@
-import { useEffect } from "react";
+import type { IMangaModel, IResponsePage } from "src/types";
+
+import { useEffect, useState, useCallback } from "react";
+
 import { MangaService } from "@services/manga-service";
 
-import { Box , Button , Typography } from "@mui/material";
+import {
+  Box,
+  Card,
+  Table,
+  TableBody,
+  TableContainer,
+  TablePagination,
+  Typography,
+} from "@mui/material";
 
 import { DashboardContent } from "src/layouts/dashboard";
 
-import { Iconify } from "src/components/iconify";
+import { TableEmptyRows } from "src/sections/user/table-empty-rows";
+import { TableNoData } from "src/sections/user/table-no-data";
+import { emptyRows, applyFilter, getComparator } from "./utils";
+
+import { MangaTableHead } from "./manga-table-head";
+import { MangaTableRow } from "./manga-table-row";
+import { MangaTableToolbar } from "./manga-table-toolbar";
+
+// ----------------------------------------------------------------------
+
+const TABLE_HEAD = [
+  { id: 'name', label: 'Name' },
+  { id: 'author', label: 'Author' },
+  { id: 'genres', label: 'Genres' },
+  { id: 'totalChapters', label: 'Chapters', align: 'center' as const },
+  { id: 'views', label: 'Views', align: 'center' as const },
+  { id: 'status', label: 'Status' },
+  { id: '', label: '' },
+];
+
+// ----------------------------------------------------------------------
 
 export default function MangaView() {
+  const [page, setPage] = useState(0);
+  const [order, setOrder] = useState<'asc' | 'desc'>('asc');
+  const [selected, setSelected] = useState<string[]>([]);
+  const [orderBy, setOrderBy] = useState('name');
+  const [filterName, setFilterName] = useState('');
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [mangaList, setMangaList] = useState<IMangaModel[]>([]);
+  const [mangaData, setMangaData] = useState<IResponsePage<IMangaModel> | null>(null);
+
+  const fetchMangaList = useCallback(async () => {
+    try {
+      const response = await MangaService.getListManga({ 
+        page: page + 1, 
+        pageSize: rowsPerPage,
+        search: filterName || undefined 
+      });
+      
+      if (response.data) {
+        setMangaData(response.data);
+        setMangaList(response.data.data);
+      }
+    } catch (error) {
+      console.error('Error fetching manga list:', error);
+    }
+  }, [page, rowsPerPage, filterName]);
+
   useEffect(() => {
-    MangaService.getListManga({ page: 1, pageSize: 10 }).then((res) => {
-    });
+    fetchMangaList();
+  }, [fetchMangaList]);
+
+  const handleSort = useCallback((id: string) => {
+    const isAsc = orderBy === id && order === 'asc';
+    setOrder(isAsc ? 'desc' : 'asc');
+    setOrderBy(id);
+  }, [order, orderBy]);
+
+  const handleSelectAllClick = useCallback((checked: boolean) => {
+    if (checked) {
+      const newSelected = mangaList.map((n) => n._id);
+      setSelected(newSelected);
+      return;
+    }
+    setSelected([]);
+  }, [mangaList]);
+
+  const handleClick = useCallback((id: string) => {
+    const selectedIndex = selected.indexOf(id);
+    let newSelected: string[] = [];
+
+    if (selectedIndex === -1) {
+      newSelected = newSelected.concat(selected, id);
+    } else if (selectedIndex === 0) {
+      newSelected = newSelected.concat(selected.slice(1));
+    } else if (selectedIndex === selected.length - 1) {
+      newSelected = newSelected.concat(selected.slice(0, -1));
+    } else if (selectedIndex > 0) {
+      newSelected = newSelected.concat(
+        selected.slice(0, selectedIndex),
+        selected.slice(selectedIndex + 1)
+      );
+    }
+    setSelected(newSelected);
+  }, [selected]);
+
+  const handleChangePage = useCallback((event: unknown, newPage: number) => {
+    setPage(newPage);
   }, []);
-    return (
-        <DashboardContent>
-            <Box
+
+  const handleChangeRowsPerPage = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    setPage(0);
+    setRowsPerPage(parseInt(event.target.value, 10));
+  }, []);
+
+  const handleFilterByName = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    setPage(0);
+    setFilterName(event.target.value);
+  }, []);
+
+  const dataFiltered = applyFilter({
+    inputData: mangaList,
+    comparator: getComparator(order, orderBy),
+    filterName,
+  });
+
+  const notFound = !dataFiltered.length && !!filterName;
+  const emptyRowsCount = emptyRows(page, rowsPerPage, mangaData?.total || 0);
+
+  return (
+    <DashboardContent>
+      <Box
         sx={{
           mb: 5,
           display: 'flex',
@@ -25,6 +139,52 @@ export default function MangaView() {
           Manga List
         </Typography>
       </Box>
-        </DashboardContent>
-    )
+
+      <Card>
+        <MangaTableToolbar 
+          numSelected={selected.length} 
+          filterName={filterName} 
+          onFilterName={handleFilterByName} 
+        />
+
+        <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
+          <Table sx={{ minWidth: 800 }}>
+            <MangaTableHead
+              order={order}
+              orderBy={orderBy}
+              rowCount={mangaList.length}
+              numSelected={selected.length}
+              onRequestSort={handleSort}
+              onSelectAllClick={handleSelectAllClick}
+              headLabel={TABLE_HEAD}
+            />
+            <TableBody>
+              {dataFiltered.map((row) => (
+                <MangaTableRow
+                  key={row._id}
+                  row={row}
+                  selected={selected.includes(row._id)}
+                  onSelectRow={() => handleClick(row._id)}
+                />
+              ))}
+
+              {emptyRowsCount > 0 && <TableEmptyRows height={68} emptyRows={emptyRowsCount} />}
+
+              {notFound && <TableNoData searchQuery={filterName} />}
+            </TableBody>
+          </Table>
+        </TableContainer>
+
+        <TablePagination
+          page={page}
+          component="div"
+          count={mangaData?.total || 0}
+          rowsPerPage={rowsPerPage}
+          onPageChange={handleChangePage}
+          rowsPerPageOptions={[5, 10, 25]}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+      </Card>
+    </DashboardContent>
+  );
 }
