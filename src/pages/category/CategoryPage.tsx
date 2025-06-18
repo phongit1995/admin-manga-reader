@@ -1,7 +1,10 @@
+import { CategoryView } from "@sections/category/CategoryView";
+
 export default function CategoryPage() {
     return (
-        <div>
-            <h1>Category</h1>
-        </div>
+        <>
+        <title>Category List</title>
+        <CategoryView />
+      </>
     )
 }

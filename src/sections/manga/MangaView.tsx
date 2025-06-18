@@ -62,7 +62,7 @@ export default function MangaView() {
       setLoading(true);
       const response = await MangaService.getListManga({ 
         page: currentPage + 1, // API uses 1-based indexing
-        pageSize: pageSize,
+        pageSize,
         search: filterName || undefined 
       });
       
