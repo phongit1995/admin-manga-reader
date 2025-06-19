@@ -1,10 +1,14 @@
 import type { IMangaModel, IResponsePage, IApiResponse } from "src/types";
+import { TYPE_SORT_MANGA } from "src/types";
 import type { ICategoryModel } from "@src/types/category.type";
+import type { IConfigSourceModel } from "@src/types/config-source.type";
 
-import { useEffect, useState, useCallback, ChangeEvent } from "react";
+import { useEffect, useState, useCallback } from "react";
+import dayjs from 'dayjs';
 
 import { MangaService } from "@src/services/manga.service";
 import { CategoryService } from "@src/services/category.service";
+import { ConfigSourceService } from "@src/services/config-source.service";
 
 import {
   Box,
@@ -14,12 +18,8 @@ import {
   TableContainer,
   Typography,
   CircularProgress,
-  TablePagination,
-  TextField,
-  Button,
   Stack,
   Pagination,
-  PaginationItem,
 } from "@mui/material";
 
 import { DashboardContent } from "src/layouts/dashboard";
@@ -40,6 +40,7 @@ const TABLE_HEAD = [
   { id: 'views', label: 'Views', align: 'center' as const },
   { id: 'chapterUpdate', label: 'Last Updated', align: 'center' as const },
   { id: 'status', label: 'Status' },
+  { id: 'source', label: 'Source' },
   { id: 'enable', label: 'Enable', align: 'center' as const },
   { id: '', label: '' },
 ];
@@ -53,14 +54,17 @@ export default function MangaView() {
   const [filterName, setFilterName] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<number | ''>('');
+  const [selectedSource, setSelectedSource] = useState('');
+  const [selectedSort, setSelectedSort] = useState<number>(TYPE_SORT_MANGA.CHAPTER_NEW);
   const [mangaList, setMangaList] = useState<IMangaModel[]>([]);
   const [mangaData, setMangaData] = useState<IResponsePage<IMangaModel> | null>(null);
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState<ICategoryModel[]>([]);
+  const [sources, setSources] = useState<IConfigSourceModel[]>([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  // Fetch categories
+  // Fetch categories and sources
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -73,7 +77,19 @@ export default function MangaView() {
       }
     };
 
+    const fetchSources = async () => {
+      try {
+        const response = await ConfigSourceService.getListConfigSource({ page: 1, pageSize: 1000 });
+        if (response && response.data) {
+          setSources(response.data.data);
+        }
+      } catch (error) {
+        console.error('Error fetching sources:', error);
+      }
+    };
+
     fetchCategories();
+    fetchSources();
   }, []);
 
   const fetchMangaList = useCallback(async (currentPage: number, pageSize: number) => {
@@ -94,6 +110,8 @@ export default function MangaView() {
         search: filterName || undefined,
         genres: selectedCategoryName || undefined,
         status: selectedStatus !== '' ? selectedStatus : undefined,
+        source: selectedSource || undefined,
+        sort: selectedSort,
       });
       
       if (response.data) {
@@ -105,7 +123,7 @@ export default function MangaView() {
     } finally {
       setLoading(false);
     }
-  }, [filterName, selectedCategory, categories, selectedStatus]);
+  }, [filterName, selectedCategory, categories, selectedStatus, selectedSource, selectedSort]);
 
   useEffect(() => {
     fetchMangaList(page, rowsPerPage);
@@ -160,6 +178,25 @@ export default function MangaView() {
     setPage(0);
   }, []);
 
+  const handleSourceChange = useCallback((source: string) => {
+    setSelectedSource(source);
+    setPage(0);
+  }, []);
+
+  const handleSortChange = useCallback((sort: number) => {
+    setSelectedSort(sort);
+    setPage(0);
+  }, []);
+
+  const handleClearFilters = useCallback(() => {
+    setFilterName('');
+    setSelectedCategory('');
+    setSelectedStatus('');
+    setSelectedSource('');
+    setSelectedSort(TYPE_SORT_MANGA.CHAPTER_NEW);
+    setPage(0);
+  }, []);
+
   const handleChangePage = useCallback((event: React.ChangeEvent<unknown>, newPage: number) => {
     setPage(newPage - 1);
   }, []);
@@ -193,6 +230,12 @@ export default function MangaView() {
           onCategoryChange={handleCategoryChange}
           selectedStatus={selectedStatus}
           onStatusChange={handleStatusChange}
+          selectedSort={selectedSort}
+          onSortChange={handleSortChange}
+          sources={sources}
+          selectedSource={selectedSource}
+          onSourceChange={handleSourceChange}
+          onClearFilters={handleClearFilters}
         />
 
         <TableContainer sx={{ position: 'relative', overflow: 'unset', minHeight: 200 }}>
@@ -252,26 +295,22 @@ export default function MangaView() {
             gap: 2,
           }}
         >
-          {/* Show items information */}
           <Box>
             <Typography variant="body2" component="span">
               {`${page * rowsPerPage + 1} - ${Math.min((page + 1) * rowsPerPage, mangaData?.total || 0)} of ${mangaData?.total || 0} items`}
             </Typography>
           </Box>
           
-          {/* Main pagination component */}
-          <Stack direction="row" spacing={2} alignItems="center">
-            <Pagination 
-              page={page + 1} 
-              count={totalPages}
-              onChange={handleChangePage}
-              color="primary"
-              siblingCount={2} // Show more siblings
-              boundaryCount={1} // Show boundary pages
-              showFirstButton 
-              showLastButton
-            />
-          </Stack>
+          <Pagination 
+            page={page + 1} 
+            count={totalPages}
+            onChange={handleChangePage}
+            color="primary"
+            siblingCount={2}
+            boundaryCount={1}
+            showFirstButton 
+            showLastButton
+          />
         </Box>
       </Card>
     </DashboardContent>

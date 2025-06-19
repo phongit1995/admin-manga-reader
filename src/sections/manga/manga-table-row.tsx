@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import dayjs from 'dayjs';
 
 import Checkbox from '@mui/material/Checkbox';
 import IconButton from '@mui/material/IconButton';
@@ -49,15 +50,8 @@ export function MangaTableRow({ row, selected, onSelectRow }: MangaTableRowProps
 
   const statusColor = row.status === 1 ? 'success' : row.status === 0 ? 'warning' : 'error';
   
-  // Format date for chapterUpdate
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    }).format(date);
-  };
+  // Format date using dayjs
+  const formatDate = (dateString: string) => dayjs(dateString).format('DD/MM/YYYY HH:mm:ss');
 
   return (
     <>
@@ -85,6 +79,10 @@ export function MangaTableRow({ row, selected, onSelectRow }: MangaTableRowProps
 
         <TableCell>
           <Label color={statusColor}>{getStatus(row.status)}</Label>
+        </TableCell>
+        
+        <TableCell>
+          <Typography variant="body2">{row.source}</Typography>
         </TableCell>
         
         <TableCell align="center">

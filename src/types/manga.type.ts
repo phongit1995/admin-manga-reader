@@ -1,11 +1,19 @@
 import type { IApiPageQuery } from "./api.type";
 
+export enum TYPE_SORT_MANGA {
+    'HOT_MANGA' = 0,
+    'CHAPTER_NEW' = 1,
+    'TOP_RATE' = 2,
+    'NUMBER_RATE' = 3,
+  }
+
 export interface IListMangaQuery extends IApiPageQuery {
     genres?: string;
     type?: number;
     sort?: number;
     search?: string;
     status?: number;
+    source?: string;
 }
 
 export interface IMangaModel {
