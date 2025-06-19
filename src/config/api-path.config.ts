@@ -1,5 +1,8 @@
 export const API_PATH_CONFIG = {
     MANGA: 'v1/admin/manga',
+    MANGA_DISABLE: 'v1/admin/manga/disable',
+    MANGA_ENABLE: 'v1/admin/manga/enable',
+    MANGA_RESET_IMAGE: 'v1/admin/manga/reset-image',
     CATEGORY: 'v1/admin/category',
     CHAPTER: 'v1/admin/chapter',
     SOURCE_CONFIG: 'v1/admin/source-config',

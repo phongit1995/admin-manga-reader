@@ -1,7 +1,6 @@
-import Tooltip from '@mui/material/Tooltip';
+import { useState } from 'react';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputAdornment from '@mui/material/InputAdornment';
 import MenuItem from '@mui/material/MenuItem';
@@ -10,11 +9,13 @@ import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import ButtonGroup from '@mui/material/ButtonGroup';
 
 import { Iconify } from 'src/components/iconify';
 import { ICategoryModel } from '@src/types/category.type';
 import { TYPE_SORT_MANGA } from '@src/types/manga.type';
 import { IConfigSourceModel } from '@src/types/config-source.type';
+import { MangaConfirmModal, ActionType } from './MangaConfirmModal';
 
 // ----------------------------------------------------------------------
 
@@ -33,6 +34,10 @@ type MangaTableToolbarProps = {
   selectedSource: string;
   onSourceChange: (source: string) => void;
   onClearFilters: () => void;
+  onDisable?: (ids: string[]) => Promise<void>;
+  onEnable?: (ids: string[]) => Promise<void>;
+  onResetImages?: (ids: string[]) => Promise<void>;
+  selectedIds: string[];
 };
 
 export function MangaTableToolbar({ 
@@ -49,11 +54,47 @@ export function MangaTableToolbar({
   sources = [],
   selectedSource,
   onSourceChange,
-  onClearFilters
+  onClearFilters,
+  onDisable,
+  onEnable,
+  onResetImages,
+  selectedIds
 }: MangaTableToolbarProps) {
   const hasActiveFilters = !!(filterName || selectedCategory || selectedStatus !== '' || selectedSource);
   
+  const [openModal, setOpenModal] = useState(false);
+  const [action, setAction] = useState<ActionType | null>(null);
+
+  const handleOpenModal = (actionType: ActionType) => {
+    setAction(actionType);
+    setOpenModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+    setAction(null);
+  };
+
+  const handleConfirmAction = async () => {
+    if (!action) return;
+    
+    switch (action) {
+      case 'disable':
+        if (onDisable) await onDisable(selectedIds);
+        break;
+      case 'enable':
+        if (onEnable) await onEnable(selectedIds);
+        break;
+      case 'resetImages':
+        if (onResetImages) await onResetImages(selectedIds);
+        break;
+      default:
+        break;
+    }
+  };
+  
   return (
+    <>
     <Toolbar
       sx={{
         height: 'auto',
@@ -62,6 +103,7 @@ export function MangaTableToolbar({
         flexDirection: { xs: 'column', md: 'row' },
         gap: 2,
         alignItems: 'flex-start',
+        justifyContent: 'space-between',
         ...(numSelected > 0 && {
           color: 'primary.main',
           bgcolor: 'primary.lighter',
@@ -69,9 +111,35 @@ export function MangaTableToolbar({
       }}
     >
       {numSelected > 0 ? (
-        <Typography component="div" variant="subtitle1">
-          {numSelected} selected
-        </Typography>
+        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, width: '100%', alignItems: { sm: 'center' }, justifyContent: 'space-between', gap: 2 }}>
+          <Typography component="div" variant="subtitle1" sx={{ display: 'flex', alignItems: 'center' }}>
+            <Iconify icon="solar:check-circle-bold" sx={{ mr: 1 }} />
+            {numSelected} manga selected
+          </Typography>
+          <ButtonGroup variant="contained" aria-label="Action button group">
+            <Button 
+              color="error" 
+              startIcon={<Iconify icon="solar:eye-closed-bold" />}
+              onClick={() => handleOpenModal('disable')}
+            >
+              Disable
+            </Button>
+            <Button 
+              color="success" 
+              startIcon={<Iconify icon="solar:eye-bold" />}
+              onClick={() => handleOpenModal('enable')}
+            >
+              Enable
+            </Button>
+            <Button 
+              color="info" 
+              startIcon={<Iconify icon="solar:restart-bold" />}
+              onClick={() => handleOpenModal('resetImages')}
+            >
+              Reset Images
+            </Button>
+          </ButtonGroup>
+        </Box>
       ) : (
         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, width: '100%' }}>
           <OutlinedInput
@@ -83,10 +151,14 @@ export function MangaTableToolbar({
                 <Iconify width={20} icon="eva:search-fill" sx={{ color: 'text.disabled' }} />
               </InputAdornment>
             }
-            sx={{ flexGrow: 1, minWidth: 200 }}
+            sx={{ 
+              flexGrow: { xs: 1, md: 0 },
+              width: { xs: '100%', md: '180px' },
+              maxWidth: '100%'
+            }}
           />
           
-          <FormControl sx={{ minWidth: 150 }}>
+          <FormControl sx={{ minWidth: 150, flexGrow: { xs: 1, md: 0 } }}>
             <InputLabel id="category-select-label">Category</InputLabel>
             <Select
               labelId="category-select-label"
@@ -106,7 +178,7 @@ export function MangaTableToolbar({
             </Select>
           </FormControl>
           
-          <FormControl sx={{ minWidth: 150 }}>
+          <FormControl sx={{ minWidth: 150, flexGrow: { xs: 1, md: 0 } }}>
             <InputLabel id="source-select-label">Source</InputLabel>
             <Select
               labelId="source-select-label"
@@ -126,7 +198,7 @@ export function MangaTableToolbar({
             </Select>
           </FormControl>
           
-          <FormControl sx={{ minWidth: 150 }}>
+          <FormControl sx={{ minWidth: 150, flexGrow: { xs: 1, md: 0 } }}>
             <InputLabel id="status-select-label">Status</InputLabel>
             <Select
               labelId="status-select-label"
@@ -143,7 +215,7 @@ export function MangaTableToolbar({
             </Select>
           </FormControl>
           
-          <FormControl sx={{ minWidth: 150 }}>
+          <FormControl sx={{ minWidth: 150, flexGrow: { xs: 1, md: 0 } }}>
             <InputLabel id="sort-select-label">Sort By</InputLabel>
             <Select
               labelId="sort-select-label"
@@ -165,20 +237,21 @@ export function MangaTableToolbar({
             onClick={onClearFilters}
             startIcon={<Iconify icon="solar:trash-bin-trash-bold" />}
             disabled={!hasActiveFilters}
-            sx={{ alignSelf: 'center' }}
+            sx={{ alignSelf: 'center', minHeight: 56 }}
           >
             Clear Filters
           </Button>
         </Box>
       )}
-
-      {numSelected > 0 && (
-        <Tooltip title="Delete">
-          <IconButton>
-            <Iconify icon="solar:trash-bin-trash-bold" />
-          </IconButton>
-        </Tooltip>
-      )}
     </Toolbar>
+
+    <MangaConfirmModal
+      open={openModal}
+      action={action}
+      numSelected={numSelected}
+      onClose={handleCloseModal}
+      onConfirm={handleConfirmAction}
+    />
+    </>
   );
 } 

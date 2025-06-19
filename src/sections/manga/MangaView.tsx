@@ -1,10 +1,10 @@
-import type { IMangaModel, IResponsePage, IApiResponse } from "src/types";
+import type { IMangaModel, IResponsePage } from "src/types";
 import { TYPE_SORT_MANGA } from "src/types";
 import type { ICategoryModel } from "@src/types/category.type";
 import type { IConfigSourceModel } from "@src/types/config-source.type";
 
 import { useEffect, useState, useCallback } from "react";
-import dayjs from 'dayjs';
+import { toast } from "react-toastify";
 
 import { MangaService } from "@src/services/manga.service";
 import { CategoryService } from "@src/services/category.service";
@@ -20,16 +20,23 @@ import {
   CircularProgress,
   Stack,
   Pagination,
+  useMediaQuery,
+  useTheme,
+  Paper,
+  Chip,
+  Avatar,
 } from "@mui/material";
 
 import { DashboardContent } from "src/layouts/dashboard";
 
 import { TableEmptyRows } from "src/sections/user/table-empty-rows";
 import { TableNoData } from "src/sections/user/table-no-data";
+import { Iconify } from 'src/components/iconify';
 
 import { MangaTableHead } from "./manga-table-head";
 import { MangaTableRow } from "./manga-table-row";
 import { MangaTableToolbar } from "./manga-table-toolbar";
+import { fDate } from "./utils";
 
 // ----------------------------------------------------------------------
 
@@ -48,6 +55,9 @@ const TABLE_HEAD = [
 // ----------------------------------------------------------------------
 
 export default function MangaView() {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
   const [order, setOrder] = useState<'asc' | 'desc'>('asc');
   const [selected, setSelected] = useState<string[]>([]);
   const [orderBy, setOrderBy] = useState('name');
@@ -74,6 +84,7 @@ export default function MangaView() {
         }
       } catch (error) {
         console.error('Error fetching categories:', error);
+        toast.error('Failed to fetch categories');
       }
     };
 
@@ -85,6 +96,7 @@ export default function MangaView() {
         }
       } catch (error) {
         console.error('Error fetching sources:', error);
+        toast.error('Failed to fetch sources');
       }
     };
 
@@ -120,6 +132,7 @@ export default function MangaView() {
       }
     } catch (error) {
       console.error('Error fetching manga list:', error);
+      toast.error('Failed to fetch manga list');
     } finally {
       setLoading(false);
     }
@@ -201,10 +214,146 @@ export default function MangaView() {
     setPage(newPage - 1);
   }, []);
 
+  const handleDisableManga = useCallback(async (ids: string[]) => {
+    try {
+      const response = await MangaService.disableManga(ids);
+      if (response) {
+        toast.success(`Successfully disabled ${ids.length} manga${ids.length > 1 ? 's' : ''}`);
+        // Refresh manga list
+        fetchMangaList(page, rowsPerPage);
+        // Clear selection
+        setSelected([]);
+      } else {
+        toast.error('Failed to disable manga. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error disabling manga:', error);
+      toast.error('An error occurred while disabling manga.');
+    }
+  }, [page, rowsPerPage, fetchMangaList]);
+
+  const handleEnableManga = useCallback(async (ids: string[]) => {
+    try {
+      const response = await MangaService.enableManga(ids);
+      if (response) {
+        toast.success(`Successfully enabled ${ids.length} manga${ids.length > 1 ? 's' : ''}`);
+        // Refresh manga list
+        fetchMangaList(page, rowsPerPage);
+        // Clear selection
+        setSelected([]);
+      } else {
+        toast.error('Failed to enable manga. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error enabling manga:', error);
+      toast.error('An error occurred while enabling manga.');
+    }
+  }, [page, rowsPerPage, fetchMangaList]);
+
+  const handleResetImages = useCallback(async (ids: string[]) => {
+    try {
+      const response = await MangaService.resetImage(ids);
+      if (response) {
+        toast.success(`Successfully reset images for ${ids.length} manga${ids.length > 1 ? 's' : ''}`);
+        // Refresh manga list
+        fetchMangaList(page, rowsPerPage);
+        // Clear selection
+        setSelected([]);
+      } else {
+        toast.error('Failed to reset images. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error resetting manga images:', error);
+      toast.error('An error occurred while resetting manga images.');
+    }
+  }, [page, rowsPerPage, fetchMangaList]);
+
   const dataFiltered = mangaList;
   const notFound = !dataFiltered.length && !!filterName;
   const emptyRowsCount = mangaList.length === 0 ? rowsPerPage : 0;
   const totalPages = Math.ceil((mangaData?.total || 0) / rowsPerPage);
+
+  // Mobile Card View renderer for each manga
+  const renderMangaCard = (manga: IMangaModel) => {
+    const isSelected = selected.includes(manga._id);
+    
+    return (
+      <Paper
+        elevation={3}
+        sx={{
+          p: 2,
+          borderRadius: 2,
+          cursor: 'pointer',
+          border: isSelected ? `2px solid ${theme.palette.primary.main}` : 'none',
+          '&:hover': {
+            boxShadow: 10,
+          },
+          mb: 2
+        }}
+        onClick={() => handleClick(manga._id)}
+      >
+        <Box sx={{ display: 'flex', gap: 2 }}>
+          <Avatar 
+            src={manga.image} 
+            alt={manga.name} 
+            sx={{ width: 80, height: 120, borderRadius: 1 }}
+            variant="rounded"
+          />
+          
+          <Box sx={{ flexGrow: 1 }}>
+            <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mb: 1 }}>
+              {manga.name}
+            </Typography>
+            
+            <Stack spacing={1}>
+              {manga.genres && manga.genres.length > 0 && (
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                  {manga.genres.slice(0, 3).map((genre, index) => (
+                    <Chip key={index} label={genre} size="small" />
+                  ))}
+                  {manga.genres.length > 3 && (
+                    <Chip label={`+${manga.genres.length - 3}`} size="small" variant="outlined" />
+                  )}
+                </Box>
+              )}
+              
+              <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                <Typography variant="body2" color="text.secondary">
+                  Chapters: {manga.totalChapters || 0}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Views: {manga.views?.toLocaleString()}
+                </Typography>
+              </Box>
+              
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Chip 
+                  size="small"
+                  label={manga.status === 0 ? 'Ongoing' : 'Completed'} 
+                  color={manga.status === 0 ? 'primary' : 'success'}
+                />
+                <Chip 
+                  size="small"
+                  label={manga.enable ? 'Enabled' : 'Disabled'} 
+                  color={manga.enable ? 'success' : 'error'}
+                  variant="outlined"
+                />
+              </Box>
+              
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
+                <Typography variant="caption" color="text.secondary">
+                  Source: {manga.source}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  Updated: {fDate(manga.chapterUpdate)}
+                </Typography>
+              </Box>
+            </Stack>
+          </Box>
+        </Box>
+      </Paper>
+    );
+  };
 
   return (
     <DashboardContent>
@@ -236,9 +385,13 @@ export default function MangaView() {
           selectedSource={selectedSource}
           onSourceChange={handleSourceChange}
           onClearFilters={handleClearFilters}
+          onDisable={handleDisableManga}
+          onEnable={handleEnableManga}
+          onResetImages={handleResetImages}
+          selectedIds={selected}
         />
 
-        <TableContainer sx={{ position: 'relative', overflow: 'unset', minHeight: 200 }}>
+        <Box sx={{ position: 'relative', minHeight: 200 }}>
           {loading && (
             <Box
               sx={{
@@ -258,32 +411,62 @@ export default function MangaView() {
             </Box>
           )}
           
-          <Table sx={{ minWidth: 800 }}>
-            <MangaTableHead
-              order={order}
-              orderBy={orderBy}
-              rowCount={mangaList.length}
-              numSelected={selected.length}
-              onRequestSort={handleSort}
-              onSelectAllClick={handleSelectAllClick}
-              headLabel={TABLE_HEAD}
-            />
-            <TableBody>
-              {dataFiltered.map((row) => (
-                <MangaTableRow
-                  key={row._id}
-                  row={row}
-                  selected={selected.includes(row._id)}
-                  onSelectRow={() => handleClick(row._id)}
+          {isMobile ? (
+            <Box sx={{ p: 2 }}>
+              {dataFiltered.length > 0 ? (
+                dataFiltered.map((manga) => renderMangaCard(manga))
+              ) : (
+                <Box>
+                  {notFound ? (
+                    <Box sx={{ textAlign: 'center', py: 3 }}>
+                      <Typography variant="h6">No results found</Typography>
+                      <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1 }}>
+                        No results found for &nbsp;
+                        <strong>&quot;{filterName}&quot;</strong>.
+                        <br /> Try checking for typos or using complete words.
+                      </Typography>
+                    </Box>
+                  ) : (
+                    <Box sx={{ textAlign: 'center', py: 3 }}>
+                      <Typography variant="h6">No manga found</Typography>
+                      <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1 }}>
+                        No manga available with the current filters.
+                      </Typography>
+                    </Box>
+                  )}
+                </Box>
+              )}
+            </Box>
+          ) : (
+            <TableContainer sx={{ overflow: 'unset' }}>
+              <Table sx={{ minWidth: 800 }}>
+                <MangaTableHead
+                  order={order}
+                  orderBy={orderBy}
+                  rowCount={mangaList.length}
+                  numSelected={selected.length}
+                  onRequestSort={handleSort}
+                  onSelectAllClick={handleSelectAllClick}
+                  headLabel={TABLE_HEAD}
                 />
-              ))}
+                <TableBody>
+                  {dataFiltered.map((row) => (
+                    <MangaTableRow
+                      key={row._id}
+                      row={row}
+                      selected={selected.includes(row._id)}
+                      onSelectRow={() => handleClick(row._id)}
+                    />
+                  ))}
 
-              {emptyRowsCount > 0 && <TableEmptyRows height={68} emptyRows={emptyRowsCount} />}
+                  {emptyRowsCount > 0 && <TableEmptyRows height={68} emptyRows={emptyRowsCount} />}
 
-              {notFound && <TableNoData searchQuery={filterName} />}
-            </TableBody>
-          </Table>
-        </TableContainer>
+                  {notFound && <TableNoData searchQuery={filterName} />}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          )}
+        </Box>
 
         <Box
           sx={{
@@ -301,16 +484,19 @@ export default function MangaView() {
             </Typography>
           </Box>
           
-          <Pagination 
-            page={page + 1} 
-            count={totalPages}
-            onChange={handleChangePage}
-            color="primary"
-            siblingCount={2}
-            boundaryCount={1}
-            showFirstButton 
-            showLastButton
-          />
+          <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', mt: { xs: 2, sm: 0 } }}>
+            <Pagination 
+              page={page + 1} 
+              count={totalPages}
+              onChange={handleChangePage}
+              color="primary"
+              siblingCount={isMobile ? 0 : 2}
+              boundaryCount={isMobile ? 1 : 1}
+              showFirstButton 
+              showLastButton
+              size={isMobile ? 'small' : 'medium'}
+            />
+          </Box>
         </Box>
       </Card>
     </DashboardContent>

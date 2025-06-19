@@ -8,5 +8,21 @@ export class MangaService {
         const response = await api.get<IApiResponsePage<IMangaModel>>(API_PATH_CONFIG.MANGA, { params: query });
         return response.data;
     }
+
+    static disableManga = async (ids: string[]) => {
+        const response = await api.put(API_PATH_CONFIG.MANGA_DISABLE, { ids });
+        return response.data;
+    }
+
+    static enableManga = async (ids: string[]) => {
+        const response = await api.put(API_PATH_CONFIG.MANGA_ENABLE, { ids });
+        return response.data;
+    }
+
+    static resetImage = async (ids: string[]) => {
+        const response = await api.put(API_PATH_CONFIG.MANGA_RESET_IMAGE, { ids });
+        return response.data;
+    }
+    
 }
 

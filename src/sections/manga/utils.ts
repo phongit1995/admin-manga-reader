@@ -22,6 +22,13 @@ export function emptyRows(page: number, rowsPerPage: number, arrayLength: number
 
 // ----------------------------------------------------------------------
 
+export function fDate(date: string | number | Date | null | undefined): string {
+  if (!date) return 'N/A';
+  return new Date(date).toLocaleDateString();
+}
+
+// ----------------------------------------------------------------------
+
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
     return -1;
