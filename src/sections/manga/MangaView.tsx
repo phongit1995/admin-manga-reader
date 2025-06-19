@@ -31,7 +31,6 @@ import { DashboardContent } from "src/layouts/dashboard";
 
 import { TableEmptyRows } from "src/sections/user/table-empty-rows";
 import { TableNoData } from "src/sections/user/table-no-data";
-import { Iconify } from 'src/components/iconify';
 
 import { MangaTableHead } from "./manga-table-head";
 import { MangaTableRow } from "./manga-table-row";
@@ -58,9 +57,7 @@ export default function MangaView() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
-  const [order, setOrder] = useState<'asc' | 'desc'>('asc');
   const [selected, setSelected] = useState<string[]>([]);
-  const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<number | ''>('');
@@ -142,12 +139,6 @@ export default function MangaView() {
     fetchMangaList(page, rowsPerPage);
   }, [fetchMangaList, page, rowsPerPage]);
 
-  const handleSort = useCallback((id: string) => {
-    const isAsc = orderBy === id && order === 'asc';
-    setOrder(isAsc ? 'desc' : 'asc');
-    setOrderBy(id);
-  }, [order, orderBy]);
-
   const handleSelectAllClick = useCallback((checked: boolean) => {
     if (checked) {
       const newSelected = mangaList.map((n) => n._id);
@@ -219,9 +210,7 @@ export default function MangaView() {
       const response = await MangaService.disableManga(ids);
       if (response) {
         toast.success(`Successfully disabled ${ids.length} manga${ids.length > 1 ? 's' : ''}`);
-        // Refresh manga list
         fetchMangaList(page, rowsPerPage);
-        // Clear selection
         setSelected([]);
       } else {
         toast.error('Failed to disable manga. Please try again.');
@@ -237,9 +226,7 @@ export default function MangaView() {
       const response = await MangaService.enableManga(ids);
       if (response) {
         toast.success(`Successfully enabled ${ids.length} manga${ids.length > 1 ? 's' : ''}`);
-        // Refresh manga list
         fetchMangaList(page, rowsPerPage);
-        // Clear selection
         setSelected([]);
       } else {
         toast.error('Failed to enable manga. Please try again.');
@@ -255,9 +242,7 @@ export default function MangaView() {
       const response = await MangaService.resetImage(ids);
       if (response) {
         toast.success(`Successfully reset images for ${ids.length} manga${ids.length > 1 ? 's' : ''}`);
-        // Refresh manga list
         fetchMangaList(page, rowsPerPage);
-        // Clear selection
         setSelected([]);
       } else {
         toast.error('Failed to reset images. Please try again.');
@@ -441,11 +426,8 @@ export default function MangaView() {
             <TableContainer sx={{ overflow: 'unset' }}>
               <Table sx={{ minWidth: 800 }}>
                 <MangaTableHead
-                  order={order}
-                  orderBy={orderBy}
                   rowCount={mangaList.length}
                   numSelected={selected.length}
-                  onRequestSort={handleSort}
                   onSelectAllClick={handleSelectAllClick}
                   headLabel={TABLE_HEAD}
                 />

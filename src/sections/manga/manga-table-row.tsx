@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 
 import Checkbox from '@mui/material/Checkbox';
@@ -11,6 +12,7 @@ import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 
 import { IMangaModel } from 'src/types';
+import { ERouterConfig } from 'src/config/router.config';
 
 import { Iconify } from 'src/components/iconify';
 import { Label } from 'src/components/label';
@@ -24,6 +26,7 @@ type MangaTableRowProps = {
 };
 
 export function MangaTableRow({ row, selected, onSelectRow }: MangaTableRowProps) {
+  const navigate = useNavigate();
   const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
 
   const handleOpenPopover = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
@@ -33,6 +36,12 @@ export function MangaTableRow({ row, selected, onSelectRow }: MangaTableRowProps
   const handleClosePopover = useCallback(() => {
     setOpenPopover(null);
   }, []);
+  
+  const handleViewDetail = useCallback(() => {
+    const detailPath = ERouterConfig.MANGA_DETAIL.replace(':id', row._id);
+    navigate(detailPath);
+    setOpenPopover(null);
+  }, [navigate, row._id]);
 
   // Map status code to readable status
   const getStatus = (statusCode: number) => {
@@ -121,7 +130,7 @@ export function MangaTableRow({ row, selected, onSelectRow }: MangaTableRowProps
             },
           }}
         >
-          <MenuItem onClick={handleClosePopover}>
+          <MenuItem onClick={handleViewDetail}>
             <Iconify icon="solar:eye-bold" />
             View
           </MenuItem>
