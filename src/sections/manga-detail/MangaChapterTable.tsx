@@ -19,6 +19,11 @@ import {
   Tooltip,
   Snackbar,
   Alert,
+  FormControl,
+  Select,
+  MenuItem,
+  InputLabel,
+  SelectChangeEvent,
 } from '@mui/material';
 import dayjs from 'dayjs';
 
@@ -49,6 +54,7 @@ export default function MangaChapterTable({ mangaId }: MangaChapterTableProps) {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [showCopyAlert, setShowCopyAlert] = useState(false);
+  const [sortOrder, setSortOrder] = useState<1 | -1>(-1);
   
   const fetchChapters = async () => {
     if (!mangaId) return;
@@ -56,8 +62,9 @@ export default function MangaChapterTable({ mangaId }: MangaChapterTableProps) {
     try {
       setLoading(true);
       const response = await ChapterService.getListChapterOfManga(mangaId, {
-        page: page + 1, // API expects 1-indexed pages
-        pageSize: rowsPerPage
+        page: page + 1,
+        pageSize: rowsPerPage,
+        sort: sortOrder
       });
       
       if (response.data) {
@@ -73,10 +80,14 @@ export default function MangaChapterTable({ mangaId }: MangaChapterTableProps) {
   
   useEffect(() => {
     fetchChapters();
-  }, [mangaId, page, rowsPerPage]);
+  }, [mangaId, page, rowsPerPage, sortOrder]);
   
   const handleChangePage = (event: React.ChangeEvent<unknown>, newPage: number) => {
     setPage(newPage - 1);
+  };
+  
+  const handleChangeSortOrder = (event: SelectChangeEvent) => {
+    setSortOrder(Number(event.target.value) as 1 | -1);
   };
   
   const formatDate = (dateString: string) => {
@@ -158,9 +169,24 @@ export default function MangaChapterTable({ mangaId }: MangaChapterTableProps) {
   return (
     <Card>
       <Box sx={{ p: 3 }}>
-        <Typography variant="h6" sx={{ mb: 2 }}>
-          Chapters
-        </Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+          <Typography variant="h6">
+            Chapters
+          </Typography>
+          <FormControl size="small" sx={{ minWidth: 120 }}>
+            <InputLabel id="sort-order-label">Sort Order</InputLabel>
+            <Select
+              labelId="sort-order-label"
+              id="sort-order"
+              value={sortOrder.toString()}
+              label="Sort Order"
+              onChange={handleChangeSortOrder}
+            >
+              <MenuItem value="1">Newest First</MenuItem>
+              <MenuItem value="-1">Oldest First</MenuItem>
+            </Select>
+          </FormControl>
+        </Box>
       </Box>
 
       <Box sx={{ position: 'relative', minHeight: 200 }}>

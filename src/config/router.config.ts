@@ -4,6 +4,7 @@ export enum ERouterConfig {
     CATEGORY = '/category',
     CONFIG_SOURCE = '/config-source',
     IN_APP_PURCHASE = '/in-app-purchase',
+    NOTIFICATION_SOURCE = '/notification-source',
     USER = '/user',
     PRODUCT = '/product',
     BLOG = '/blog',

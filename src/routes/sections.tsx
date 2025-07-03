@@ -22,6 +22,7 @@ export const CategoryPage = lazy(() => import('src/pages/category/CategoryPage')
 export const ConfigSourcePage = lazy(() => import('src/pages/config-source'));
 export const MangaDetailPage = lazy(() => import('src/pages/manga/MangaDetailPage'));
 export const InAppPurchasePage = lazy(() => import('src/pages/in-app-purchase'));
+export const NotificationSourcePage = lazy(() => import('src/pages/notification-source'));
 export const Page404 = lazy(() => import('src/pages/page-not-found'));
 
 const renderFallback = () => (
@@ -63,6 +64,7 @@ export const routesSection: RouteObject[] = [
       { path: ERouterConfig.CATEGORY, element: <CategoryPage /> },
       { path: ERouterConfig.CONFIG_SOURCE, element: <ConfigSourcePage /> },
       { path: ERouterConfig.IN_APP_PURCHASE, element: <InAppPurchasePage /> },
+      { path: ERouterConfig.NOTIFICATION_SOURCE, element: <NotificationSourcePage /> },
     ],
   },
   {

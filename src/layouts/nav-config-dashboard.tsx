@@ -47,6 +47,12 @@ export const navData = [
     activeIcon: <Icon icon="material-symbols:payments" width={24} height={24} />,
   },
   {
+    title: 'Notification Source',
+    path: ERouterConfig.NOTIFICATION_SOURCE,
+    icon: <Icon icon="material-symbols:notifications-outline" width={24} height={24} />,
+    activeIcon: <Icon icon="material-symbols:notifications" width={24} height={24} />,
+  },
+  {
     title: 'User',
     path: ERouterConfig.USER,
     icon: icon('ic-user'),
