@@ -11,22 +11,45 @@ import { toast } from "react-toastify";
 import { Iconify } from "src/components/iconify";
 import NotificationSourceTable from "./NotificationSourceTable";
 import AddNotificationSourceModal from "./AddNotificationSourceModal";
+import DeleteNotificationSourceModal from "./DeleteNotificationSourceModal";
 
 export default function NotificationSourceView() {
   const [notificationSourceList, setNotificationSourceList] = useState<INotificationSourceModel[]>([]);
   const [loading, setLoading] = useState(false);
   const [openAddModal, setOpenAddModal] = useState(false);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [selectedNotificationSource, setSelectedNotificationSource] = useState<INotificationSourceModel | null>(null);
 
   const fetchNotificationSourceList = useCallback(async () => {
     try {
       setLoading(true);
       const response = await NotificationSourceService.getListNotificationSource();
-      if (response && response.data?.data) {
-        setNotificationSourceList(response.data.data);
+      
+      if (response) {
+        // Handle different possible response formats
+        if (Array.isArray(response)) {
+          setNotificationSourceList(response);
+        } else if (typeof response === 'object' && response !== null) {
+          // Check if response has a data property that's an array
+          const responseObj = response as Record<string, any>;
+          if (responseObj.data && Array.isArray(responseObj.data)) {
+            setNotificationSourceList(responseObj.data);
+          } else {
+            // If it's a single object, put it in an array
+            setNotificationSourceList([response as INotificationSourceModel]);
+          }
+        } else {
+          // Fallback to empty array
+          setNotificationSourceList([]);
+          console.warn('Unexpected API response format:', response);
+        }
+      } else {
+        setNotificationSourceList([]);
       }
     } catch (error) {
       console.error('Error fetching notification source list:', error);
       toast.error('Failed to fetch notification sources');
+      setNotificationSourceList([]);
     } finally {
       setLoading(false);
     }
@@ -45,8 +68,13 @@ export default function NotificationSourceView() {
   };
 
   const handleDeleteClick = (notificationSource: INotificationSourceModel) => {
-    // Delete functionality will be implemented later
-    console.log('Delete clicked for:', notificationSource);
+    setSelectedNotificationSource(notificationSource);
+    setOpenDeleteModal(true);
+  };
+
+  const handleCloseDeleteModal = () => {
+    setOpenDeleteModal(false);
+    setSelectedNotificationSource(null);
   };
 
   return (
@@ -75,12 +103,20 @@ export default function NotificationSourceView() {
         notificationSourceList={notificationSourceList}
         loading={loading}
         onDeleteClick={handleDeleteClick}
+        onRefresh={fetchNotificationSourceList}
       />
 
       <AddNotificationSourceModal
         open={openAddModal}
         onClose={handleCloseAddModal}
         onSuccess={fetchNotificationSourceList}
+      />
+
+      <DeleteNotificationSourceModal
+        open={openDeleteModal}
+        onClose={handleCloseDeleteModal}
+        onSuccess={fetchNotificationSourceList}
+        notificationSource={selectedNotificationSource}
       />
     </DashboardContent>
   );

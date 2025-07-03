@@ -13,3 +13,8 @@ export interface INotificationSourceModel {
     updatedAt: string;
     __v: number;
 }
+
+export interface INotificationSourceUpdateModel {
+    name?: string;
+    enable?: boolean;
+}
