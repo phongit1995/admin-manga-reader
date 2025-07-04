@@ -9,21 +9,18 @@ import {
   Stack,
   CircularProgress,
   Typography,
-  FormControlLabel,
-  Switch,
   Input
 } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { toast } from "react-toastify";
 import { Iconify } from "src/components/iconify";
+import { NotificationSourceService } from 'src/services/notification-source.service';
 
-// Define validation schema
 const schema = yup.object({
-  name: yup.string().required('Name is required'),
-  enable: yup.boolean().default(true)
+  name: yup.string().required('Name is required')
 }).required();
 
 interface AddNotificationSourceModalProps {
@@ -34,12 +31,12 @@ interface AddNotificationSourceModalProps {
 
 interface IFormInput {
   name: string;
-  enable: boolean;
 }
 
 export default function AddNotificationSourceModal({ open, onClose, onSuccess }: AddNotificationSourceModalProps) {
   const [loading, setLoading] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { 
     control, 
@@ -49,8 +46,7 @@ export default function AddNotificationSourceModal({ open, onClose, onSuccess }:
   } = useForm<IFormInput>({
     resolver: yupResolver(schema),
     defaultValues: {
-      name: '',
-      enable: true
+      name: ''
     },
     mode: 'onChange'
   });
@@ -58,8 +54,7 @@ export default function AddNotificationSourceModal({ open, onClose, onSuccess }:
   useEffect(() => {
     if (open) {
       reset({
-        name: '',
-        enable: true
+        name: ''
       });
       setSelectedFile(null);
     }
@@ -67,30 +62,47 @@ export default function AddNotificationSourceModal({ open, onClose, onSuccess }:
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
-      setSelectedFile(event.target.files[0]);
+      const file = event.target.files[0];
+      
+      if (file.type !== 'application/json' && !file.name.endsWith('.json')) {
+        toast.error('Please select a valid JSON file');
+        return;
+      }
+      
+      setSelectedFile(file);
+    }
+  };
+
+  const handleFileBoxClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
     }
   };
 
   const handleAddNotificationSource = async (data: IFormInput) => {
     try {
+      if (!selectedFile) {
+        toast.error('Please select a Firebase service account JSON file');
+        return;
+      }
+
       setLoading(true);
       
-      // Mock success (no actual API call yet)
-      setTimeout(() => {
-        console.log('Form data:', data);
-        console.log('Selected file:', selectedFile);
-        
-        reset();
-        setSelectedFile(null);
-        onClose();
-        onSuccess();
-        toast.success('Notification Source added successfully (mock)');
-        setLoading(false);
-      }, 1000);
+      const formData = new FormData();
+      formData.append('name', data.name);
+      formData.append('file', selectedFile);
       
+      await NotificationSourceService.createNotificationSource(formData);
+      
+      toast.success('Notification Source added successfully');
+      reset();
+      setSelectedFile(null);
+      onClose();
+      onSuccess();
     } catch (error) {
       console.error('Error creating notification source:', error);
       toast.error('Failed to add notification source');
+    } finally {
       setLoading(false);
     }
   };
@@ -141,6 +153,7 @@ export default function AddNotificationSourceModal({ open, onClose, onSuccess }:
                 Firebase Service Account Key
               </Typography>
               <Box 
+                onClick={handleFileBoxClick}
                 sx={{ 
                   border: '1px dashed',
                   borderColor: 'grey.400',
@@ -157,6 +170,7 @@ export default function AddNotificationSourceModal({ open, onClose, onSuccess }:
                 }}
               >
                 <Input
+                  inputRef={fileInputRef}
                   type="file"
                   sx={{ display: 'none' }}
                   onChange={handleFileChange}
@@ -182,29 +196,15 @@ export default function AddNotificationSourceModal({ open, onClose, onSuccess }:
                     </Box>
                   ) : (
                     <Typography variant="body2" color="text.secondary">
-                      Click to upload JSON file
+                      Click to upload Firebase service account JSON file
                     </Typography>
                   )}
                 </Stack>
               </Box>
+              <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1 }}>
+                Upload a valid Firebase service account key JSON file
+              </Typography>
             </Box>
-
-            <Controller
-              name="enable"
-              control={control}
-              render={({ field: { value, onChange } }) => (
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={value}
-                      onChange={(e) => onChange(e.target.checked)}
-                      disabled={loading}
-                    />
-                  }
-                  label="Enable"
-                />
-              )}
-            />
           </Stack>
         </Box>
       </DialogContent>
