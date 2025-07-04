@@ -14,6 +14,8 @@ export type NavItem = {
   icon: React.ReactNode;
   info?: React.ReactNode;
   activeIcon?: React.ReactNode;
+  children?: NavItem[];
+  expanded?: boolean;
 };
 
 export const navData = [
@@ -47,16 +49,24 @@ export const navData = [
     activeIcon: <Icon icon="material-symbols:payments" width={24} height={24} />,
   },
   {
-    title: 'Notification Source',
-    path: ERouterConfig.NOTIFICATION_SOURCE,
-    icon: <Icon icon="material-symbols:notifications-outline" width={24} height={24} />,
-    activeIcon: <Icon icon="material-symbols:notifications" width={24} height={24} />,
-  },
-  {
-    title: 'App Notification',
-    path: ERouterConfig.APP_NOTIFICATION,
-    icon: <Icon icon="material-symbols:campaign-outline" width={24} height={24} />,
-    activeIcon: <Icon icon="material-symbols:campaign" width={24} height={24} />,
+    title: 'Notification',
+    path: '#', // Placeholder path
+    icon: <Icon icon="solar:bell-linear" width={24} height={24} />,
+    activeIcon: <Icon icon="solar:bell-bold" width={24} height={24} />,
+    children: [
+      {
+        title: 'Notification Source',
+        path: ERouterConfig.NOTIFICATION_SOURCE,
+        icon: <Icon icon="solar:notification-lines-linear" width={20} height={20} />,
+        activeIcon: <Icon icon="solar:notification-lines-bold" width={20} height={20} />,
+      },
+      {
+        title: 'App Notification',
+        path: ERouterConfig.APP_NOTIFICATION,
+        icon: <Icon icon="solar:bell-add-linear" width={20} height={20} />,
+        activeIcon: <Icon icon="solar:bell-add-bold" width={20} height={20} />,
+      },
+    ],
   },
   {
     title: 'User',
