@@ -464,6 +464,13 @@
   resolved "https://registry.npmjs.org/@humanwhocodes/retry/-/retry-0.4.2.tgz"
   integrity sha512-xeO57FpIu4p1Ri3Jq/EXq4ClRm86dVF2z/+kvFnyqVYRavTZmaFaUBbWCOuuTh0o/g7DSsk6kc2vrS4Vl5oPOQ==
 
+"@iconify/icons-solar@^1.2.3":
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/@iconify/icons-solar/-/icons-solar-1.2.3.tgz#7488e054d257f06b5f6eda52bc9988595b17b007"
+  integrity sha512-dots93IzoaOrJ8aUD2YGZ4+Jy+yf5D87CmzSeBkEi/m+WX1klvHqWuw5kyZvVroLOlaIaJXb5nZVaDnhc8XJyQ==
+  dependencies:
+    "@iconify/types" "*"
+
 "@iconify/react@^5.2.1":
   version "5.2.1"
   resolved "https://registry.npmjs.org/@iconify/react/-/react-5.2.1.tgz"
@@ -471,9 +478,9 @@
   dependencies:
     "@iconify/types" "^2.0.0"
 
-"@iconify/types@^2.0.0":
+"@iconify/types@*", "@iconify/types@^2.0.0":
   version "2.0.0"
-  resolved "https://registry.npmjs.org/@iconify/types/-/types-2.0.0.tgz"
+  resolved "https://registry.yarnpkg.com/@iconify/types/-/types-2.0.0.tgz#ab0e9ea681d6c8a1214f30cd741fe3a20cc57f57"
   integrity sha512-+wluvCrRhXrhyOmRDJ3q8mux9JkKy5SJ/v8ol2tu4FVjyYvtEzkc/3pK15ET6RKg4b4w4BmTk1+gsCUhf21Ykg==
 
 "@isaacs/fs-minipass@^4.0.0":

@@ -71,7 +71,7 @@ export function NotificationsPopover({ data = [], sx, ...other }: NotificationsP
         {...other}
       >
         <Badge badgeContent={totalUnRead} color="error">
-          <Iconify width={24} icon="solar:bell-bing-bold-duotone" />
+          <Iconify width={24} icon="eva:bell-fill" />
         </Badge>
       </IconButton>
 

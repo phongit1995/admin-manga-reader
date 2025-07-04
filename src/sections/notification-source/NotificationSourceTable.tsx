@@ -119,7 +119,7 @@ const NotificationSourceTableRow = ({ row, index, onDeleteClick, onStatusChange 
       
       <TableCell align="right" sx={{ width: 60 }}>
         <IconButton onClick={() => onDeleteClick(row)} size="small">
-          <Iconify icon="solar:trash-bin-trash-bold" sx={{ color: 'error.main' }} />
+          <Iconify icon="mingcute:delete-line" sx={{ color: 'error.main' }} />
         </IconButton>
       </TableCell>
     </TableRow>
@@ -196,7 +196,7 @@ export default function NotificationSourceTable({
           <TableBody>
             {safeList.map((row, index) => (
               <NotificationSourceTableRow
-                key={row._id}
+                key={row._id || index}
                 row={row}
                 index={index}
                 onDeleteClick={onDeleteClick}
