@@ -8,6 +8,7 @@ export const API_PATH_CONFIG = {
     SOURCE_CONFIG: 'v1/admin/source-config',
     IN_APP_PURCHASE: 'v1/admin/in-app-purchase',
     NOTIFICATION_SOURCE: 'v1/admin/notification-source',
+    APP_NOTIFICATION: 'v1/admin/app-notification',
     SOURCE: 'v1/admin/source',
     SEARCH: 'v1/admin/search',
     GENRE: 'v1/admin/genre',

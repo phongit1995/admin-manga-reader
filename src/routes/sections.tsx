@@ -10,6 +10,7 @@ import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgr
 import { AuthLayout } from 'src/layouts/auth';
 import { DashboardLayout } from 'src/layouts/dashboard';
 import { ERouterConfig } from 'src/config/router.config';
+import AppNotificationPage from '@src/pages/app-notification';
 // ----------------------------------------------------------------------
 
 export const DashboardPage = lazy(() => import('src/pages/dashboard'));
@@ -65,6 +66,7 @@ export const routesSection: RouteObject[] = [
       { path: ERouterConfig.CONFIG_SOURCE, element: <ConfigSourcePage /> },
       { path: ERouterConfig.IN_APP_PURCHASE, element: <InAppPurchasePage /> },
       { path: ERouterConfig.NOTIFICATION_SOURCE, element: <NotificationSourcePage /> },
+      { path: ERouterConfig.APP_NOTIFICATION, element: <AppNotificationPage /> },
     ],
   },
   {

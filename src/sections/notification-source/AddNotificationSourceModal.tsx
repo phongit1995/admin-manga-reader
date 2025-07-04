@@ -155,7 +155,6 @@ export default function AddNotificationSourceModal({ open, onClose, onSuccess }:
                   },
                   transition: 'all 0.2s ease-in-out'
                 }}
-                component="label"
               >
                 <Input
                   type="file"
