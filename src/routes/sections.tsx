@@ -21,6 +21,7 @@ export const ProductsPage = lazy(() => import('src/pages/products'));
 export const MangaPage = lazy(() => import('src/pages/manga/MangaPage'));
 export const CategoryPage = lazy(() => import('src/pages/category/CategoryPage'));
 export const ConfigSourcePage = lazy(() => import('src/pages/config-source'));
+export const AppConfigPage = lazy(() => import('src/pages/app-config'));
 export const MangaDetailPage = lazy(() => import('src/pages/manga/MangaDetailPage'));
 export const InAppPurchasePage = lazy(() => import('src/pages/in-app-purchase'));
 export const NotificationSourcePage = lazy(() => import('src/pages/notification-source'));
@@ -64,6 +65,7 @@ export const routesSection: RouteObject[] = [
       { path: ERouterConfig.MANGA_DETAIL, element: <MangaDetailPage /> },
       { path: ERouterConfig.CATEGORY, element: <CategoryPage /> },
       { path: ERouterConfig.CONFIG_SOURCE, element: <ConfigSourcePage /> },
+      { path: ERouterConfig.APP_CONFIG, element: <AppConfigPage /> },
       { path: ERouterConfig.IN_APP_PURCHASE, element: <InAppPurchasePage /> },
       { path: ERouterConfig.NOTIFICATION_SOURCE, element: <NotificationSourcePage /> },
       { path: ERouterConfig.APP_NOTIFICATION, element: <AppNotificationPage /> },

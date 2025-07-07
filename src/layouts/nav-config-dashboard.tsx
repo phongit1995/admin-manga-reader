@@ -37,12 +37,6 @@ export const navData = [
     activeIcon: <Icon icon="material-symbols:category" width={24} height={24} />,
   },
   {
-    title: 'Config Source',
-    path: ERouterConfig.CONFIG_SOURCE,
-    icon: <Icon icon="material-symbols:settings-outline" width={24} height={24} />,
-    activeIcon: <Icon icon="material-symbols:settings" width={24} height={24} />,
-  },
-  {
     title: 'InApp Purchase',
     path: ERouterConfig.IN_APP_PURCHASE,
     icon: <Icon icon="material-symbols:payments-outline" width={24} height={24} />,
@@ -63,8 +57,28 @@ export const navData = [
       {
         title: 'App Notification',
         path: ERouterConfig.APP_NOTIFICATION,
-        icon: <Icon icon="eva:bell-fill" width={20} height={20} />,
-        activeIcon: <Icon icon="eva:bell-fill" width={20} height={20} />,
+        icon: <Icon icon="material-symbols:notifications-active-outline" width={20} height={20} />,
+        activeIcon: <Icon icon="material-symbols:notifications-active" width={20} height={20} />,
+      },
+    ],
+  },
+  {
+    title: 'Config',
+    path: '#', // Placeholder path
+    icon: <Icon icon="material-symbols:settings-outline" width={24} height={24} />,
+    activeIcon: <Icon icon="material-symbols:settings" width={24} height={24} />,
+    children: [
+      {
+        title: 'Config Source',
+        path: ERouterConfig.CONFIG_SOURCE,
+        icon: <Icon icon="material-symbols:settings-input-component-outline" width={20} height={20} />,
+        activeIcon: <Icon icon="material-symbols:settings-input-component" width={20} height={20} />,
+      },
+      {
+        title: 'App Config',
+        path: ERouterConfig.APP_CONFIG,
+        icon: <Icon icon="material-symbols:settings-applications-outline" width={20} height={20} />,
+        activeIcon: <Icon icon="material-symbols:settings-applications" width={20} height={20} />,
       },
     ],
   },

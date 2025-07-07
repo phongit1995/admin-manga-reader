@@ -3,6 +3,7 @@ export enum ERouterConfig {
     MANGA_DETAIL = '/manga/:id',
     CATEGORY = '/category',
     CONFIG_SOURCE = '/config-source',
+    APP_CONFIG = '/app-config',
     IN_APP_PURCHASE = '/in-app-purchase',
     NOTIFICATION_SOURCE = '/notification-source',
     APP_NOTIFICATION = '/app-notification',

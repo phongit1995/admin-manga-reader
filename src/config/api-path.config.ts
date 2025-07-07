@@ -6,6 +6,7 @@ export const API_PATH_CONFIG = {
     CATEGORY: 'v1/admin/category',
     CHAPTER: 'v1/admin/chapter',
     SOURCE_CONFIG: 'v1/admin/source-config',
+    APP_CONFIG: 'v1/admin/app-config',
     IN_APP_PURCHASE: 'v1/admin/in-app-purchase',
     NOTIFICATION_SOURCE: 'v1/admin/notification-source',
     APP_NOTIFICATION: 'v1/admin/app-notification',
