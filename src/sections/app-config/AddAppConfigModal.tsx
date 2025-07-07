@@ -23,20 +23,22 @@ const schema = yup.object({
   source: yup.string().required('Source is required'),
   showFakeApp: yup.boolean().default(false),
   imageResource: yup.string(),
-  readImageHeader: yup.mixed().transform(value => {
-    if (!value) return undefined;
+  readImageHeader: yup.string().test('is-json', 'Must be a valid JSON object', value => {
+    if (!value) return true; // Empty is valid, will convert to undefined later
     try {
-      return typeof value === 'string' ? JSON.parse(value) : value;
+      JSON.parse(value);
+      return true;
     } catch (error) {
-      return undefined;
+      return false;
     }
   }),
-  imageHeader: yup.mixed().transform(value => {
-    if (!value) return undefined;
+  imageHeader: yup.string().test('is-json', 'Must be a valid JSON object', value => {
+    if (!value) return true; // Empty is valid, will default to {}
     try {
-      return typeof value === 'string' ? JSON.parse(value) : value;
+      JSON.parse(value);
+      return true;
     } catch (error) {
-      return undefined;
+      return false;
     }
   }),
 }).required();
@@ -209,10 +211,11 @@ export default function AddAppConfigModal({ open, onClose, onSuccess }: AddAppCo
                   fullWidth
                   label="Read Image Header (JSON)"
                   error={!!errors.readImageHeader}
-                  helperText={errors.readImageHeader?.message || "Enter valid JSON object"}
+                  helperText={errors.readImageHeader?.message || "Enter valid JSON object or leave empty"}
                   disabled={loading}
                   multiline
                   rows={4}
+                  placeholder="{}"
                   {...field}
                 />
               )}
