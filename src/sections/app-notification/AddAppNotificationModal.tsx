@@ -23,6 +23,7 @@ import AppNotificationService from '@src/services/app-notification.service';
 const schema = yup.object({
   packageId: yup.string().required('Package ID is required'),
   platform: yup.string().required('Platform is required'),
+  title: yup.string(),
   message: yup.string(),
   version: yup.string(),
   link: yup.string().url('Must be a valid URL').required('Link is required'),
@@ -32,6 +33,7 @@ const schema = yup.object({
 type FormValues = {
   packageId: string;
   platform: string;
+  title: string;
   message: string;
   version: string;
   link: string;
@@ -57,6 +59,7 @@ export default function AddAppNotificationModal({ open, onClose, onSuccess }: Ad
     defaultValues: {
       packageId: '',
       platform: 'android',
+      title: '',
       message: '',
       version: '',
       link: '',
@@ -70,6 +73,7 @@ export default function AddAppNotificationModal({ open, onClose, onSuccess }: Ad
       reset({
         packageId: '',
         platform: 'android',
+        title: '',
         message: '',
         version: '',
         link: '',
@@ -89,6 +93,7 @@ export default function AddAppNotificationModal({ open, onClose, onSuccess }: Ad
         link: data.link,
         isForce: data.isForce,
         // Only include optional fields if they have values
+        ...(data.title ? { title: data.title } : {}),
         ...(data.message ? { message: data.message } : {}),
         ...(data.version ? { version: data.version } : {})
       };
@@ -168,6 +173,21 @@ export default function AddAppNotificationModal({ open, onClose, onSuccess }: Ad
                   <MenuItem value="android">Android</MenuItem>
                   <MenuItem value="ios">iOS</MenuItem>
                 </TextField>
+              )}
+            />
+
+            <Controller
+              name="title"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  fullWidth
+                  label="Title"
+                  error={!!errors.title}
+                  helperText={errors.title?.message}
+                  disabled={loading}
+                  {...field}
+                />
               )}
             />
 

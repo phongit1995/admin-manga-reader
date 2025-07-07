@@ -21,6 +21,7 @@ import { Iconify } from "src/components/iconify";
 import { toast } from "react-toastify";
 import AddConfigSourceModal from "./AddConfigSourceModal";
 import DeleteConfigSourceModal from "./DeleteConfigSourceModal";
+import EditConfigSourceModal from "./EditConfigSourceModal";
 
 // Table components
 interface ConfigSourceTableHeadProps {
@@ -51,40 +52,66 @@ const ConfigSourceTableHead = ({ headLabel }: ConfigSourceTableHeadProps) => (
 
 interface ConfigSourceTableRowProps {
   row: IConfigSourceModel;
+  onEditClick: (configSource: IConfigSourceModel) => void;
   onDeleteClick: (configSource: IConfigSourceModel) => void;
+  onToggleEnable: (id: string, value: boolean) => Promise<void>;
 }
 
-const ConfigSourceTableRow = ({ row, onDeleteClick }: ConfigSourceTableRowProps) => (
-  <TableRow hover>
-    <TableCell>
-      <Typography variant="subtitle2">{row.name}</Typography>
-    </TableCell>
-    
-    <TableCell>
-      <Typography variant="body2">{row.key}</Typography>
-    </TableCell>
-    
-    <TableCell align="center">
-      <Switch checked={row.enable} disabled />
-    </TableCell>
-    
-    <TableCell align="center">{row.index}</TableCell>
+const ConfigSourceTableRow = ({ row, onEditClick, onDeleteClick, onToggleEnable }: ConfigSourceTableRowProps) => {
+  const [loadingEnable, setLoadingEnable] = useState(false);
+  
+  const handleToggleEnable = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = event.target.checked;
+    console.log(`Toggle Enable: ${row.enable} -> ${newValue}`);
+    try {
+      setLoadingEnable(true);
+      await onToggleEnable(row._id || '', newValue);
+    } finally {
+      setLoadingEnable(false);
+    }
+  };
+  
+  return (
+    <TableRow hover>
+      <TableCell>
+        <Typography variant="subtitle2">{row.name}</Typography>
+      </TableCell>
+      
+      <TableCell>
+        <Typography variant="body2">{row.key}</Typography>
+      </TableCell>
+      
+      <TableCell align="center">
+        <Switch 
+          checked={!!row.enable} 
+          onChange={handleToggleEnable}
+          disabled={loadingEnable}
+        />
+      </TableCell>
+      
+      <TableCell align="center">{row.index}</TableCell>
 
-    <TableCell>
-      {new Date(row.createdAt).toLocaleDateString()}
-    </TableCell>
-    
-    <TableCell>
-      {new Date(row.updatedAt).toLocaleDateString()}
-    </TableCell>
-    
-    <TableCell align="right">
-      <IconButton onClick={() => onDeleteClick(row)}>
-        <Iconify icon="solar:trash-bin-trash-bold" sx={{ color: 'error.main' }} />
-      </IconButton>
-    </TableCell>
-  </TableRow>
-);
+      <TableCell>
+        {new Date(row.createdAt).toLocaleDateString()}
+      </TableCell>
+      
+      <TableCell>
+        {new Date(row.updatedAt).toLocaleDateString()}
+      </TableCell>
+      
+      <TableCell align="right">
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <IconButton onClick={() => onEditClick(row)}>
+            <Iconify icon="solar:pen-bold" />
+          </IconButton>
+          <IconButton onClick={() => onDeleteClick(row)}>
+            <Iconify icon="solar:trash-bin-trash-bold" sx={{ color: 'error.main' }} />
+          </IconButton>
+        </Box>
+      </TableCell>
+    </TableRow>
+  );
+};
 
 // ----------------------------------------------------------------------
 
@@ -104,6 +131,7 @@ export const ConfigSourceView = () => {
   const [configSourceList, setConfigSourceList] = useState<IConfigSourceModel[]>([]);
   const [loading, setLoading] = useState(false);
   const [openAddModal, setOpenAddModal] = useState(false);
+  const [openEditModal, setOpenEditModal] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [selectedConfigSource, setSelectedConfigSource] = useState<IConfigSourceModel | null>(null);
 
@@ -137,6 +165,16 @@ export const ConfigSourceView = () => {
     setOpenAddModal(false);
   };
 
+  const handleEditClick = (configSource: IConfigSourceModel) => {
+    setSelectedConfigSource(configSource);
+    setOpenEditModal(true);
+  };
+
+  const handleCloseEditModal = () => {
+    setOpenEditModal(false);
+    setSelectedConfigSource(null);
+  };
+
   const handleDeleteClick = (configSource: IConfigSourceModel) => {
     setSelectedConfigSource(configSource);
     setOpenDeleteModal(true);
@@ -145,6 +183,33 @@ export const ConfigSourceView = () => {
   const handleCloseDeleteModal = () => {
     setOpenDeleteModal(false);
     setSelectedConfigSource(null);
+  };
+
+  const handleToggleEnable = async (id: string, value: boolean) => {
+    try {
+      if (!id) {
+        toast.error('Config Source ID not found');
+        return;
+      }
+      
+      // Only send the field that needs updating
+      const updateData = {
+        enable: value
+      };
+      
+      console.log(`Updating enable to ${value}`);
+      
+      await ConfigSourceService.updateConfigSource(id, updateData);
+      
+      toast.success('Enable status updated successfully');
+      
+      // Refresh the list
+      fetchConfigSourceList();
+    } catch (error) {
+      console.error('Error updating enable status:', error);
+      toast.error('Failed to update enable status');
+      throw error; // Re-throw so the component can handle its own state
+    }
   };
 
   return (
@@ -199,7 +264,9 @@ export const ConfigSourceView = () => {
                 <ConfigSourceTableRow
                   key={row._id}
                   row={row}
+                  onEditClick={handleEditClick}
                   onDeleteClick={handleDeleteClick}
+                  onToggleEnable={handleToggleEnable}
                 />
               ))}
 
@@ -231,6 +298,13 @@ export const ConfigSourceView = () => {
       <DeleteConfigSourceModal
         open={openDeleteModal}
         onClose={handleCloseDeleteModal}
+        configSource={selectedConfigSource}
+        onSuccess={fetchConfigSourceList}
+      />
+
+      <EditConfigSourceModal
+        open={openEditModal}
+        onClose={handleCloseEditModal}
         configSource={selectedConfigSource}
         onSuccess={fetchConfigSourceList}
       />

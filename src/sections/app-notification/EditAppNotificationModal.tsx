@@ -21,6 +21,7 @@ import { IAppNotificationModel } from '@src/types/app-notification.types';
 import AppNotificationService from '@src/services/app-notification.service';
 
 const schema = yup.object({
+  title: yup.string(),
   message: yup.string(),
   version: yup.string(),
   link: yup.string().url('Must be a valid URL').required('Link is required'),
@@ -31,6 +32,7 @@ const schema = yup.object({
 type FormValues = {
   packageId: string;
   platform: string;
+  title: string;
   message: string;
   version: string;
   link: string;
@@ -63,6 +65,7 @@ export default function EditAppNotificationModal({
     defaultValues: {
       packageId: '',
       platform: 'android',
+      title: '',
       message: '',
       version: '',
       link: '',
@@ -77,6 +80,7 @@ export default function EditAppNotificationModal({
       reset({
         packageId: notification.packageId || '',
         platform: notification.platform || 'android',
+        title: notification.title || '',
         message: notification.message || '',
         version: notification.version || '',
         link: notification.link || '',
@@ -97,6 +101,7 @@ export default function EditAppNotificationModal({
       
       // Convert form data to match API request type
       const requestData = {
+        title: data.title,
         message: data.message,
         link: data.link,
         isForce: data.isForce,
@@ -184,6 +189,21 @@ export default function EditAppNotificationModal({
                   <MenuItem value="android">Android</MenuItem>
                   <MenuItem value="ios">iOS</MenuItem>
                 </TextField>
+              )}
+            />
+
+            <Controller
+              name="title"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  fullWidth
+                  label="Title"
+                  error={!!errors.title}
+                  helperText={errors.title?.message}
+                  disabled={loading}
+                  {...field}
+                />
               )}
             />
 

@@ -5,6 +5,7 @@ export interface IListAppNotificationQuery extends IApiPageQuery {
 
 export interface IAppNotificationModel {
     _id?: string;
+    title?: string;
     message?: string;
     packageId?: string;
     platform?: string;
@@ -19,6 +20,7 @@ export interface IAppNotificationModel {
 
 
 export interface ICreateAppNotificationRequest {
+    title?: string;
     message?: string;
     packageId?: string;
     platform?: string;

@@ -20,3 +20,5 @@ export interface ICreateConfigSourceRequest {
     index: number;
     enable: boolean;
 }
+
+export interface IUpdateConfigSourceRequest extends Partial< ICreateConfigSourceRequest> {}

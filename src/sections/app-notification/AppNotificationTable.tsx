@@ -44,6 +44,7 @@ const AppNotificationTableHead = ({ headLabel }: AppNotificationTableHeadProps) 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
+  { id: 'title', label: 'Title', width: 150 },
   { id: 'message', label: 'Message', width: 200 },
   { id: 'packageId', label: 'Package ID', width: 150 },
   { id: 'platform', label: 'Platform', width: 100 },
@@ -137,7 +138,7 @@ export default function AppNotificationTable({
 
           {!notificationList.length && !loading && (
             <TableRow>
-              <TableCell colSpan={9}>
+              <TableCell colSpan={10}>
                 <Box sx={{ py: 3, textAlign: 'center' }}>
                   <Typography variant="h6" sx={{ mb: 1 }}>
                     No App Notifications Found

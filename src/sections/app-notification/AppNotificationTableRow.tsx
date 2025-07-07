@@ -51,6 +51,10 @@ export default function AppNotificationTableRow({
   return (
     <TableRow hover>
       <TableCell>
+        <Typography variant="body2">{row.title}</Typography>
+      </TableCell>
+      
+      <TableCell>
         <Typography variant="body2">{row.message}</Typography>
       </TableCell>
       
