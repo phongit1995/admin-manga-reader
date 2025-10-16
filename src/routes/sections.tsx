@@ -19,6 +19,7 @@ export const UserPage = lazy(() => import('src/pages/user'));
 export const SignInPage = lazy(() => import('src/pages/sign-in'));
 export const ProductsPage = lazy(() => import('src/pages/products'));
 export const MangaPage = lazy(() => import('src/pages/manga/MangaPage'));
+export const NovelPage = lazy(() => import('src/pages/novel/NovelPage'));
 export const CategoryPage = lazy(() => import('src/pages/category/CategoryPage'));
 export const ConfigSourcePage = lazy(() => import('src/pages/config-source'));
 export const AppConfigPage = lazy(() => import('src/pages/app-config'));
@@ -63,6 +64,7 @@ export const routesSection: RouteObject[] = [
       { path: ERouterConfig.BLOG, element: <BlogPage /> },
       { path: ERouterConfig.MANGA, element: <MangaPage /> },
       { path: ERouterConfig.MANGA_DETAIL, element: <MangaDetailPage /> },
+      { path: ERouterConfig.NOVEL, element: <NovelPage /> },
       { path: ERouterConfig.CATEGORY, element: <CategoryPage /> },
       { path: ERouterConfig.CONFIG_SOURCE, element: <ConfigSourcePage /> },
       { path: ERouterConfig.APP_CONFIG, element: <AppConfigPage /> },

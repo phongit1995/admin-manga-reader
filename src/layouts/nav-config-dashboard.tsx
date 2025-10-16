@@ -31,6 +31,12 @@ export const navData = [
     activeIcon: <Icon icon="material-symbols:menu-book" width={24} height={24} />,
   },
   {
+    title: 'Novel',
+    path: ERouterConfig.NOVEL,
+    icon: <Icon icon="material-symbols:book-outline" width={24} height={24} />,
+    activeIcon: <Icon icon="material-symbols:book" width={24} height={24} />,
+  },
+  {
     title: 'Category',
     path: ERouterConfig.CATEGORY,
     icon: <Icon icon="material-symbols:category-outline" width={24} height={24} />,
