@@ -1,6 +1,7 @@
 import type { IconButtonProps } from '@mui/material/IconButton';
 
 import { useState, useCallback } from 'react';
+import { toast } from 'react-toastify';
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -13,7 +14,9 @@ import IconButton from '@mui/material/IconButton';
 import MenuItem, { menuItemClasses } from '@mui/material/MenuItem';
 
 import { useRouter, usePathname } from 'src/routes/hooks';
+import { ERouterConfig } from 'src/config/router.config';
 
+import { AdminAuthService } from '@src/services';
 import { _myAccount } from 'src/_mock';
 
 // ----------------------------------------------------------------------
@@ -49,6 +52,13 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
     },
     [handleClosePopover, router]
   );
+
+  const handleLogout = useCallback(() => {
+    handleClosePopover();
+    AdminAuthService.logout();
+    toast.success('Logged out successfully');
+    router.replace(ERouterConfig.SIGN_IN);
+  }, [handleClosePopover, router]);
 
   return (
     <>
@@ -129,7 +139,13 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
         <Divider sx={{ borderStyle: 'dashed' }} />
 
         <Box sx={{ p: 1 }}>
-          <Button fullWidth color="error" size="medium" variant="text">
+          <Button 
+            fullWidth 
+            color="error" 
+            size="medium" 
+            variant="text"
+            onClick={handleLogout}
+          >
             Logout
           </Button>
         </Box>

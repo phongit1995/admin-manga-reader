@@ -1,12 +1,20 @@
 export const API_PATH_CONFIG = {
+    // Auth
+    ADMIN_LOGIN: 'v1/admin/auth/login',
+    
+    // Manga
     MANGA: 'v1/admin/manga',
     MANGA_DISABLE: 'v1/admin/manga/disable',
     MANGA_ENABLE: 'v1/admin/manga/enable',
     MANGA_RESET_IMAGE: 'v1/admin/manga/reset-image',
+    
+    // Novel
     NOVEL: 'v1/admin/novel',
     NOVEL_DISABLE: 'v1/admin/novel/disable',
     NOVEL_ENABLE: 'v1/admin/novel/enable',
     NOVEL_RESET_IMAGE: 'v1/admin/novel/reset-image',
+    
+    // Others
     CATEGORY: 'v1/admin/category',
     CHAPTER: 'v1/admin/chapter',
     SOURCE_CONFIG: 'v1/admin/source-config',

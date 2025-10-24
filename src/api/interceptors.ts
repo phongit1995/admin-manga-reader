@@ -9,15 +9,15 @@ import {
     data: unknown;
   }
   
-  export const requestInterceptor = (
-    config: InternalAxiosRequestConfig
-  ): InternalAxiosRequestConfig => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.set('Authorization', `Bearer ${token}`);
-    }
-    return config;
-  };
+export const requestInterceptor = (
+  config: InternalAxiosRequestConfig
+): InternalAxiosRequestConfig => {
+  const token = localStorage.getItem('admin_token');
+  if (token) {
+    config.headers.set('Authorization', `Bearer ${token}`);
+  }
+  return config;
+};
   
   export const successInterceptor = (response: AxiosResponse): AxiosResponse => response;
   
