@@ -93,24 +93,4 @@ export const navData = [
     path: ERouterConfig.USER,
     icon: icon('ic-user'),
   },
-  {
-    title: 'Product',
-    path: ERouterConfig.PRODUCT,
-    icon: icon('ic-cart'),
-  },
-  {
-    title: 'Blog',
-    path: ERouterConfig.BLOG,
-    icon: icon('ic-blog'),
-  },
-  {
-    title: 'Sign in',
-    path: ERouterConfig.SIGN_IN,
-    icon: icon('ic-lock'),
-  },
-  {
-    title: 'Not found',
-    path: ERouterConfig.PAGE_404,
-    icon: icon('ic-disabled'),
-  },
 ];

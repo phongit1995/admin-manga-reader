@@ -29,5 +29,6 @@ export const API_PATH_CONFIG = {
     USER: 'v1/admin/user',
     USER_UPDATE_COIN: 'v1/admin/user/:id/coin',
     USER_UPDATE_PASSWORD: 'v1/admin/user/:id/password',
+    STATISTICS_COMMON: 'v1/admin/statistics/common',
     
 }
