@@ -1,0 +1,414 @@
+import type { IUserModel, IResponsePage } from "src/types";
+
+import { useEffect, useState, useCallback } from "react";
+import { toast } from "react-toastify";
+
+import { UserService } from "@src/services/user.service";
+
+import {
+  Box,
+  Card,
+  Table,
+  TableBody,
+  TableContainer,
+  Typography,
+  CircularProgress,
+  Stack,
+  Pagination,
+  useMediaQuery,
+  useTheme,
+  Paper,
+  Chip,
+  Avatar,
+} from "@mui/material";
+
+import { DashboardContent } from "src/layouts/dashboard";
+
+import { TableEmptyRows } from "./table-empty-rows";
+import { TableNoData } from "./table-no-data";
+
+import { UserTableHead } from "./user-table-head";
+import { UserTableRow } from "./user-table-row";
+import { UserTableToolbar } from "./user-table-toolbar";
+import { UserChangeCoinModal } from "./UserChangeCoinModal";
+import { UserChangePasswordModal } from "./UserChangePasswordModal";
+import { fDate } from "./utils";
+
+const TABLE_HEAD = [
+  { id: 'username', label: 'Username', width: 200 },
+  { id: 'email', label: 'Email', width: 220 },
+  { id: 'gender', label: 'Gender', align: 'center' as const },
+  { id: 'coin', label: 'Coins', align: 'center' as const },
+  { id: 'isVip', label: 'VIP Status', align: 'center' as const },
+  { id: 'vipTime', label: 'VIP Expires', align: 'center' as const },
+  { id: 'createdAt', label: 'Joined Date', align: 'center' as const },
+  { id: '', label: '' },
+];
+
+export default function UserView() {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
+  const [selected, setSelected] = useState<string[]>([]);
+  const [filterName, setFilterName] = useState('');
+  const [userList, setUserList] = useState<IUserModel[]>([]);
+  const [userData, setUserData] = useState<IResponsePage<IUserModel> | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  const [changeCoinModal, setChangeCoinModal] = useState<{ open: boolean; user: IUserModel | null }>({
+    open: false,
+    user: null,
+  });
+
+  const [changePasswordModal, setChangePasswordModal] = useState<{ open: boolean; user: IUserModel | null }>({
+    open: false,
+    user: null,
+  });
+
+  const fetchUserList = useCallback(async (currentPage: number, pageSize: number) => {
+    try {
+      setLoading(true);
+      
+      const response = await UserService.getListUser({ 
+        page: currentPage + 1,
+        pageSize,
+        search: filterName || undefined,
+      });
+      
+      if (response.data) {
+        setUserData(response.data);
+        setUserList(response.data.data);
+      }
+    } catch (error) {
+      console.error('Error fetching user list:', error);
+      toast.error('Failed to fetch user list');
+    } finally {
+      setLoading(false);
+    }
+  }, [filterName]);
+
+  useEffect(() => {
+    fetchUserList(page, rowsPerPage);
+  }, [fetchUserList, page, rowsPerPage]);
+
+  const handleSelectAllClick = useCallback((checked: boolean) => {
+    if (checked) {
+      const newSelected = userList.map((n) => n._id);
+      setSelected(newSelected);
+      return;
+    }
+    setSelected([]);
+  }, [userList]);
+
+  const handleClick = useCallback((id: string) => {
+    const selectedIndex = selected.indexOf(id);
+    let newSelected: string[] = [];
+
+    if (selectedIndex === -1) {
+      newSelected = newSelected.concat(selected, id);
+    } else if (selectedIndex === 0) {
+      newSelected = newSelected.concat(selected.slice(1));
+    } else if (selectedIndex === selected.length - 1) {
+      newSelected = newSelected.concat(selected.slice(0, -1));
+    } else if (selectedIndex > 0) {
+      newSelected = newSelected.concat(
+        selected.slice(0, selectedIndex),
+        selected.slice(selectedIndex + 1)
+      );
+    }
+    setSelected(newSelected);
+  }, [selected]);
+
+  const handleFilterByName = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    setFilterName(event.target.value);
+    setPage(0);
+  }, []);
+
+  const handleClearFilters = useCallback(() => {
+    setFilterName('');
+    setPage(0);
+  }, []);
+
+  const handleChangePage = useCallback((event: React.ChangeEvent<unknown>, newPage: number) => {
+    setPage(newPage - 1);
+  }, []);
+
+  const handleOpenChangeCoin = useCallback((user: IUserModel) => {
+    setChangeCoinModal({ open: true, user });
+  }, []);
+
+  const handleCloseChangeCoin = useCallback(() => {
+    setChangeCoinModal({ open: false, user: null });
+  }, []);
+
+  const handleOpenChangePassword = useCallback((user: IUserModel) => {
+    setChangePasswordModal({ open: true, user });
+  }, []);
+
+  const handleCloseChangePassword = useCallback(() => {
+    setChangePasswordModal({ open: false, user: null });
+  }, []);
+
+  const handleUpdateCoin = useCallback(async (userId: string, newCoin: number) => {
+    try {
+      await UserService.updateCoin(userId, newCoin);
+      toast.success('User coins updated successfully');
+      fetchUserList(page, rowsPerPage);
+    } catch (error: any) {
+      console.error('Error updating coin:', error);
+      const errorMessage = error?.response?.data?.message || 'Failed to update coins';
+      toast.error(errorMessage);
+    }
+  }, [page, rowsPerPage, fetchUserList]);
+
+  const handleUpdatePassword = useCallback(async (userId: string, newPassword: string) => {
+    try {
+      await UserService.updatePassword(userId, newPassword);
+      toast.success('User password updated successfully');
+    } catch (error: any) {
+      console.error('Error updating password:', error);
+      const errorMessage = error?.response?.data?.message || 'Failed to update password';
+      toast.error(errorMessage);
+    }
+  }, []);
+
+  const dataFiltered = userList;
+  const notFound = !dataFiltered.length && !!filterName;
+  const emptyRowsCount = userList.length === 0 ? rowsPerPage : 0;
+  const totalPages = Math.ceil((userData?.total || 0) / rowsPerPage);
+
+  const getGenderLabel = (gender: number) => {
+    switch(gender) {
+      case 0:
+        return 'Female';
+      case 1:
+        return 'Male';
+      case 2:
+        return 'Other';
+      default:
+        return 'Unknown';
+    }
+  };
+
+  const renderUserCard = (user: IUserModel) => {
+    const isSelected = selected.includes(user._id);
+    
+    return (
+      <Paper
+        key={user._id}
+        elevation={3}
+        sx={{
+          p: 2,
+          borderRadius: 2,
+          cursor: 'pointer',
+          border: isSelected ? `2px solid ${theme.palette.primary.main}` : 'none',
+          '&:hover': {
+            boxShadow: 10,
+          },
+          mb: 2
+        }}
+        onClick={() => handleClick(user._id)}
+      >
+        <Box sx={{ display: 'flex', gap: 2 }}>
+          <Avatar 
+            src={user.avatar} 
+            alt={user.username} 
+            sx={{ width: 60, height: 60 }}
+          />
+          
+          <Box sx={{ flexGrow: 1 }}>
+            <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mb: 0.5 }}>
+              {user.username}
+            </Typography>
+            
+            <Typography variant="body2" sx={{ color: 'text.secondary', mb: 1 }}>
+              {user.email}
+            </Typography>
+            
+            <Stack spacing={1}>
+              <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                <Chip 
+                  size="small"
+                  label={getGenderLabel(user.gender)} 
+                  color="default"
+                  variant="outlined"
+                />
+                <Chip 
+                  size="small"
+                  label={user.isVip ? 'VIP' : 'Free'} 
+                  color={user.isVip ? 'warning' : 'default'}
+                />
+                <Chip 
+                  size="small"
+                  label={`${user.coin} coins`} 
+                  color="primary"
+                  variant="outlined"
+                />
+              </Box>
+              
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
+                <Typography variant="caption" color="text.secondary">
+                  Joined: {fDate(user.createdAt)}
+                </Typography>
+                {user.isVip && (
+                  <Typography variant="caption" color="warning.main">
+                    VIP until: {fDate(user.vipTime)}
+                  </Typography>
+                )}
+              </Box>
+            </Stack>
+          </Box>
+        </Box>
+      </Paper>
+    );
+  };
+
+  return (
+    <DashboardContent>
+      <Box
+        sx={{
+          mb: 5,
+          display: 'flex',
+          alignItems: 'center',
+        }}
+      >
+        <Typography variant="h4" sx={{ flexGrow: 1 }}>
+          User Management
+        </Typography>
+      </Box>
+
+      <Card>
+        <UserTableToolbar 
+          numSelected={selected.length} 
+          filterName={filterName} 
+          onFilterName={handleFilterByName}
+          onClearFilters={handleClearFilters}
+        />
+
+        <Box sx={{ position: 'relative', minHeight: 200 }}>
+          {loading && (
+            <Box
+              sx={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                zIndex: 2,
+              }}
+            >
+              <CircularProgress />
+            </Box>
+          )}
+          
+          {isMobile ? (
+            <Box sx={{ p: 2 }}>
+              {dataFiltered.length > 0 ? (
+                dataFiltered.map((user) => renderUserCard(user))
+              ) : (
+                <Box>
+                  {notFound ? (
+                    <Box sx={{ textAlign: 'center', py: 3 }}>
+                      <Typography variant="h6">No results found</Typography>
+                      <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1 }}>
+                        No results found for &nbsp;
+                        <strong>&quot;{filterName}&quot;</strong>.
+                        <br /> Try checking for typos or using complete words.
+                      </Typography>
+                    </Box>
+                  ) : (
+                    <Box sx={{ textAlign: 'center', py: 3 }}>
+                      <Typography variant="h6">No users found</Typography>
+                      <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1 }}>
+                        No users available with the current filters.
+                      </Typography>
+                    </Box>
+                  )}
+                </Box>
+              )}
+            </Box>
+          ) : (
+            <TableContainer sx={{ overflow: 'unset' }}>
+              <Table sx={{ minWidth: 800 }}>
+                <UserTableHead
+                  rowCount={userList.length}
+                  numSelected={selected.length}
+                  onSelectAllClick={handleSelectAllClick}
+                  headLabel={TABLE_HEAD}
+                />
+                <TableBody>
+                  {dataFiltered.map((row) => (
+                    <UserTableRow
+                      key={row._id}
+                      row={row}
+                      selected={selected.includes(row._id)}
+                      onSelectRow={() => handleClick(row._id)}
+                      onChangeCoin={() => handleOpenChangeCoin(row)}
+                      onChangePassword={() => handleOpenChangePassword(row)}
+                    />
+                  ))}
+
+                  {emptyRowsCount > 0 && <TableEmptyRows height={68} emptyRows={emptyRowsCount} />}
+
+                  {notFound && <TableNoData searchQuery={filterName} />}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          )}
+        </Box>
+
+        <Box
+          sx={{
+            p: 2,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: 2,
+          }}
+        >
+          <Box>
+            <Typography variant="body2" component="span">
+              {`${page * rowsPerPage + 1} - ${Math.min((page + 1) * rowsPerPage, userData?.total || 0)} of ${userData?.total || 0} users`}
+            </Typography>
+          </Box>
+          
+          <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', mt: { xs: 2, sm: 0 } }}>
+            <Pagination 
+              page={page + 1} 
+              count={totalPages}
+              onChange={handleChangePage}
+              color="primary"
+              siblingCount={isMobile ? 0 : 2}
+              boundaryCount={isMobile ? 1 : 1}
+              showFirstButton 
+              showLastButton
+              size={isMobile ? 'small' : 'medium'}
+            />
+          </Box>
+        </Box>
+      </Card>
+
+      <UserChangeCoinModal
+        open={changeCoinModal.open}
+        user={changeCoinModal.user}
+        onClose={handleCloseChangeCoin}
+        onConfirm={handleUpdateCoin}
+      />
+
+      <UserChangePasswordModal
+        open={changePasswordModal.open}
+        user={changePasswordModal.user}
+        onClose={handleCloseChangePassword}
+        onConfirm={handleUpdatePassword}
+      />
+    </DashboardContent>
+  );
+}
+

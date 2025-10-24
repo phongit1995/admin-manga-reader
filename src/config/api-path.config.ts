@@ -26,5 +26,8 @@ export const API_PATH_CONFIG = {
     SEARCH: 'v1/admin/search',
     GENRE: 'v1/admin/genre',
     AUTHOR: 'v1/admin/author',
+    USER: 'v1/admin/user',
+    USER_UPDATE_COIN: 'v1/admin/user/:id/coin',
+    USER_UPDATE_PASSWORD: 'v1/admin/user/:id/password',
     
 }

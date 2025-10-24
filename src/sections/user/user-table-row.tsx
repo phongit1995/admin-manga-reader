@@ -1,37 +1,38 @@
 import { useState, useCallback } from 'react';
+import dayjs from 'dayjs';
 
 import Box from '@mui/material/Box';
-import Avatar from '@mui/material/Avatar';
-import Popover from '@mui/material/Popover';
-import TableRow from '@mui/material/TableRow';
 import Checkbox from '@mui/material/Checkbox';
-import MenuList from '@mui/material/MenuList';
-import TableCell from '@mui/material/TableCell';
 import IconButton from '@mui/material/IconButton';
 import MenuItem, { menuItemClasses } from '@mui/material/MenuItem';
+import MenuList from '@mui/material/MenuList';
+import Popover from '@mui/material/Popover';
+import TableCell from '@mui/material/TableCell';
+import TableRow from '@mui/material/TableRow';
+import Typography from '@mui/material/Typography';
+import Avatar from '@mui/material/Avatar';
+import Chip from '@mui/material/Chip';
 
-import { Label } from 'src/components/label';
+import { IUserModel } from 'src/types';
+
 import { Iconify } from 'src/components/iconify';
-
-// ----------------------------------------------------------------------
-
-export type UserProps = {
-  id: string;
-  name: string;
-  role: string;
-  status: string;
-  company: string;
-  avatarUrl: string;
-  isVerified: boolean;
-};
+import { Label } from 'src/components/label';
 
 type UserTableRowProps = {
-  row: UserProps;
+  row: IUserModel;
   selected: boolean;
   onSelectRow: () => void;
+  onChangeCoin: () => void;
+  onChangePassword: () => void;
 };
 
-export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) {
+export function UserTableRow({ 
+  row, 
+  selected, 
+  onSelectRow, 
+  onChangeCoin, 
+  onChangePassword 
+}: UserTableRowProps) {
   const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
 
   const handleOpenPopover = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
@@ -42,6 +43,44 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
     setOpenPopover(null);
   }, []);
 
+  const handleChangeCoin = useCallback(() => {
+    handleClosePopover();
+    onChangeCoin();
+  }, [onChangeCoin, handleClosePopover]);
+
+  const handleChangePassword = useCallback(() => {
+    handleClosePopover();
+    onChangePassword();
+  }, [onChangePassword, handleClosePopover]);
+
+  const getGenderLabel = (gender: number) => {
+    switch(gender) {
+      case 0:
+        return 'Female';
+      case 1:
+        return 'Male';
+      case 2:
+        return 'Other';
+      default:
+        return 'Unknown';
+    }
+  };
+
+  const getGenderColor = (gender: number): "default" | "primary" | "secondary" | "error" | "info" | "success" | "warning" => {
+    switch(gender) {
+      case 0:
+        return 'error';
+      case 1:
+        return 'info';
+      case 2:
+        return 'default';
+      default:
+        return 'default';
+    }
+  };
+  
+  const formatDate = (dateString: string) => dayjs(dateString).format('DD/MM/YYYY');
+
   return (
     <>
       <TableRow hover tabIndex={-1} role="checkbox" selected={selected}>
@@ -50,32 +89,62 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
         </TableCell>
 
         <TableCell component="th" scope="row">
-          <Box
-            sx={{
-              gap: 2,
-              display: 'flex',
-              alignItems: 'center',
-            }}
-          >
-            <Avatar alt={row.name} src={row.avatarUrl} />
-            {row.name}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <Avatar src={row.avatar} alt={row.username} sx={{ width: 40, height: 40 }}>
+              {row.username.charAt(0).toUpperCase()}
+            </Avatar>
+            <Typography variant="subtitle2" noWrap>
+              {row.username}
+            </Typography>
           </Box>
         </TableCell>
 
-        <TableCell>{row.company}</TableCell>
-
-        <TableCell>{row.role}</TableCell>
+        <TableCell>
+          <Typography variant="body2" noWrap>
+            {row.email}
+          </Typography>
+        </TableCell>
 
         <TableCell align="center">
-          {row.isVerified ? (
-            <Iconify width={22} icon="solar:check-circle-bold" sx={{ color: 'success.main' }} />
+          <Chip 
+            label={getGenderLabel(row.gender)} 
+            size="small"
+            color={getGenderColor(row.gender)}
+            variant="outlined"
+          />
+        </TableCell>
+
+        <TableCell align="center">
+          <Chip 
+            label={row.coin} 
+            size="small"
+            color="primary"
+            variant="outlined"
+          />
+        </TableCell>
+        
+        <TableCell align="center">
+          <Label color={row.isVip ? 'warning' : 'default'}>
+            {row.isVip ? 'VIP' : 'Free'}
+          </Label>
+        </TableCell>
+
+        <TableCell align="center">
+          {row.isVip ? (
+            <Typography variant="body2" color="warning.main">
+              {formatDate(row.vipTime)}
+            </Typography>
           ) : (
-            '-'
+            <Typography variant="body2" color="text.secondary">
+              N/A
+            </Typography>
           )}
         </TableCell>
 
-        <TableCell>
-          <Label color={(row.status === 'banned' && 'error') || 'success'}>{row.status}</Label>
+        <TableCell align="center">
+          <Typography variant="body2">
+            {formatDate(row.createdAt)}
+          </Typography>
         </TableCell>
 
         <TableCell align="right">
@@ -97,7 +166,7 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
           sx={{
             p: 0.5,
             gap: 0.5,
-            width: 140,
+            width: 180,
             display: 'flex',
             flexDirection: 'column',
             [`& .${menuItemClasses.root}`]: {
@@ -108,14 +177,14 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
             },
           }}
         >
-          <MenuItem onClick={handleClosePopover}>
-            <Iconify icon="solar:pen-bold" />
-            Edit
+          <MenuItem onClick={handleChangeCoin}>
+            <Iconify icon="solar:cart-3-bold" />
+            Change Coins
           </MenuItem>
 
-          <MenuItem onClick={handleClosePopover} sx={{ color: 'error.main' }}>
-            <Iconify icon="solar:trash-bin-trash-bold" />
-            Delete
+          <MenuItem onClick={handleChangePassword}>
+            <Iconify icon="solar:pen-bold" />
+            Change Password
           </MenuItem>
         </MenuList>
       </Popover>
