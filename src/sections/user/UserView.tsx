@@ -2,6 +2,7 @@ import type { IUserModel, IResponsePage } from "src/types";
 
 import { useEffect, useState, useCallback } from "react";
 import { toast } from "react-toastify";
+import dayjs from "dayjs";
 
 import { UserService } from "@src/services/user.service";
 
@@ -20,6 +21,13 @@ import {
   Paper,
   Chip,
   Avatar,
+  Badge,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  Divider,
 } from "@mui/material";
 
 import { DashboardContent } from "src/layouts/dashboard";
@@ -32,15 +40,12 @@ import { UserTableRow } from "./user-table-row";
 import { UserTableToolbar } from "./user-table-toolbar";
 import { UserChangeCoinModal } from "./UserChangeCoinModal";
 import { UserChangePasswordModal } from "./UserChangePasswordModal";
-import { fDate } from "./utils";
 
 const TABLE_HEAD = [
-  { id: 'username', label: 'Username', width: 200 },
+  { id: 'username', label: 'Username', width: 250 },
   { id: 'email', label: 'Email', width: 220 },
   { id: 'gender', label: 'Gender', align: 'center' as const },
   { id: 'coin', label: 'Coins', align: 'center' as const },
-  { id: 'isVip', label: 'VIP Status', align: 'center' as const },
-  { id: 'vipTime', label: 'VIP Expires', align: 'center' as const },
   { id: 'createdAt', label: 'Joined Date', align: 'center' as const },
   { id: '', label: '' },
 ];
@@ -63,6 +68,11 @@ export default function UserView() {
   });
 
   const [changePasswordModal, setChangePasswordModal] = useState<{ open: boolean; user: IUserModel | null }>({
+    open: false,
+    user: null,
+  });
+
+  const [viewDetailModal, setViewDetailModal] = useState<{ open: boolean; user: IUserModel | null }>({
     open: false,
     user: null,
   });
@@ -149,6 +159,14 @@ export default function UserView() {
 
   const handleCloseChangePassword = useCallback(() => {
     setChangePasswordModal({ open: false, user: null });
+  }, []);
+
+  const handleViewDetail = useCallback((user: IUserModel) => {
+    setViewDetailModal({ open: true, user });
+  }, []);
+
+  const handleCloseViewDetail = useCallback(() => {
+    setViewDetailModal({ open: false, user: null });
   }, []);
 
   const handleUpdateCoin = useCallback(async (userId: string, newCoin: number) => {
@@ -250,11 +268,11 @@ export default function UserView() {
               
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
                 <Typography variant="caption" color="text.secondary">
-                  Joined: {fDate(user.createdAt)}
+                  Joined: {dayjs(user.createdAt).format('DD/MM/YYYY HH:mm')}
                 </Typography>
-                {user.isVip && (
+                {(user.isVip || (user.vipTime && new Date(user.vipTime) > new Date())) && (
                   <Typography variant="caption" color="warning.main">
-                    VIP until: {fDate(user.vipTime)}
+                    VIP until: {dayjs(user.vipTime).format('DD/MM/YYYY')}
                   </Typography>
                 )}
               </Box>
@@ -351,6 +369,7 @@ export default function UserView() {
                       onSelectRow={() => handleClick(row._id)}
                       onChangeCoin={() => handleOpenChangeCoin(row)}
                       onChangePassword={() => handleOpenChangePassword(row)}
+                      onViewDetail={() => handleViewDetail(row)}
                     />
                   ))}
 
@@ -408,6 +427,118 @@ export default function UserView() {
         onClose={handleCloseChangePassword}
         onConfirm={handleUpdatePassword}
       />
+
+      {/* View Detail Modal */}
+      <Dialog
+        open={viewDetailModal.open}
+        onClose={handleCloseViewDetail}
+        fullWidth
+        maxWidth="sm"
+      >
+        <DialogTitle>User Detail</DialogTitle>
+        <DialogContent>
+          {viewDetailModal.user && (() => {
+            const user = viewDetailModal.user!;
+            const isVipActive = user.isVip || (user.vipTime && new Date(user.vipTime) > new Date());
+            return (
+              <Box sx={{ pt: 2 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+                  <Badge
+                    overlap="circular"
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                    badgeContent={
+                      isVipActive ? (
+                        <Box
+                          sx={{
+                            width: 24,
+                            height: 24,
+                            borderRadius: '50%',
+                            bgcolor: '#FFB300',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            border: '2px solid #fff',
+                            fontSize: 12,
+                          }}
+                        >
+                          👑
+                        </Box>
+                      ) : null
+                    }
+                  >
+                    <Avatar
+                      src={user.avatar}
+                      alt={user.username}
+                      sx={{
+                        width: 64,
+                        height: 64,
+                        ...(isVipActive && {
+                          border: '3px solid #FFB300',
+                          boxShadow: '0 0 12px rgba(255, 179, 0, 0.5)',
+                        }),
+                      }}
+                    >
+                      {user.username.charAt(0).toUpperCase()}
+                    </Avatar>
+                  </Badge>
+                  <Box>
+                    <Typography variant="h6">{user.username}</Typography>
+                    {isVipActive && (
+                      <Chip label="VIP" size="small" sx={{ bgcolor: '#FFB300', color: '#fff', fontWeight: 'bold' }} />
+                    )}
+                  </Box>
+                </Box>
+
+                <Divider sx={{ mb: 2 }} />
+
+                <Stack spacing={1.5}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <Typography variant="body2" color="text.secondary">Email</Typography>
+                    <Typography variant="body2" fontWeight="bold">{user.email}</Typography>
+                  </Box>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <Typography variant="body2" color="text.secondary">Gender</Typography>
+                    <Typography variant="body2">{user.gender === 1 ? 'Male' : user.gender === 0 ? 'Female' : 'Other'}</Typography>
+                  </Box>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <Typography variant="body2" color="text.secondary">Coins</Typography>
+                    <Chip label={user.coin} size="small" color="primary" variant="outlined" />
+                  </Box>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <Typography variant="body2" color="text.secondary">VIP Status</Typography>
+                    <Typography variant="body2" fontWeight="bold" color={isVipActive ? 'warning.main' : 'text.secondary'}>
+                      {isVipActive ? 'VIP Active' : 'Free'}
+                    </Typography>
+                  </Box>
+                  {isVipActive && user.vipTime && (
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <Typography variant="body2" color="text.secondary">VIP Expires</Typography>
+                      <Typography variant="body2" color="warning.main">
+                        {dayjs(user.vipTime).format('DD/MM/YYYY HH:mm')}
+                      </Typography>
+                    </Box>
+                  )}
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <Typography variant="body2" color="text.secondary">Joined Date</Typography>
+                    <Typography variant="body2">{dayjs(user.createdAt).format('DD/MM/YYYY HH:mm')}</Typography>
+                  </Box>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <Typography variant="body2" color="text.secondary">Updated At</Typography>
+                    <Typography variant="body2">{dayjs(user.updatedAt).format('DD/MM/YYYY HH:mm')}</Typography>
+                  </Box>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <Typography variant="body2" color="text.secondary">User ID</Typography>
+                    <Typography variant="body2" sx={{ fontFamily: 'monospace', fontSize: 12 }}>{user._id}</Typography>
+                  </Box>
+                </Stack>
+              </Box>
+            );
+          })()}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseViewDetail}>Close</Button>
+        </DialogActions>
+      </Dialog>
     </DashboardContent>
   );
 }

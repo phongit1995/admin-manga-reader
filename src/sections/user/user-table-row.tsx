@@ -12,11 +12,11 @@ import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 import Avatar from '@mui/material/Avatar';
 import Chip from '@mui/material/Chip';
+import Badge from '@mui/material/Badge';
 
 import { IUserModel } from 'src/types';
 
 import { Iconify } from 'src/components/iconify';
-import { Label } from 'src/components/label';
 
 type UserTableRowProps = {
   row: IUserModel;
@@ -24,6 +24,7 @@ type UserTableRowProps = {
   onSelectRow: () => void;
   onChangeCoin: () => void;
   onChangePassword: () => void;
+  onViewDetail: () => void;
 };
 
 export function UserTableRow({ 
@@ -31,7 +32,8 @@ export function UserTableRow({
   selected, 
   onSelectRow, 
   onChangeCoin, 
-  onChangePassword 
+  onChangePassword,
+  onViewDetail,
 }: UserTableRowProps) {
   const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
 
@@ -52,6 +54,11 @@ export function UserTableRow({
     handleClosePopover();
     onChangePassword();
   }, [onChangePassword, handleClosePopover]);
+
+  const handleViewDetail = useCallback(() => {
+    handleClosePopover();
+    onViewDetail();
+  }, [onViewDetail, handleClosePopover]);
 
   const getGenderLabel = (gender: number) => {
     switch(gender) {
@@ -78,8 +85,11 @@ export function UserTableRow({
         return 'default';
     }
   };
-  
-  const formatDate = (dateString: string) => dayjs(dateString).format('DD/MM/YYYY');
+
+  // Check VIP: isVip flag OR vipTime is in the future
+  const isVipActive = row.isVip || (row.vipTime && new Date(row.vipTime) > new Date());
+
+  const formatDateTime = (dateString: string) => dayjs(dateString).format('DD/MM/YYYY HH:mm');
 
   return (
     <>
@@ -90,12 +100,54 @@ export function UserTableRow({
 
         <TableCell component="th" scope="row">
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <Avatar src={row.avatar} alt={row.username} sx={{ width: 40, height: 40 }}>
-              {row.username.charAt(0).toUpperCase()}
-            </Avatar>
-            <Typography variant="subtitle2" noWrap>
-              {row.username}
-            </Typography>
+            <Badge
+              overlap="circular"
+              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+              badgeContent={
+                isVipActive ? (
+                  <Box
+                    sx={{
+                      width: 20,
+                      height: 20,
+                      borderRadius: '50%',
+                      bgcolor: '#FFB300',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      border: '2px solid #fff',
+                      fontSize: 10,
+                    }}
+                  >
+                    👑
+                  </Box>
+                ) : null
+              }
+            >
+              <Avatar
+                src={row.avatar}
+                alt={row.username}
+                sx={{
+                  width: 40,
+                  height: 40,
+                  ...(isVipActive && {
+                    border: '2px solid #FFB300',
+                    boxShadow: '0 0 8px rgba(255, 179, 0, 0.4)',
+                  }),
+                }}
+              >
+                {row.username.charAt(0).toUpperCase()}
+              </Avatar>
+            </Badge>
+            <Box>
+              <Typography variant="subtitle2" noWrap>
+                {row.username}
+              </Typography>
+              {isVipActive && (
+                <Typography variant="caption" sx={{ color: '#FFB300', fontWeight: 'bold' }}>
+                  VIP {row.vipTime ? `• đến ${dayjs(row.vipTime).format('DD/MM/YYYY')}` : ''}
+                </Typography>
+              )}
+            </Box>
           </Box>
         </TableCell>
 
@@ -122,28 +174,10 @@ export function UserTableRow({
             variant="outlined"
           />
         </TableCell>
-        
-        <TableCell align="center">
-          <Label color={row.isVip ? 'warning' : 'default'}>
-            {row.isVip ? 'VIP' : 'Free'}
-          </Label>
-        </TableCell>
-
-        <TableCell align="center">
-          {row.isVip ? (
-            <Typography variant="body2" color="warning.main">
-              {formatDate(row.vipTime)}
-            </Typography>
-          ) : (
-            <Typography variant="body2" color="text.secondary">
-              N/A
-            </Typography>
-          )}
-        </TableCell>
 
         <TableCell align="center">
           <Typography variant="body2">
-            {formatDate(row.createdAt)}
+            {formatDateTime(row.createdAt)}
           </Typography>
         </TableCell>
 
@@ -177,6 +211,11 @@ export function UserTableRow({
             },
           }}
         >
+          <MenuItem onClick={handleViewDetail}>
+            <Iconify icon="solar:eye-bold" />
+            View Detail
+          </MenuItem>
+
           <MenuItem onClick={handleChangeCoin}>
             <Iconify icon="solar:cart-3-bold" />
             Change Coins
