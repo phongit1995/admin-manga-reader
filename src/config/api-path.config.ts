@@ -30,5 +30,11 @@ export const API_PATH_CONFIG = {
     USER_UPDATE_COIN: 'v1/admin/user/:id/coin',
     USER_UPDATE_PASSWORD: 'v1/admin/user/:id/password',
     STATISTICS_COMMON: 'v1/admin/statistics/common',
+
+    // Platform Config
+    PLATFORM_CONFIG: 'v1/admin/platform-config',
+
+    // Notification
+    NOTIFICATION_SEND: 'v1/admin/notification/send',
     
 }

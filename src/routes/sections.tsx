@@ -27,6 +27,8 @@ export const AppConfigPage = lazy(() => import('src/pages/app-config'));
 export const MangaDetailPage = lazy(() => import('src/pages/manga/MangaDetailPage'));
 export const InAppPurchasePage = lazy(() => import('src/pages/in-app-purchase'));
 export const NotificationSourcePage = lazy(() => import('src/pages/notification-source'));
+export const PlatformConfigPage = lazy(() => import('src/pages/platform-config'));
+export const SendNotificationPage = lazy(() => import('src/pages/send-notification'));
 export const Page404 = lazy(() => import('src/pages/page-not-found'));
 
 const renderFallback = () => (
@@ -74,6 +76,8 @@ export const routesSection: RouteObject[] = [
       { path: ERouterConfig.IN_APP_PURCHASE, element: <InAppPurchasePage /> },
       { path: ERouterConfig.NOTIFICATION_SOURCE, element: <NotificationSourcePage /> },
       { path: ERouterConfig.APP_NOTIFICATION, element: <AppNotificationPage /> },
+      { path: ERouterConfig.PLATFORM_CONFIG, element: <PlatformConfigPage /> },
+      { path: ERouterConfig.SEND_NOTIFICATION, element: <SendNotificationPage /> },
     ],
   },
   {

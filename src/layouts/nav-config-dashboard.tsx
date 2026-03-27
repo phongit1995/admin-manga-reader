@@ -66,6 +66,12 @@ export const navData = [
         icon: <Icon icon="material-symbols:notifications-active-outline" width={20} height={20} />,
         activeIcon: <Icon icon="material-symbols:notifications-active" width={20} height={20} />,
       },
+      {
+        title: 'Send Notification',
+        path: ERouterConfig.SEND_NOTIFICATION,
+        icon: <Icon icon="material-symbols:send-outline" width={20} height={20} />,
+        activeIcon: <Icon icon="material-symbols:send" width={20} height={20} />,
+      },
     ],
   },
   {
@@ -85,6 +91,12 @@ export const navData = [
         path: ERouterConfig.APP_CONFIG,
         icon: <Icon icon="material-symbols:settings-applications-outline" width={20} height={20} />,
         activeIcon: <Icon icon="material-symbols:settings-applications" width={20} height={20} />,
+      },
+      {
+        title: 'Platform Config',
+        path: ERouterConfig.PLATFORM_CONFIG,
+        icon: <Icon icon="material-symbols:devices-outline" width={20} height={20} />,
+        activeIcon: <Icon icon="material-symbols:devices" width={20} height={20} />,
       },
     ],
   },

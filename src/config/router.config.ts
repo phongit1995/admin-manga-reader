@@ -9,6 +9,8 @@ export enum ERouterConfig {
     IN_APP_PURCHASE = '/in-app-purchase',
     NOTIFICATION_SOURCE = '/notification-source',
     APP_NOTIFICATION = '/app-notification',
+    PLATFORM_CONFIG = '/platform-config',
+    SEND_NOTIFICATION = '/send-notification',
     USER = '/user',
     PRODUCT = '/product',
     BLOG = '/blog',
