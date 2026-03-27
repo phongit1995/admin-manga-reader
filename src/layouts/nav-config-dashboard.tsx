@@ -98,6 +98,12 @@ export const navData = [
         icon: <Icon icon="material-symbols:devices-outline" width={20} height={20} />,
         activeIcon: <Icon icon="material-symbols:devices" width={20} height={20} />,
       },
+      {
+        title: 'Redeem Code',
+        path: ERouterConfig.REDEEM_CODE,
+        icon: <Icon icon="material-symbols:redeem-outline" width={20} height={20} />,
+        activeIcon: <Icon icon="material-symbols:redeem" width={20} height={20} />,
+      },
     ],
   },
   {

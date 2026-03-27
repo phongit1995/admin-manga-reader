@@ -29,6 +29,7 @@ export const InAppPurchasePage = lazy(() => import('src/pages/in-app-purchase'))
 export const NotificationSourcePage = lazy(() => import('src/pages/notification-source'));
 export const PlatformConfigPage = lazy(() => import('src/pages/platform-config'));
 export const SendNotificationPage = lazy(() => import('src/pages/send-notification'));
+export const RedeemCodePage = lazy(() => import('src/pages/redeem-code'));
 export const Page404 = lazy(() => import('src/pages/page-not-found'));
 
 const renderFallback = () => (
@@ -78,6 +79,7 @@ export const routesSection: RouteObject[] = [
       { path: ERouterConfig.APP_NOTIFICATION, element: <AppNotificationPage /> },
       { path: ERouterConfig.PLATFORM_CONFIG, element: <PlatformConfigPage /> },
       { path: ERouterConfig.SEND_NOTIFICATION, element: <SendNotificationPage /> },
+      { path: ERouterConfig.REDEEM_CODE, element: <RedeemCodePage /> },
     ],
   },
   {

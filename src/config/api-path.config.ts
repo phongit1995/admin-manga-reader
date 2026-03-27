@@ -36,5 +36,13 @@ export const API_PATH_CONFIG = {
 
     // Notification
     NOTIFICATION_SEND: 'v1/admin/notification/send',
+
+    // Redeem Code
+    REDEEM_CODE_LIST: 'v1/admin/redeem-code/list',
+    REDEEM_CODE_CREATE: 'v1/admin/redeem-code/create',
+    REDEEM_CODE_BATCH_CREATE: 'v1/admin/redeem-code/batch-create',
+    REDEEM_CODE_STATS: 'v1/admin/redeem-code/stats',
+    REDEEM_CODE_DISABLE: 'v1/admin/redeem-code/disable',
+    REDEEM_CODE_DEVICE_HISTORY: 'v1/admin/redeem-code/device',
     
 }
