@@ -28,7 +28,7 @@
       "@api/*": ["src/api/*"],
       "@pages/*": ["src/pages/*"],
       "@components/*": ["src/components/*"],
-      "@sections/*": ["src/sections/*"],
+
       "@layouts/*": ["src/layouts/*"],
       "@hooks/*": ["src/hooks/*"],
       "@hooks": ["src/hooks"],

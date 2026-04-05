@@ -1,6 +1,6 @@
 import { CONFIG } from 'src/config-global';
 
-import { ConfigSourceView } from 'src/sections/config-source/ConfigSourceView';
+import { ConfigSourceView } from './ConfigSourceView';
 
 // ----------------------------------------------------------------------
 

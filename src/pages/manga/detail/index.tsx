@@ -1,6 +1,6 @@
 import { CONFIG } from 'src/config-global';
 
-import MangaDetailView from 'src/sections/manga-detail/MangaDetailView';
+import MangaDetailView from './MangaDetailView';
 
 // ----------------------------------------------------------------------
 

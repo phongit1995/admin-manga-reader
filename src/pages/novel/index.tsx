@@ -1,6 +1,6 @@
 import { CONFIG } from 'src/config-global';
 
-import NovelView from 'src/sections/novel/NovelView';
+import NovelView from './NovelView';
 
 // ----------------------------------------------------------------------
 

@@ -1,6 +1,6 @@
 import { CONFIG } from 'src/config-global';
 
-import { AppConfigView } from 'src/sections/app-config/AppConfigView';
+import { AppConfigView } from './AppConfigView';
 
 // ----------------------------------------------------------------------
 

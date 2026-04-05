@@ -1,6 +1,6 @@
 import { CONFIG } from 'src/config-global';
 
-import { RedeemCodeView } from 'src/sections/redeem-code/RedeemCodeView';
+import { RedeemCodeView } from './RedeemCodeView';
 
 // ----------------------------------------------------------------------
 

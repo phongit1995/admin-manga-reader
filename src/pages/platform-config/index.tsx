@@ -1,6 +1,6 @@
 import { CONFIG } from 'src/config-global';
 
-import { PlatformConfigView } from 'src/sections/platform-config/PlatformConfigView';
+import { PlatformConfigView } from './PlatformConfigView';
 
 // ----------------------------------------------------------------------
 

@@ -1,6 +1,6 @@
 import { CONFIG } from 'src/config-global';
 
-import InAppPurchaseView from 'src/sections/in-app-purchase/InAppPurchaseView';
+import InAppPurchaseView from './InAppPurchaseView';
 
 // ----------------------------------------------------------------------
 

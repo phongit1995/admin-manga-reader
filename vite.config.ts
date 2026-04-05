@@ -47,10 +47,7 @@ export default defineConfig({
         find: '@components',
         replacement: path.resolve(process.cwd(), 'src/components'),
       },
-      {
-        find: '@sections',
-        replacement: path.resolve(process.cwd(), 'src/sections'),
-      },
+
       {
         find: '@layouts',
         replacement: path.resolve(process.cwd(), 'src/layouts'),

@@ -1,6 +1,6 @@
 import { CONFIG } from 'src/config-global';
 
-import NotificationSourceView from 'src/sections/notification-source/NotificationSourceView';
+import NotificationSourceView from './NotificationSourceView';
 
 // ----------------------------------------------------------------------
 

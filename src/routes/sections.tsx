@@ -30,9 +30,6 @@ export const SendNotificationPage = lazy(() => import('src/pages/send-notificati
 export const RedeemCodePage       = lazy(() => import('src/pages/redeem-code'));
 export const SignInPage           = lazy(() => import('src/pages/sign-in'));
 export const Page404              = lazy(() => import('src/pages/not-found'));
-// Deprecated (kept for backward compatibility):
-export const BlogPage             = lazy(() => import('src/pages/blog'));
-export const ProductsPage         = lazy(() => import('src/pages/products'));
 
 const renderFallback = () => (
   <Box
@@ -80,9 +77,6 @@ export const routesSection: RouteObject[] = [
       { path: ERouterConfig.PLATFORM_CONFIG, element: <PlatformConfigPage /> },
       { path: ERouterConfig.SEND_NOTIFICATION, element: <SendNotificationPage /> },
       { path: ERouterConfig.REDEEM_CODE, element: <RedeemCodePage /> },
-      // Deprecated routes (no navigation entry):
-      { path: '/product', element: <ProductsPage /> },
-      { path: '/blog', element: <BlogPage /> },
     ],
   },
   {

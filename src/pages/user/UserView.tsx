@@ -32,8 +32,8 @@ import {
 
 import { DashboardContent } from "src/layouts/dashboard";
 
-import { TableEmptyRows } from "./table-empty-rows";
-import { TableNoData } from "./table-no-data";
+import { TableEmptyRows } from "@components/table";
+import { TableNoData } from "@components/table";
 
 import { UserTableHead } from "./user-table-head";
 import { UserTableRow } from "./user-table-row";

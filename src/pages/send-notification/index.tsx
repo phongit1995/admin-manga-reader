@@ -1,6 +1,6 @@
 import { CONFIG } from 'src/config-global';
 
-import { SendNotificationView } from 'src/sections/send-notification/SendNotificationView';
+import { SendNotificationView } from './SendNotificationView';
 
 // ----------------------------------------------------------------------
 

@@ -6,7 +6,7 @@ import { DashboardContent } from 'src/layouts/dashboard';
 import { StatisticsService } from '@src/services';
 import type { IStatisticsCommon } from 'src/types';
 
-import { AnalyticsWidgetSummary } from '../analytics-widget-summary';
+import { AnalyticsWidgetSummary } from './components/analytics-widget-summary';
 
 export function OverviewAnalyticsView() {
   const [statistics, setStatistics] = useState<IStatisticsCommon | null>(null);

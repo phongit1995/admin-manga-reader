@@ -1,12 +1,14 @@
-import type { INovelModel, IResponsePage } from "src/types";
-import { TYPE_SORT_NOVEL } from "src/types";
+import type { IMangaModel, IResponsePage } from "src/types";
+import { TYPE_SORT_MANGA } from "src/types";
 import type { ICategoryModel } from "@src/types/category.type";
+import type { IConfigSourceModel } from "@src/types/config-source.type";
 
 import { useEffect, useState, useCallback } from "react";
 import { toast } from "react-toastify";
 
-import { NovelService } from "@src/services/novel.service";
+import { MangaService } from "@src/services/manga.service";
 import { CategoryService } from "@src/services/category.service";
+import { ConfigSourceService } from "@src/services/config-source.service";
 
 import {
   Box,
@@ -27,12 +29,12 @@ import {
 
 import { DashboardContent } from "src/layouts/dashboard";
 
-import { TableEmptyRows } from "src/sections/user/table-empty-rows";
-import { TableNoData } from "src/sections/user/table-no-data";
+import { TableEmptyRows } from "@components/table";
+import { TableNoData } from "@components/table";
 
-import { NovelTableHead } from "./novel-table-head";
-import { NovelTableRow } from "./novel-table-row";
-import { NovelTableToolbar } from "./novel-table-toolbar";
+import { MangaTableHead } from "./manga-table-head";
+import { MangaTableRow } from "./manga-table-row";
+import { MangaTableToolbar } from "./manga-table-toolbar";
 import { fDate } from "./utils";
 
 // ----------------------------------------------------------------------
@@ -51,7 +53,7 @@ const TABLE_HEAD = [
 
 // ----------------------------------------------------------------------
 
-export default function NovelView() {
+export default function MangaView() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -59,15 +61,17 @@ export default function NovelView() {
   const [filterName, setFilterName] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<number | ''>('');
-  const [selectedSort, setSelectedSort] = useState<number>(TYPE_SORT_NOVEL.CHAPTER_NEW);
-  const [novelList, setNovelList] = useState<INovelModel[]>([]);
-  const [novelData, setNovelData] = useState<IResponsePage<INovelModel> | null>(null);
+  const [selectedSource, setSelectedSource] = useState('');
+  const [selectedSort, setSelectedSort] = useState<number>(TYPE_SORT_MANGA.CHAPTER_NEW);
+  const [mangaList, setMangaList] = useState<IMangaModel[]>([]);
+  const [mangaData, setMangaData] = useState<IResponsePage<IMangaModel> | null>(null);
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState<ICategoryModel[]>([]);
+  const [sources, setSources] = useState<IConfigSourceModel[]>([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  // Fetch categories
+  // Fetch categories and sources
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -81,10 +85,23 @@ export default function NovelView() {
       }
     };
 
+    const fetchSources = async () => {
+      try {
+        const response = await ConfigSourceService.getListConfigSource({ page: 1, pageSize: 1000 });
+        if (response && response.data) {
+          setSources(response.data.data);
+        }
+      } catch (error) {
+        console.error('Error fetching sources:', error);
+        toast.error('Failed to fetch sources');
+      }
+    };
+
     fetchCategories();
+    fetchSources();
   }, []);
 
-  const fetchNovelList = useCallback(async (currentPage: number, pageSize: number) => {
+  const fetchMangaList = useCallback(async (currentPage: number, pageSize: number) => {
     try {
       setLoading(true);
       
@@ -96,39 +113,40 @@ export default function NovelView() {
         }
       }
       
-      const response = await NovelService.getListNovel({ 
+      const response = await MangaService.getListManga({ 
         page: currentPage + 1,
         pageSize,
         search: filterName || undefined,
         genres: selectedCategoryName || undefined,
         status: selectedStatus !== '' ? selectedStatus : undefined,
+        source: selectedSource || undefined,
         sort: selectedSort,
       });
       
       if (response.data) {
-        setNovelData(response.data);
-        setNovelList(response.data.data);
+        setMangaData(response.data);
+        setMangaList(response.data.data);
       }
     } catch (error) {
-      console.error('Error fetching novel list:', error);
-      toast.error('Failed to fetch novel list');
+      console.error('Error fetching manga list:', error);
+      toast.error('Failed to fetch manga list');
     } finally {
       setLoading(false);
     }
-  }, [filterName, selectedCategory, categories, selectedStatus, selectedSort]);
+  }, [filterName, selectedCategory, categories, selectedStatus, selectedSource, selectedSort]);
 
   useEffect(() => {
-    fetchNovelList(page, rowsPerPage);
-  }, [fetchNovelList, page, rowsPerPage]);
+    fetchMangaList(page, rowsPerPage);
+  }, [fetchMangaList, page, rowsPerPage]);
 
   const handleSelectAllClick = useCallback((checked: boolean) => {
     if (checked) {
-      const newSelected = novelList.map((n) => n._id);
+      const newSelected = mangaList.map((n) => n._id);
       setSelected(newSelected);
       return;
     }
     setSelected([]);
-  }, [novelList]);
+  }, [mangaList]);
 
   const handleClick = useCallback((id: string) => {
     const selectedIndex = selected.indexOf(id);
@@ -164,6 +182,11 @@ export default function NovelView() {
     setPage(0);
   }, []);
 
+  const handleSourceChange = useCallback((source: string) => {
+    setSelectedSource(source);
+    setPage(0);
+  }, []);
+
   const handleSortChange = useCallback((sort: number) => {
     setSelectedSort(sort);
     setPage(0);
@@ -173,7 +196,8 @@ export default function NovelView() {
     setFilterName('');
     setSelectedCategory('');
     setSelectedStatus('');
-    setSelectedSort(TYPE_SORT_NOVEL.CHAPTER_NEW);
+    setSelectedSource('');
+    setSelectedSort(TYPE_SORT_MANGA.CHAPTER_NEW);
     setPage(0);
   }, []);
 
@@ -181,62 +205,62 @@ export default function NovelView() {
     setPage(newPage - 1);
   }, []);
 
-  const handleDisableNovel = useCallback(async (ids: string[]) => {
+  const handleDisableManga = useCallback(async (ids: string[]) => {
     try {
-      const response = await NovelService.disableNovel(ids);
+      const response = await MangaService.disableManga(ids);
       if (response) {
-        toast.success(`Successfully disabled ${ids.length} novel${ids.length > 1 ? 's' : ''}`);
-        fetchNovelList(page, rowsPerPage);
+        toast.success(`Successfully disabled ${ids.length} manga${ids.length > 1 ? 's' : ''}`);
+        fetchMangaList(page, rowsPerPage);
         setSelected([]);
       } else {
-        toast.error('Failed to disable novel. Please try again.');
+        toast.error('Failed to disable manga. Please try again.');
       }
     } catch (error) {
-      console.error('Error disabling novel:', error);
-      toast.error('An error occurred while disabling novel.');
+      console.error('Error disabling manga:', error);
+      toast.error('An error occurred while disabling manga.');
     }
-  }, [page, rowsPerPage, fetchNovelList]);
+  }, [page, rowsPerPage, fetchMangaList]);
 
-  const handleEnableNovel = useCallback(async (ids: string[]) => {
+  const handleEnableManga = useCallback(async (ids: string[]) => {
     try {
-      const response = await NovelService.enableNovel(ids);
+      const response = await MangaService.enableManga(ids);
       if (response) {
-        toast.success(`Successfully enabled ${ids.length} novel${ids.length > 1 ? 's' : ''}`);
-        fetchNovelList(page, rowsPerPage);
+        toast.success(`Successfully enabled ${ids.length} manga${ids.length > 1 ? 's' : ''}`);
+        fetchMangaList(page, rowsPerPage);
         setSelected([]);
       } else {
-        toast.error('Failed to enable novel. Please try again.');
+        toast.error('Failed to enable manga. Please try again.');
       }
     } catch (error) {
-      console.error('Error enabling novel:', error);
-      toast.error('An error occurred while enabling novel.');
+      console.error('Error enabling manga:', error);
+      toast.error('An error occurred while enabling manga.');
     }
-  }, [page, rowsPerPage, fetchNovelList]);
+  }, [page, rowsPerPage, fetchMangaList]);
 
   const handleResetImages = useCallback(async (ids: string[]) => {
     try {
-      const response = await NovelService.resetImage(ids);
+      const response = await MangaService.resetImage(ids);
       if (response) {
-        toast.success(`Successfully reset images for ${ids.length} novel${ids.length > 1 ? 's' : ''}`);
-        fetchNovelList(page, rowsPerPage);
+        toast.success(`Successfully reset images for ${ids.length} manga${ids.length > 1 ? 's' : ''}`);
+        fetchMangaList(page, rowsPerPage);
         setSelected([]);
       } else {
         toast.error('Failed to reset images. Please try again.');
       }
     } catch (error) {
-      console.error('Error resetting novel images:', error);
-      toast.error('An error occurred while resetting novel images.');
+      console.error('Error resetting manga images:', error);
+      toast.error('An error occurred while resetting manga images.');
     }
-  }, [page, rowsPerPage, fetchNovelList]);
+  }, [page, rowsPerPage, fetchMangaList]);
 
-  const dataFiltered = novelList;
+  const dataFiltered = mangaList;
   const notFound = !dataFiltered.length && !!filterName;
-  const emptyRowsCount = novelList.length === 0 ? rowsPerPage : 0;
-  const totalPages = Math.ceil((novelData?.total || 0) / rowsPerPage);
+  const emptyRowsCount = mangaList.length === 0 ? rowsPerPage : 0;
+  const totalPages = Math.ceil((mangaData?.total || 0) / rowsPerPage);
 
-  // Mobile Card View renderer for each novel
-  const renderNovelCard = (novel: INovelModel) => {
-    const isSelected = selected.includes(novel._id);
+  // Mobile Card View renderer for each manga
+  const renderMangaCard = (manga: IMangaModel) => {
+    const isSelected = selected.includes(manga._id);
     
     return (
       <Paper
@@ -251,62 +275,62 @@ export default function NovelView() {
           },
           mb: 2
         }}
-        onClick={() => handleClick(novel._id)}
+        onClick={() => handleClick(manga._id)}
       >
         <Box sx={{ display: 'flex', gap: 2 }}>
           <Avatar 
-            src={novel.image} 
-            alt={novel.name} 
+            src={manga.image} 
+            alt={manga.name} 
             sx={{ width: 80, height: 120, borderRadius: 1 }}
             variant="rounded"
           />
           
           <Box sx={{ flexGrow: 1 }}>
             <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mb: 1 }}>
-              {novel.name}
+              {manga.name}
             </Typography>
             
             <Stack spacing={1}>
-              {novel.genres && novel.genres.length > 0 && (
+              {manga.genres && manga.genres.length > 0 && (
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                  {novel.genres.slice(0, 3).map((genre, index) => (
+                  {manga.genres.slice(0, 3).map((genre, index) => (
                     <Chip key={index} label={genre} size="small" />
                   ))}
-                  {novel.genres.length > 3 && (
-                    <Chip label={`+${novel.genres.length - 3}`} size="small" variant="outlined" />
+                  {manga.genres.length > 3 && (
+                    <Chip label={`+${manga.genres.length - 3}`} size="small" variant="outlined" />
                   )}
                 </Box>
               )}
               
               <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Typography variant="body2" color="text.secondary">
-                  Chapters: {novel.totalChapters || 0}
+                  Chapters: {manga.totalChapters || 0}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  Views: {novel.views?.toLocaleString()}
+                  Views: {manga.views?.toLocaleString()}
                 </Typography>
               </Box>
               
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Chip 
                   size="small"
-                  label={novel.status === 0 ? 'Ongoing' : 'Completed'} 
-                  color={novel.status === 0 ? 'primary' : 'success'}
+                  label={manga.status === 0 ? 'Ongoing' : 'Completed'} 
+                  color={manga.status === 0 ? 'primary' : 'success'}
                 />
                 <Chip 
                   size="small"
-                  label={novel.enable ? 'Enabled' : 'Disabled'} 
-                  color={novel.enable ? 'success' : 'error'}
+                  label={manga.enable ? 'Enabled' : 'Disabled'} 
+                  color={manga.enable ? 'success' : 'error'}
                   variant="outlined"
                 />
               </Box>
               
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
                 <Typography variant="caption" color="text.secondary">
-                  Source: {novel.source}
+                  Source: {manga.source}
                 </Typography>
                 <Typography variant="caption" color="text.secondary">
-                  Updated: {fDate(novel.chapterUpdate)}
+                  Updated: {fDate(manga.chapterUpdate)}
                 </Typography>
               </Box>
             </Stack>
@@ -326,12 +350,12 @@ export default function NovelView() {
         }}
       >
         <Typography variant="h4" sx={{ flexGrow: 1 }}>
-          Novel List
+          Manga List
         </Typography>
       </Box>
 
       <Card>
-        <NovelTableToolbar 
+        <MangaTableToolbar 
           numSelected={selected.length} 
           filterName={filterName} 
           onFilterName={handleFilterByName}
@@ -342,9 +366,12 @@ export default function NovelView() {
           onStatusChange={handleStatusChange}
           selectedSort={selectedSort}
           onSortChange={handleSortChange}
+          sources={sources}
+          selectedSource={selectedSource}
+          onSourceChange={handleSourceChange}
           onClearFilters={handleClearFilters}
-          onDisable={handleDisableNovel}
-          onEnable={handleEnableNovel}
+          onDisable={handleDisableManga}
+          onEnable={handleEnableManga}
           onResetImages={handleResetImages}
           selectedIds={selected}
         />
@@ -372,7 +399,7 @@ export default function NovelView() {
           {isMobile ? (
             <Box sx={{ p: 2 }}>
               {dataFiltered.length > 0 ? (
-                dataFiltered.map((novel) => renderNovelCard(novel))
+                dataFiltered.map((manga) => renderMangaCard(manga))
               ) : (
                 <Box>
                   {notFound ? (
@@ -386,9 +413,9 @@ export default function NovelView() {
                     </Box>
                   ) : (
                     <Box sx={{ textAlign: 'center', py: 3 }}>
-                      <Typography variant="h6">No novel found</Typography>
+                      <Typography variant="h6">No manga found</Typography>
                       <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1 }}>
-                        No novel available with the current filters.
+                        No manga available with the current filters.
                       </Typography>
                     </Box>
                   )}
@@ -398,15 +425,15 @@ export default function NovelView() {
           ) : (
             <TableContainer sx={{ overflow: 'unset' }}>
               <Table sx={{ minWidth: 800 }}>
-                <NovelTableHead
-                  rowCount={novelList.length}
+                <MangaTableHead
+                  rowCount={mangaList.length}
                   numSelected={selected.length}
                   onSelectAllClick={handleSelectAllClick}
                   headLabel={TABLE_HEAD}
                 />
                 <TableBody>
                   {dataFiltered.map((row) => (
-                    <NovelTableRow
+                    <MangaTableRow
                       key={row._id}
                       row={row}
                       selected={selected.includes(row._id)}
@@ -435,7 +462,7 @@ export default function NovelView() {
         >
           <Box>
             <Typography variant="body2" component="span">
-              {`${page * rowsPerPage + 1} - ${Math.min((page + 1) * rowsPerPage, novelData?.total || 0)} of ${novelData?.total || 0} items`}
+              {`${page * rowsPerPage + 1} - ${Math.min((page + 1) * rowsPerPage, mangaData?.total || 0)} of ${mangaData?.total || 0} items`}
             </Typography>
           </Box>
           
@@ -457,4 +484,3 @@ export default function NovelView() {
     </DashboardContent>
   );
 }
-
