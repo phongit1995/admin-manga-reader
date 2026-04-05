@@ -4,7 +4,7 @@ import { UserView } from 'src/sections/user/view';
 
 // ----------------------------------------------------------------------
 
-export default function Page() {
+export default function UserPage() {
   return (
     <>
       <title>{`Users - ${CONFIG.appName}`}</title>

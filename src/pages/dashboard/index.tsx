@@ -4,7 +4,7 @@ import { OverviewAnalyticsView as DashboardView } from 'src/sections/overview/vi
 
 // ----------------------------------------------------------------------
 
-export default function Page() {
+export default function DashboardPage() {
   return (
     <>
       <title>{`Dashboard - ${CONFIG.appName}`}</title>

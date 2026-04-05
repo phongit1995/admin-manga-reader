@@ -11,26 +11,28 @@ import { AuthLayout } from 'src/layouts/auth';
 import { DashboardLayout } from 'src/layouts/dashboard';
 import { ERouterConfig } from 'src/config/router.config';
 import { ProtectedRoute } from 'src/routes/components';
-import AppNotificationPage from '@src/pages/app-notification';
+
 // ----------------------------------------------------------------------
 
-export const DashboardPage = lazy(() => import('src/pages/dashboard'));
-export const BlogPage = lazy(() => import('src/pages/blog'));
-export const UserPage = lazy(() => import('src/pages/user'));
-export const SignInPage = lazy(() => import('src/pages/sign-in'));
-export const ProductsPage = lazy(() => import('src/pages/products'));
-export const MangaPage = lazy(() => import('src/pages/manga/MangaPage'));
-export const NovelPage = lazy(() => import('src/pages/novel/NovelPage'));
-export const CategoryPage = lazy(() => import('src/pages/category/CategoryPage'));
-export const ConfigSourcePage = lazy(() => import('src/pages/config-source'));
-export const AppConfigPage = lazy(() => import('src/pages/app-config'));
-export const MangaDetailPage = lazy(() => import('src/pages/manga/MangaDetailPage'));
-export const InAppPurchasePage = lazy(() => import('src/pages/in-app-purchase'));
+export const DashboardPage        = lazy(() => import('src/pages/dashboard'));
+export const UserPage             = lazy(() => import('src/pages/user'));
+export const MangaPage            = lazy(() => import('src/pages/manga'));
+export const MangaDetailPage      = lazy(() => import('src/pages/manga/detail'));
+export const NovelPage            = lazy(() => import('src/pages/novel'));
+export const CategoryPage         = lazy(() => import('src/pages/category'));
+export const AppConfigPage        = lazy(() => import('src/pages/app-config'));
+export const ConfigSourcePage     = lazy(() => import('src/pages/config-source'));
+export const InAppPurchasePage    = lazy(() => import('src/pages/in-app-purchase'));
 export const NotificationSourcePage = lazy(() => import('src/pages/notification-source'));
-export const PlatformConfigPage = lazy(() => import('src/pages/platform-config'));
+export const AppNotificationPage  = lazy(() => import('src/pages/app-notification'));
+export const PlatformConfigPage   = lazy(() => import('src/pages/platform-config'));
 export const SendNotificationPage = lazy(() => import('src/pages/send-notification'));
-export const RedeemCodePage = lazy(() => import('src/pages/redeem-code'));
-export const Page404 = lazy(() => import('src/pages/page-not-found'));
+export const RedeemCodePage       = lazy(() => import('src/pages/redeem-code'));
+export const SignInPage           = lazy(() => import('src/pages/sign-in'));
+export const Page404              = lazy(() => import('src/pages/not-found'));
+// Deprecated (kept for backward compatibility):
+export const BlogPage             = lazy(() => import('src/pages/blog'));
+export const ProductsPage         = lazy(() => import('src/pages/products'));
 
 const renderFallback = () => (
   <Box
@@ -66,8 +68,6 @@ export const routesSection: RouteObject[] = [
     children: [
       { index: true, element: <DashboardPage /> },
       { path: ERouterConfig.USER, element: <UserPage /> },
-      { path: ERouterConfig.PRODUCT, element: <ProductsPage /> },
-      { path: ERouterConfig.BLOG, element: <BlogPage /> },
       { path: ERouterConfig.MANGA, element: <MangaPage /> },
       { path: ERouterConfig.MANGA_DETAIL, element: <MangaDetailPage /> },
       { path: ERouterConfig.NOVEL, element: <NovelPage /> },
@@ -80,6 +80,9 @@ export const routesSection: RouteObject[] = [
       { path: ERouterConfig.PLATFORM_CONFIG, element: <PlatformConfigPage /> },
       { path: ERouterConfig.SEND_NOTIFICATION, element: <SendNotificationPage /> },
       { path: ERouterConfig.REDEEM_CODE, element: <RedeemCodePage /> },
+      // Deprecated routes (no navigation entry):
+      { path: '/product', element: <ProductsPage /> },
+      { path: '/blog', element: <BlogPage /> },
     ],
   },
   {

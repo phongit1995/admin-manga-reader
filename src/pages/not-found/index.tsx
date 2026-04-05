@@ -4,11 +4,10 @@ import { NotFoundView } from 'src/sections/error';
 
 // ----------------------------------------------------------------------
 
-export default function Page() {
+export default function NotFoundPage() {
   return (
     <>
-      <title>{`404 page not found! | Error - ${CONFIG.appName}`}</title>
-
+      <title>{`404 - Page Not Found | ${CONFIG.appName}`}</title>
       <NotFoundView />
     </>
   );

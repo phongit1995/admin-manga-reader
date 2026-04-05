@@ -4,11 +4,10 @@ import { SignInView } from 'src/sections/auth';
 
 // ----------------------------------------------------------------------
 
-export default function Page() {
+export default function SignInPage() {
   return (
     <>
-      <title>{`Sign in - ${CONFIG.appName}`}</title>
-
+      <title>{`Sign In - ${CONFIG.appName}`}</title>
       <SignInView />
     </>
   );
