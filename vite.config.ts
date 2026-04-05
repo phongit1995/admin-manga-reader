@@ -56,6 +56,10 @@ export default defineConfig({
         replacement: path.resolve(process.cwd(), 'src/layouts'),
       },
       {
+        find: '@hooks',
+        replacement: path.resolve(process.cwd(), 'src/hooks'),
+      },
+      {
         find: '@utils',
         replacement: path.resolve(process.cwd(), 'src/utils'),
       },

@@ -10,7 +10,7 @@ import Typography from '@mui/material/Typography';
 import InputAdornment from '@mui/material/InputAdornment';
 import CircularProgress from '@mui/material/CircularProgress';
 
-import { useRouter } from 'src/routes/hooks';
+import { useRouter } from '@hooks';
 
 import { Iconify } from 'src/components/iconify';
 import { AdminAuthService } from '@src/services';

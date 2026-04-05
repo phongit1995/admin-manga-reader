@@ -13,7 +13,7 @@ import ListItemText from '@mui/material/ListItemText';
 import Collapse from '@mui/material/Collapse';
 import { Icon } from '@iconify/react';
 
-import { usePathname } from 'src/routes/hooks';
+import { usePathname } from '@hooks';
 import { RouterLink } from 'src/routes/components';
 
 import { Logo } from 'src/components/logo';
