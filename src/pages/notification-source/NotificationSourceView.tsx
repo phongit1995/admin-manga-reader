@@ -26,20 +26,16 @@ export default function NotificationSourceView() {
       const response = await NotificationSourceService.getListNotificationSource();
       
       if (response) {
-        // Handle different possible response formats
         if (Array.isArray(response)) {
           setNotificationSourceList(response);
         } else if (typeof response === 'object' && response !== null) {
-          // Check if response has a data property that's an array
           const responseObj = response as Record<string, any>;
           if (responseObj.data && Array.isArray(responseObj.data)) {
             setNotificationSourceList(responseObj.data);
           } else {
-            // If it's a single object, put it in an array
             setNotificationSourceList([response as INotificationSourceModel]);
           }
         } else {
-          // Fallback to empty array
           setNotificationSourceList([]);
           console.warn('Unexpected API response format:', response);
         }

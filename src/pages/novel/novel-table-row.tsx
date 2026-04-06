@@ -13,8 +13,6 @@ import { ERouterConfig } from 'src/config/router.config';
 import { ActionPopover } from '@components/action-popover';
 import { Label } from 'src/components/label';
 
-// ----------------------------------------------------------------------
-
 type NovelTableRowProps = {
   row: INovelModel;
   selected: boolean;
@@ -29,7 +27,6 @@ export function NovelTableRow({ row, selected, onSelectRow }: NovelTableRowProps
     navigate(detailPath);
   }, [navigate, row._id]);
 
-  // Map status code to readable status
   const getStatus = (statusCode: number) => {
     switch(statusCode) {
       case 0:
@@ -44,8 +41,7 @@ export function NovelTableRow({ row, selected, onSelectRow }: NovelTableRowProps
   };
 
   const statusColor = row.status === 1 ? 'success' : row.status === 0 ? 'warning' : 'error';
-  
-  // Format date using dayjs
+
   const formatDate = (dateString: string) => dayjs(dateString).format('DD/MM/YYYY HH:mm:ss');
 
   return (

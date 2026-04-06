@@ -11,8 +11,6 @@ import { allIconNames, registerIcons } from './register-icons';
 
 import type { IconifyName } from './register-icons';
 
-// ----------------------------------------------------------------------
-
 export type IconifyProps = React.ComponentProps<typeof IconRoot> &
   Omit<IconProps, 'icon'> & {
     icon: IconifyName;
@@ -52,7 +50,5 @@ export function Iconify({ className, icon, width = 20, height, sx, ...other }: I
     />
   );
 }
-
-// ----------------------------------------------------------------------
 
 const IconRoot = styled(Icon)``;

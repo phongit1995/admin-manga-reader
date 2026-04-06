@@ -5,9 +5,6 @@ import { useScrollToTop } from '@hooks';
 import { ThemeProvider } from 'src/theme/theme-provider';
 import { ToastContainer } from 'react-toastify';
 
-
-// ----------------------------------------------------------------------
-
 type AppProps = {
   children: React.ReactNode;
 };

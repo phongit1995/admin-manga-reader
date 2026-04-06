@@ -14,8 +14,6 @@ import ClickAwayListener from '@mui/material/ClickAwayListener';
 
 import { Iconify } from 'src/components/iconify';
 
-// ----------------------------------------------------------------------
-
 export function Searchbar({ sx, ...other }: BoxProps) {
   const theme = useTheme();
 

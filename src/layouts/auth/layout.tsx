@@ -20,8 +20,6 @@ import type { MainSectionProps } from '../core/main-section';
 import type { HeaderSectionProps } from '../core/header-section';
 import type { LayoutSectionProps } from '../core/layout-section';
 
-// ----------------------------------------------------------------------
-
 type LayoutBaseProps = Pick<LayoutSectionProps, 'sx' | 'children' | 'cssVars'>;
 
 export type AuthLayoutProps = LayoutBaseProps & {
@@ -131,8 +129,6 @@ export function AuthLayout({
     </LayoutSection>
   );
 }
-
-// ----------------------------------------------------------------------
 
 const backgroundStyles = (): CSSObject => ({
   zIndex: 1,

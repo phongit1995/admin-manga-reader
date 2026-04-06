@@ -98,15 +98,13 @@ export default function EditAppNotificationModal({
       }
       
       setLoading(true);
-      
-      // Convert form data to match API request type
+
       const requestData = {
         title: data.title,
         message: data.message,
         link: data.link,
         isForce: data.isForce,
         enable: data.enable,
-        // Only include version if it has value
         ...(data.version ? { version: data.version } : {})
       };
       

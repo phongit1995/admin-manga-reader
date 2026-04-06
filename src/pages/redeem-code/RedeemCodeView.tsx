@@ -28,7 +28,6 @@ import { toast } from "react-toastify";
 import CreateRedeemCodeModal from "./CreateRedeemCodeModal";
 import BatchCreateRedeemCodeModal from "./BatchCreateRedeemCodeModal";
 
-// Table Head
 interface RedeemCodeTableHeadProps {
   headLabel: {
     id: string;
@@ -55,7 +54,6 @@ const RedeemCodeTableHead = ({ headLabel }: RedeemCodeTableHeadProps) => (
   </TableHead>
 );
 
-// Table Row
 interface RedeemCodeTableRowProps {
   row: IRedeemCodeModel;
   onDisableClick: (code: string) => void;
@@ -136,8 +134,6 @@ const RedeemCodeTableRow = ({ row, onDisableClick, disabling }: RedeemCodeTableR
   </TableRow>
 );
 
-// ----------------------------------------------------------------------
-
 const TABLE_HEAD = [
   { id: "code", label: "Code", minWidth: 180 },
   { id: "type", label: "Type", width: 100 },
@@ -148,8 +144,6 @@ const TABLE_HEAD = [
   { id: "createdAt", label: "Created", width: 110 },
   { id: "", label: "", width: 60 },
 ];
-
-// ----------------------------------------------------------------------
 
 export const RedeemCodeView = () => {
   const [codeList, setCodeList] = useState<IRedeemCodeModel[]>([]);
@@ -242,7 +236,6 @@ export const RedeemCodeView = () => {
         </Stack>
       </Box>
 
-      {/* Filters */}
       <Stack direction="row" spacing={2} sx={{ mb: 3 }}>
         <TextField
           select

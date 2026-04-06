@@ -1,5 +1,3 @@
-// ─── Analytics Config ────────────────────────────────────────────────────────
-
 export interface IAnalyticsConfigModel {
   _id: string;
   name: string;
@@ -11,14 +9,12 @@ export interface IAnalyticsConfigModel {
   createdAt: string;
 }
 
-/** POST /v1/admin/analytics/config — multipart/form-data */
 export interface ICreateAnalyticsConfigRequest {
   name: string;
   propertyId: string;
   file: File;
 }
 
-/** PUT /v1/admin/analytics/config/{id} */
 export interface IUpdateAnalyticsConfigRequest {
   name?: string;
   propertyId?: string;
@@ -26,18 +22,12 @@ export interface IUpdateAnalyticsConfigRequest {
   enable: boolean;
 }
 
-// ─── Analytics Report ────────────────────────────────────────────────────────
-
 export interface IAnalyticsReportQuery {
   startDate: string;
   endDate: string;
-  /** Comma-separated GA4 metrics, e.g. "activeUsers,sessions" */
   metrics: string;
-  /** Comma-separated GA4 dimensions, e.g. "date,country" */
   dimensions?: string;
 }
-
-// ─── Analytics Realtime ──────────────────────────────────────────────────────
 
 export interface IAnalyticsRealtimeCountry {
   country: string;

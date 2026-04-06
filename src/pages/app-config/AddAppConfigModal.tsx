@@ -92,8 +92,7 @@ export default function AddAppConfigModal({ open, onClose, onSuccess }: AddAppCo
   const handleAddConfig = async (data: FormValues) => {
     try {
       setLoading(true);
-      
-      // Parse JSON strings to objects for API
+
       let readImageHeaderObj;
       let imageHeaderObj;
       
@@ -118,12 +117,10 @@ export default function AddAppConfigModal({ open, onClose, onSuccess }: AddAppCo
         setLoading(false);
         return;
       }
-      
-      // Convert form data to match API request type
+
       const requestData: ICreateAppConfigRequest = {
         source: data.source,
         showFakeApp: data.showFakeApp,
-        // Only include optional fields if they have values
         ...(data.imageResource ? { imageResource: data.imageResource } : {}),
         ...(readImageHeaderObj ? { readImageHeader: readImageHeaderObj } : {}),
         imageHeader: imageHeaderObj

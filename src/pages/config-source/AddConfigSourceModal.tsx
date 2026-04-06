@@ -19,7 +19,6 @@ import { ConfigSourceService } from "@services/config-source.service";
 import { toast } from "react-toastify";
 import { useState, useEffect } from 'react';
 
-// Define validation schema
 const schema = yup.object({
   name: yup.string().required('Name is required'),
   key: yup.string().required('Key is required'),
@@ -35,7 +34,7 @@ const schema = yup.object({
 interface AddConfigSourceModalProps {
   open: boolean;
   onClose: () => void;
-  onSuccess: () => void; // Callback to refresh the config source list
+  onSuccess: () => void;
 }
 
 export default function AddConfigSourceModal({ open, onClose, onSuccess }: AddConfigSourceModalProps) {
@@ -54,7 +53,7 @@ export default function AddConfigSourceModal({ open, onClose, onSuccess }: AddCo
       index: 0,
       enable: true
     },
-    mode: 'onChange' // Validate on change for better UX
+    mode: 'onChange'
   });
 
   useEffect(() => {
@@ -100,7 +99,6 @@ export default function AddConfigSourceModal({ open, onClose, onSuccess }: AddCo
     }
   };
 
-  // Only close if not loading
   const handleDialogClose = (event: any, reason: string) => {
     if (reason !== 'backdropClick' || !loading) {
       handleClose();

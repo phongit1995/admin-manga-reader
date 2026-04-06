@@ -4,8 +4,6 @@ import { addCollection } from '@iconify/react';
 
 import allIcons from './icon-sets';
 
-// ----------------------------------------------------------------------
-
 export const iconSets = Object.entries(allIcons).reduce((acc, [key, value]) => {
   const [prefix, iconName] = key.split(':');
   const existingPrefix = acc.find((item) => item.prefix === prefix);
@@ -27,8 +25,6 @@ export const iconSets = Object.entries(allIcons).reduce((acc, [key, value]) => {
 export const allIconNames = Object.keys(allIcons) as IconifyName[];
 
 export type IconifyName = keyof typeof allIcons;
-
-// ----------------------------------------------------------------------
 
 let areIconsRegistered = false;
 

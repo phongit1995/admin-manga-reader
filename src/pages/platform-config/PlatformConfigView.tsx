@@ -25,7 +25,6 @@ import { toast } from "react-toastify";
 import AddPlatformConfigModal from "./AddPlatformConfigModal";
 import EditPlatformConfigModal from "./EditPlatformConfigModal";
 
-// Table components
 interface PlatformConfigTableHeadProps {
   headLabel: {
     id: string;
@@ -133,8 +132,6 @@ const PlatformConfigTableRow = ({ row, onEditClick, onToggleStatus }: PlatformCo
   );
 };
 
-// ----------------------------------------------------------------------
-
 const TABLE_HEAD = [
   { id: 'packageId', label: 'Package ID', minWidth: 200 },
   { id: 'platform', label: 'Platform', width: 100 },
@@ -145,8 +142,6 @@ const TABLE_HEAD = [
   { id: 'status', label: 'Status', align: 'center' as const, width: 80 },
   { id: '', label: '', width: 60 },
 ];
-
-// ----------------------------------------------------------------------
 
 export const PlatformConfigView = () => {
   const [configList, setConfigList] = useState<IPlatformConfigModel[]>([]);

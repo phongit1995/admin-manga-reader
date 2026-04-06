@@ -6,8 +6,6 @@ import { svgColorClasses } from './classes';
 
 import type { SvgColorProps } from './types';
 
-// ----------------------------------------------------------------------
-
 export function SvgColor({ src, className, sx, ...other }: SvgColorProps) {
   return (
     <SvgRoot
@@ -23,8 +21,6 @@ export function SvgColor({ src, className, sx, ...other }: SvgColorProps) {
     />
   );
 }
-
-// ----------------------------------------------------------------------
 
 const SvgRoot = styled('span')(() => ({
   width: 24,

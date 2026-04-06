@@ -4,8 +4,6 @@ import IconButton from '@mui/material/IconButton';
 
 import { Iconify } from 'src/components/iconify';
 
-// ----------------------------------------------------------------------
-
 export function MenuButton({ sx, ...other }: IconButtonProps) {
   return (
     <IconButton sx={sx} {...other}>

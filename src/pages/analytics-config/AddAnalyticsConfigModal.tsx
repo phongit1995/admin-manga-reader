@@ -20,8 +20,6 @@ import { toast } from 'react-toastify';
 import { Icon } from '@iconify/react';
 import { AnalyticsService } from '@src/services/analytics.service';
 
-// ----------------------------------------------------------------------
-
 const schema = yup
   .object({
     name: yup.string().required('Name is required'),
@@ -128,7 +126,6 @@ export default function AddAnalyticsConfigModal({
       <DialogContent>
         <Box component="form" sx={{ pt: 2 }} noValidate>
           <Stack spacing={3}>
-            {/* Name */}
             <Controller
               name="name"
               control={control}
@@ -145,7 +142,6 @@ export default function AddAnalyticsConfigModal({
               )}
             />
 
-            {/* Property ID */}
             <Controller
               name="propertyId"
               control={control}
@@ -162,7 +158,6 @@ export default function AddAnalyticsConfigModal({
               )}
             />
 
-            {/* File upload */}
             <Box>
               <Typography variant="subtitle2" gutterBottom>
                 Google Service Account Key

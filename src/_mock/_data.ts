@@ -11,15 +11,11 @@ import {
   _productNames,
 } from './_mock';
 
-// ----------------------------------------------------------------------
-
 export const _myAccount = {
   displayName: 'Jaydon Frankie',
   email: 'demo@minimals.cc',
   photoURL: '/assets/images/avatar/avatar-25.webp',
 };
-
-// ----------------------------------------------------------------------
 
 export const _users = [...Array(24)].map((_, index) => ({
   id: _id(index),
@@ -43,8 +39,6 @@ export const _users = [...Array(24)].map((_, index) => ({
     ][index] || 'UI Designer',
 }));
 
-// ----------------------------------------------------------------------
-
 export const _posts = [...Array(23)].map((_, index) => ({
   id: _id(index),
   title: _postTitles(index),
@@ -60,8 +54,6 @@ export const _posts = [...Array(23)].map((_, index) => ({
     avatarUrl: `/assets/images/avatar/avatar-${index + 1}.webp`,
   },
 }));
-
-// ----------------------------------------------------------------------
 
 const COLORS = [
   '#00AB55',
@@ -96,8 +88,6 @@ export const _products = [...Array(24)].map((_, index) => {
   };
 });
 
-// ----------------------------------------------------------------------
-
 export const _langs = [
   {
     value: 'en',
@@ -115,8 +105,6 @@ export const _langs = [
     icon: '/assets/icons/flags/ic-flag-fr.svg',
   },
 ];
-
-// ----------------------------------------------------------------------
 
 export const _timeline = [...Array(5)].map((_, index) => ({
   id: _id(index),
@@ -158,8 +146,6 @@ export const _tasks = Array.from({ length: 5 }, (_, index) => ({
   id: _id(index),
   name: _taskNames(index),
 }));
-
-// ----------------------------------------------------------------------
 
 export const _notifications = [
   {

@@ -17,8 +17,7 @@ export function AppConfigView() {
   const [openEditModal, setOpenEditModal] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [selectedConfig, setSelectedConfig] = useState<IAppConfigModel | null>(null);
-  
-  // Pagination states
+
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [configData, setConfigData] = useState<{total: number; data: IAppConfigModel[]} | null>(null);
@@ -46,8 +45,7 @@ export function AppConfigView() {
   useEffect(() => {
     fetchConfigList(page, rowsPerPage);
   }, [fetchConfigList, page, rowsPerPage]);
-  
-  // Refresh data after status change
+
   const handleStatusChange = useCallback(() => {
     fetchConfigList(page, rowsPerPage);
   }, [fetchConfigList, page, rowsPerPage]);
@@ -80,7 +78,6 @@ export function AppConfigView() {
     setSelectedConfig(null);
   };
 
-  // Pagination handlers
   const handleChangePage = useCallback((event: React.ChangeEvent<unknown>, newPage: number) => {
     setPage(newPage - 1); // Pagination component is 1-indexed, but our state is 0-indexed
   }, []);

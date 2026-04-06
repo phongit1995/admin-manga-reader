@@ -18,7 +18,6 @@ import { NotificationSourceService } from "src/services/notification-source.serv
 import { useState } from "react";
 import { toast } from "react-toastify";
 
-// Table components
 interface NotificationSourceTableHeadProps {
   headLabel: {
     id: string;
@@ -150,7 +149,6 @@ export default function NotificationSourceTable({
   onDeleteClick,
   onRefresh
 }: NotificationSourceTableProps) {
-  // Ensure notificationSourceList is always an array
   const safeList = Array.isArray(notificationSourceList) ? notificationSourceList : [];
   
   const handleStatusChange = async (id: string, enabled: boolean) => {

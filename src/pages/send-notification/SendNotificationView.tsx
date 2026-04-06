@@ -85,7 +85,6 @@ export const SendNotificationView = () => {
           }
         }
 
-        // Only show enabled sources
         setSources(sourceList.filter((s) => s.enable));
       } catch (error) {
         console.error("Error fetching notification sources:", error);
@@ -138,7 +137,6 @@ export const SendNotificationView = () => {
       <Card sx={{ p: 4, maxWidth: 600 }}>
         <Box component="form" noValidate>
           <Stack spacing={3}>
-            {/* 1. Notification Source */}
             <Controller
               name="notificationSourceId"
               control={control}
@@ -163,7 +161,6 @@ export const SendNotificationView = () => {
               )}
             />
 
-            {/* 2. Device Token */}
             <Controller
               name="deviceToken"
               control={control}
@@ -184,7 +181,6 @@ export const SendNotificationView = () => {
               )}
             />
 
-            {/* 3. Topic */}
             <Controller
               name="topic"
               control={control}
@@ -205,7 +201,6 @@ export const SendNotificationView = () => {
               )}
             />
 
-            {/* 4. Title */}
             <Controller
               name="title"
               control={control}
@@ -222,7 +217,6 @@ export const SendNotificationView = () => {
               )}
             />
 
-            {/* 5. Body */}
             <Controller
               name="body"
               control={control}

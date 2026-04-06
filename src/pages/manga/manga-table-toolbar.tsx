@@ -18,8 +18,6 @@ import { IConfigSourceModel } from '@src/types/config-source.type';
 import { ConfirmActionModal } from '@components/confirm-action-modal';
 import type { ConfirmActionConfig } from '@components/confirm-action-modal';
 
-// ----------------------------------------------------------------------
-
 const MANGA_ACTIONS: Record<string, ConfirmActionConfig> = {
   disable: {
     key: 'disable',

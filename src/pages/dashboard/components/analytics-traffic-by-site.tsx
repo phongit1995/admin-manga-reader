@@ -11,8 +11,6 @@ import { fShortenNumber } from 'src/utils/format-number';
 
 import { Iconify } from 'src/components/iconify';
 
-// ----------------------------------------------------------------------
-
 type Props = CardProps & {
   title?: string;
   subheader?: string;

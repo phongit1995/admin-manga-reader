@@ -2,8 +2,6 @@ import { CONFIG } from 'src/config-global';
 
 import { ConfigSourceView } from './ConfigSourceView';
 
-// ----------------------------------------------------------------------
-
 export default function ConfigSourcePage() {
   return (
     <>

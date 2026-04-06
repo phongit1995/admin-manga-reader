@@ -12,8 +12,6 @@ import Box from '@mui/material/Box';
 
 import { Iconify } from 'src/components/iconify';
 
-// ----------------------------------------------------------------------
-
 interface ConfirmDeleteModalProps {
   open: boolean;
   onClose: () => void;

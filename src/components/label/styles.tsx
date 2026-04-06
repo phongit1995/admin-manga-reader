@@ -6,8 +6,6 @@ import { styled } from '@mui/material/styles';
 
 import type { LabelProps } from './types';
 
-// ----------------------------------------------------------------------
-
 export const LabelRoot = styled('span', {
   shouldForwardProp: (prop: string) => !['color', 'variant', 'disabled', 'sx'].includes(prop),
 })<LabelProps>(({ color, variant, disabled, theme }) => {

@@ -19,8 +19,6 @@ import MenuItem, { menuItemClasses } from '@mui/material/MenuItem';
 import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
 
-// ----------------------------------------------------------------------
-
 type Props = CardProps & {
   title?: string;
   subheader?: string;
@@ -60,8 +58,6 @@ export function AnalyticsTasks({ title, subheader, list, sx, ...other }: Props) 
     </Card>
   );
 }
-
-// ----------------------------------------------------------------------
 
 type TaskItemProps = BoxProps & {
   selected: boolean;

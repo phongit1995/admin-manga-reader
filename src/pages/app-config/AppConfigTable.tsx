@@ -14,8 +14,6 @@ import AppConfigTableRow from "./AppConfigTableRow";
 import { CommonTableHead } from '@components/table';
 import { LoadingOverlay } from '@components/loading-overlay';
 
-// ----------------------------------------------------------------------
-
 const TABLE_HEAD = [
   { id: 'source', label: 'Source', width: 150 },
   { id: 'showFakeApp', label: 'Show Fake App', align: 'center' as const, width: 120 },
@@ -26,8 +24,6 @@ const TABLE_HEAD = [
   { id: 'updatedAt', label: 'Updated At', width: 120 },
   { id: 'actions', label: '', width: 100 },
 ];
-
-// ----------------------------------------------------------------------
 
 interface AppConfigTableProps {
   configList: IAppConfigModel[];
@@ -50,8 +46,7 @@ export default function AppConfigTable({
         toast.error('Config ID not found');
         return;
       }
-      
-      // Only send field to update
+
       const updateData = {
         showFakeApp: value
       };
@@ -61,8 +56,7 @@ export default function AppConfigTable({
       await AppConfigService.updateAppConfig(id, updateData);
       
       toast.success('Status updated successfully');
-      
-      // Call onStatusChange to refresh the list
+
       onStatusChange();
     } catch (error) {
       console.error(`Error updating status:`, error);

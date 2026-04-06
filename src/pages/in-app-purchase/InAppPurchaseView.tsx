@@ -64,8 +64,6 @@ const InAppPurchaseTableRow = ({ row, onDeleteClick }: InAppPurchaseTableRowProp
   </TableRow>
 );
 
-// ----------------------------------------------------------------------
-
 const TABLE_HEAD = [
   { id: 'source', label: 'Source', width: 100 },
   { id: 'bundleId', label: 'Bundle ID', width: 200 },
@@ -75,15 +73,12 @@ const TABLE_HEAD = [
   { id: '', label: '' },
 ];
 
-// ----------------------------------------------------------------------
-
 export default function InAppPurchaseView() {
   const [purchaseList, setPurchaseList] = useState<IInAppPurchaseModel[]>([]);
   const [loading, setLoading] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [selectedPurchase, setSelectedPurchase] = useState<IInAppPurchaseModel | null>(null);
   
-  // Pagination states
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [purchaseData, setPurchaseData] = useState<{total: number; data: IInAppPurchaseModel[]} | null>(null);
@@ -92,17 +87,15 @@ export default function InAppPurchaseView() {
     try {
       setLoading(true);
       const response = await InAppPurchaseService.getListInAppPurchase({
-        page: currentPage + 1, // API uses 1-based indexing
+        page: currentPage + 1,
         pageSize
       });
       
       if (response && response.data) {
         if (Array.isArray(response.data)) {
           setPurchaseList(response.data);
-          // If API doesn't return total, we'll just use the array length
           setPurchaseData({ total: response.data.length, data: response.data });
         } else if (response.data.data) {
-          // Handle paginated response format
           setPurchaseList(response.data.data);
           setPurchaseData(response.data);
         }
@@ -129,9 +122,8 @@ export default function InAppPurchaseView() {
     setSelectedPurchase(null);
   };
 
-  // Pagination handlers
   const handleChangePage = useCallback((event: React.ChangeEvent<unknown>, newPage: number) => {
-    setPage(newPage - 1); // Pagination component is 1-indexed, but our state is 0-indexed
+    setPage(newPage - 1);
   }, []);
 
   const totalPages = Math.ceil((purchaseData?.total || 0) / rowsPerPage);
@@ -185,7 +177,6 @@ export default function InAppPurchaseView() {
           </Table>
         </TableContainer>
 
-        {/* Pagination controls */}
         <Box
           sx={{
             p: 2,
@@ -196,14 +187,12 @@ export default function InAppPurchaseView() {
             gap: 2,
           }}
         >
-          {/* Show items information */}
           <Box>
             <Typography variant="body2" component="span">
               {`${page * rowsPerPage + 1} - ${Math.min((page + 1) * rowsPerPage, purchaseData?.total || 0)} of ${purchaseData?.total || 0} items`}
             </Typography>
           </Box>
-          
-          {/* Main pagination component */}
+
           <Pagination 
             page={page + 1} 
             count={totalPages}

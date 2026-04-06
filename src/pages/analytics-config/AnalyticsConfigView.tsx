@@ -30,8 +30,6 @@ import type { IAnalyticsConfigModel } from '@src/types/analytics.type';
 import AddAnalyticsConfigModal from './AddAnalyticsConfigModal';
 import EditAnalyticsConfigModal from './EditAnalyticsConfigModal';
 
-// ----------------------------------------------------------------------
-
 const TABLE_HEAD = [
   { id: 'no', label: 'NO', align: 'center' as const, width: 50 },
   { id: 'name', label: 'Name', width: 200 },
@@ -43,8 +41,6 @@ const TABLE_HEAD = [
   { id: 'createdAt', label: 'Created', width: 120 },
   { id: 'actions', label: '', width: 100 },
 ];
-
-// ─── Row ────────────────────────────────────────────────────────────────────
 
 function ConfigRow({
   row,
@@ -72,7 +68,6 @@ function ConfigRow({
 
   return (
     <TableRow hover>
-      {/* NO */}
       <TableCell align="center">
         <Typography variant="body2" color="text.secondary">
           {order}
@@ -103,7 +98,6 @@ function ConfigRow({
         </Typography>
       </TableCell>
 
-      {/* Index from API */}
       <TableCell align="center">
         <Typography variant="body2">{row.index ?? '-'}</Typography>
       </TableCell>
@@ -141,13 +135,10 @@ function ConfigRow({
   );
 }
 
-// ─── Main View ──────────────────────────────────────────────────────────────
-
 export default function AnalyticsConfigView() {
   const [configList, setConfigList] = useState<IAnalyticsConfigModel[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // Modals
   const [openAddModal, setOpenAddModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
@@ -173,7 +164,6 @@ export default function AnalyticsConfigView() {
     fetchConfigs();
   }, [fetchConfigs]);
 
-  // Toggle enable
   const handleToggleEnable = useCallback(
     async (id: string, enable: boolean) => {
       try {
@@ -188,7 +178,6 @@ export default function AnalyticsConfigView() {
     [fetchConfigs]
   );
 
-  // Edit
   const handleEdit = (config: IAnalyticsConfigModel) => {
     setSelectedConfig(config);
     setOpenEditModal(true);
@@ -199,7 +188,6 @@ export default function AnalyticsConfigView() {
     setSelectedConfig(null);
   };
 
-  // Delete
   const handleDelete = (config: IAnalyticsConfigModel) => {
     setSelectedConfig(config);
     setOpenDeleteModal(true);
@@ -267,14 +255,12 @@ export default function AnalyticsConfigView() {
         </TableContainer>
       </Card>
 
-      {/* Add Modal */}
       <AddAnalyticsConfigModal
         open={openAddModal}
         onClose={() => setOpenAddModal(false)}
         onSuccess={fetchConfigs}
       />
 
-      {/* Edit Modal */}
       <EditAnalyticsConfigModal
         open={openEditModal}
         onClose={handleCloseEditModal}
@@ -282,7 +268,6 @@ export default function AnalyticsConfigView() {
         config={selectedConfig}
       />
 
-      {/* Delete Modal */}
       <ConfirmDeleteModal
         open={openDeleteModal}
         onClose={handleCloseDeleteModal}

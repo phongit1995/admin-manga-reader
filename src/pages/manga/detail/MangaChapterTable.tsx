@@ -114,7 +114,6 @@ export default function MangaChapterTable({ mangaId }: MangaChapterTableProps) {
     setShowCopyAlert(false);
   };
 
-  // Render each chapter as a card for mobile view
   const renderChapterCard = (chapter: IChapterModel) => (
     <Card 
       key={chapter._id} 

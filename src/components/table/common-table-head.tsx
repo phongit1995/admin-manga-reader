@@ -3,8 +3,6 @@ import Checkbox from '@mui/material/Checkbox';
 import TableHead from '@mui/material/TableHead';
 import TableCell from '@mui/material/TableCell';
 
-// ----------------------------------------------------------------------
-
 export type HeadLabelItem = {
   id: string;
   label: string;
@@ -15,7 +13,6 @@ export type HeadLabelItem = {
 
 type CommonTableHeadProps = {
   headLabel: HeadLabelItem[];
-  // Checkbox select-all (optional — omit to hide checkbox column)
   rowCount?: number;
   numSelected?: number;
   onSelectAllClick?: (checked: boolean) => void;

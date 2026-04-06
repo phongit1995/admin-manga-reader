@@ -85,14 +85,12 @@ export default function AddAppNotificationModal({ open, onClose, onSuccess }: Ad
   const handleAddNotification = async (data: FormValues) => {
     try {
       setLoading(true);
-      
-      // Convert form data to match API request type
+
       const requestData: ICreateAppNotificationRequest = {
         packageId: data.packageId,
         platform: data.platform,
         link: data.link,
         isForce: data.isForce,
-        // Only include optional fields if they have values
         ...(data.title ? { title: data.title } : {}),
         ...(data.message ? { message: data.message } : {}),
         ...(data.version ? { version: data.version } : {})

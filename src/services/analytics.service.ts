@@ -10,9 +10,6 @@ import type {
 } from '@src/types/analytics.type';
 
 export class AnalyticsService {
-  // ── Config CRUD ──────────────────────────────────────────────────────────
-
-  /** GET  /v1/admin/analytics/config */
   static getListConfig = async () => {
     const response = await api.get<IApiResponse<IAnalyticsConfigModel[]>>(
       API_PATH_CONFIG.ANALYTICS_CONFIG
@@ -20,7 +17,6 @@ export class AnalyticsService {
     return response.data;
   };
 
-  /** POST /v1/admin/analytics/config  (multipart/form-data) */
   static createConfig = async (body: ICreateAnalyticsConfigRequest) => {
     const formData = new FormData();
     formData.append('name', body.name);
@@ -35,7 +31,6 @@ export class AnalyticsService {
     return response.data;
   };
 
-  /** PUT  /v1/admin/analytics/config/{id} */
   static updateConfig = async (id: string, body: IUpdateAnalyticsConfigRequest) => {
     const response = await api.put<IApiResponse<IAnalyticsConfigModel>>(
       `${API_PATH_CONFIG.ANALYTICS_CONFIG}/${id}`,
@@ -44,7 +39,6 @@ export class AnalyticsService {
     return response.data;
   };
 
-  /** DELETE /v1/admin/analytics/config/{id} */
   static deleteConfig = async (id: string) => {
     const response = await api.delete(
       `${API_PATH_CONFIG.ANALYTICS_CONFIG}/${id}`
@@ -52,9 +46,6 @@ export class AnalyticsService {
     return response.data;
   };
 
-  // ── Reports ──────────────────────────────────────────────────────────────
-
-  /** GET /v1/admin/analytics/report */
   static getReport = async (params: IAnalyticsReportQuery) => {
     const response = await api.get(
       API_PATH_CONFIG.ANALYTICS_REPORT,
@@ -63,7 +54,6 @@ export class AnalyticsService {
     return response.data;
   };
 
-  /** GET /v1/admin/analytics/realtime/{configId} */
   static getRealtimeReport = async (configId: string) => {
     const response = await api.get<IApiResponse<IAnalyticsRealtimeData>>(
       `${API_PATH_CONFIG.ANALYTICS_REALTIME}/${configId}`

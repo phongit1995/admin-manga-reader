@@ -18,8 +18,6 @@ import { AnalyticsService } from '@src/services/analytics.service';
 
 import type { IAnalyticsConfigModel } from '@src/types/analytics.type';
 
-// ----------------------------------------------------------------------
-
 const schema = yup
   .object({
     name: yup.string().required('Name is required'),
@@ -164,7 +162,6 @@ export default function EditAnalyticsConfigModal({
             )}
           />
 
-          {/* Read-only info */}
           {config && (
             <>
               <TextField

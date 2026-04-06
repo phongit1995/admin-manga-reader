@@ -22,8 +22,6 @@ import type {
   IAnalyticsRealtimeData,
 } from '@src/types/analytics.type';
 
-// ----------------------------------------------------------------------
-
 interface AnalyticsRealtimeProps {
   /** Render function receiving the widget cards to place inside Grid */
   children: (widgets: {
@@ -41,7 +39,6 @@ export function AnalyticsRealtime({ children }: AnalyticsRealtimeProps) {
   const [loading, setLoading] = useState(false);
   const [configsLoading, setConfigsLoading] = useState(true);
 
-  // Fetch config list
   useEffect(() => {
     const fetchConfigs = async () => {
       try {
@@ -68,7 +65,6 @@ export function AnalyticsRealtime({ children }: AnalyticsRealtimeProps) {
     fetchConfigs();
   }, []);
 
-  // Fetch realtime data
   const fetchRealtime = useCallback(async () => {
     if (!selectedConfigId) return;
     try {
@@ -90,20 +86,15 @@ export function AnalyticsRealtime({ children }: AnalyticsRealtimeProps) {
     fetchRealtime();
   }, [fetchRealtime]);
 
-  // Auto-refresh every 60s
   useEffect(() => {
     if (!selectedConfigId) return undefined;
     const interval = setInterval(fetchRealtime, 60_000);
     return () => clearInterval(interval);
   }, [selectedConfigId, fetchRealtime]);
 
-  // ── Loading / empty ──────────────────────────────────────────────────────
-
   if (configsLoading || configs.length === 0) return null;
 
   const countries = realtimeData?.countries ?? [];
-
-  // ── Config selector (inline, compact) ────────────────────────────────────
 
   const configSelect = (
     <Stack direction="row" alignItems="center" spacing={1}>
@@ -126,8 +117,6 @@ export function AnalyticsRealtime({ children }: AnalyticsRealtimeProps) {
       </Tooltip>
     </Stack>
   );
-
-  // ── Widgets ──────────────────────────────────────────────────────────────
 
   const activeUsers30min = (
     <RealtimeStatCard
@@ -155,8 +144,6 @@ export function AnalyticsRealtime({ children }: AnalyticsRealtimeProps) {
 
   return <>{children({ activeUsers30min, activeUsersToday, topCountries, configSelect })}</>;
 }
-
-// ─── Stat Card (matches AnalyticsWidgetSummary style) ────────────────────────
 
 function RealtimeStatCard({
   title,
@@ -211,8 +198,6 @@ function RealtimeStatCard({
     </Card>
   );
 }
-
-// ─── Top Countries (compact card) ────────────────────────────────────────────
 
 function TopCountriesCard({
   countries,

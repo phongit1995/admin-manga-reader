@@ -12,8 +12,6 @@ import { DashboardLayout } from 'src/layouts/dashboard';
 import { ERouterConfig } from 'src/config/router.config';
 import { ProtectedRoute } from 'src/routes/components';
 
-// ----------------------------------------------------------------------
-
 export const DashboardPage        = lazy(() => import('src/pages/dashboard'));
 export const UserPage             = lazy(() => import('src/pages/user'));
 export const MangaPage            = lazy(() => import('src/pages/manga'));

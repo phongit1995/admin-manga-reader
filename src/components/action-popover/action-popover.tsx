@@ -9,8 +9,6 @@ import { Iconify } from 'src/components/iconify';
 
 import type { IconifyName } from 'src/components/iconify';
 
-// ----------------------------------------------------------------------
-
 export type ActionMenuItem = {
   label: string;
   icon: IconifyName;

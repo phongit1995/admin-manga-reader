@@ -22,8 +22,6 @@ import { fToNow } from 'src/utils/format-time';
 import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
 
-// ----------------------------------------------------------------------
-
 type NotificationItemProps = {
   id: string;
   type: string;
@@ -159,8 +157,6 @@ export function NotificationsPopover({ data = [], sx, ...other }: NotificationsP
   );
 }
 
-// ----------------------------------------------------------------------
-
 function NotificationItem({ notification }: { notification: NotificationItemProps }) {
   const { avatarUrl, title } = renderContent(notification);
 
@@ -199,8 +195,6 @@ function NotificationItem({ notification }: { notification: NotificationItemProp
     </ListItemButton>
   );
 }
-
-// ----------------------------------------------------------------------
 
 function renderContent(notification: NotificationItemProps) {
   const title = (

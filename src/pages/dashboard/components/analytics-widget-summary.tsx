@@ -14,8 +14,6 @@ import { Iconify } from 'src/components/iconify';
 import { SvgColor } from 'src/components/svg-color';
 import { Chart, useChart } from 'src/components/chart';
 
-// ----------------------------------------------------------------------
-
 type Props = CardProps & {
   title: string;
   total: number;

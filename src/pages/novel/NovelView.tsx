@@ -32,8 +32,6 @@ import { TableEmptyRows, TableNoData, CommonTableHead, fDate } from '@components
 import { NovelTableRow } from "./novel-table-row";
 import { NovelTableToolbar } from "./novel-table-toolbar";
 
-// ----------------------------------------------------------------------
-
 const TABLE_HEAD = [
   { id: 'name', label: 'Name', width: 280 },
   { id: 'genres', label: 'Genres', width: 120 },
@@ -45,8 +43,6 @@ const TABLE_HEAD = [
   { id: 'enable', label: 'Enable', align: 'center' as const },
   { id: '', label: '' },
 ];
-
-// ----------------------------------------------------------------------
 
 export default function NovelView() {
   const theme = useTheme();
@@ -64,7 +60,6 @@ export default function NovelView() {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  // Fetch categories
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -211,7 +206,6 @@ export default function NovelView() {
   }, [page, rowsPerPage, fetchNovelList]);
 
   const handleResetImages = useCallback(async (_ids: string[]) => {
-    // TODO: API endpoint novel/reset-image does not exist in Swagger
     toast.warning('Reset images is not available for novels.');
   }, []);
 
@@ -220,7 +214,6 @@ export default function NovelView() {
   const emptyRowsCount = novelList.length === 0 ? rowsPerPage : 0;
   const totalPages = Math.ceil((novelData?.total || 0) / rowsPerPage);
 
-  // Mobile Card View renderer for each novel
   const renderNovelCard = (novel: INovelModel) => {
     const isSelected = selected.includes(novel._id);
     

@@ -8,8 +8,6 @@ import type {
 
 import type { CustomShadows } from './core/custom-shadows';
 
-// ----------------------------------------------------------------------
-
 /**
  * Theme options
  * Extended type that includes additional properties for color schemes and CSS variables.

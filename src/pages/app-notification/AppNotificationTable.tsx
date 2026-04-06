@@ -14,8 +14,6 @@ import AppNotificationTableRow from "./AppNotificationTableRow";
 import { CommonTableHead } from '@components/table';
 import { LoadingOverlay } from '@components/loading-overlay';
 
-// ----------------------------------------------------------------------
-
 const TABLE_HEAD = [
   { id: 'title', label: 'Title', width: 150 },
   { id: 'message', label: 'Message', width: 200 },
@@ -28,8 +26,6 @@ const TABLE_HEAD = [
   { id: 'createdAt', label: 'Created At', width: 120 },
   { id: 'actions', label: '', width: 100 },
 ];
-
-// ----------------------------------------------------------------------
 
 interface AppNotificationTableProps {
   notificationList: IAppNotificationModel[];
@@ -52,8 +48,7 @@ export default function AppNotificationTable({
         toast.error('Notification ID not found');
         return;
       }
-      
-      // Chỉ gửi field cần update
+
       const updateData = {
         [field]: value
       };
@@ -63,8 +58,7 @@ export default function AppNotificationTable({
       await AppNotificationService.updateAppNotification(id, updateData);
       
       toast.success(`${field === 'enable' ? 'Enable' : 'Force update'} status updated successfully`);
-      
-      // Call onStatusChange to refresh the list
+
       onStatusChange();
     } catch (error) {
       console.error(`Error updating ${field} status:`, error);

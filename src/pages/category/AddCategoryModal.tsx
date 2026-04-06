@@ -17,7 +17,6 @@ import { CategoryService } from "@src/services/category.service";
 import { toast } from "react-toastify";
 import { useState, useEffect } from 'react';
 
-// Define validation schema
 const schema = yup.object({
   name: yup.string().required('Name is required'),
   image: yup.string().required('Image URL is required'),
@@ -32,7 +31,7 @@ const schema = yup.object({
 interface AddCategoryProps {
   open: boolean;
   onClose: () => void;
-  onSuccess: () => void; // Callback to refresh the category list
+  onSuccess: () => void;
 }
 
 export default function AddCategory({ open, onClose, onSuccess }: AddCategoryProps) {
@@ -50,7 +49,7 @@ export default function AddCategory({ open, onClose, onSuccess }: AddCategoryPro
       image: '',
       index: 0
     },
-    mode: 'onChange' // Validate on change for better UX
+    mode: 'onChange'
   });
 
   useEffect(() => {
@@ -96,7 +95,6 @@ export default function AddCategory({ open, onClose, onSuccess }: AddCategoryPro
     }
   };
 
-  // Only close if not loading
   const handleDialogClose = (event: any, reason: string) => {
     if (reason !== 'backdropClick' || !loading) {
       handleClose();

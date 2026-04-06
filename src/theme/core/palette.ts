@@ -6,40 +6,26 @@ import { themeConfig } from '../theme-config';
 
 import type { ThemeColorScheme } from '../types';
 
-// ----------------------------------------------------------------------
-
-/**
- * TypeScript (type definition and extension)
- * @to {@link file://./../extend-theme-types.d.ts}
- */
-
-// Keys for the palette colors
 export type PaletteColorKey = 'primary' | 'secondary' | 'info' | 'success' | 'warning' | 'error';
 
-// Palette color without additional channels
 export type PaletteColorNoChannels = Omit<PaletteColor, 'lighterChannel' | 'darkerChannel'>;
 
-// Palette color with additional channels
 export type PaletteColorWithChannels = PaletteColor & PaletteColorChannel;
 
-// Extended common colors
 export type CommonColorsExtend = {
   whiteChannel: string;
   blackChannel: string;
 };
 
-// Extended text colors
 export type TypeTextExtend = {
   disabledChannel: string;
 };
 
-// Extended background colors
 export type TypeBackgroundExtend = {
   neutral: string;
   neutralChannel: string;
 };
 
-// Extended palette colors
 export type PaletteColorExtend = {
   lighter: string;
   darker: string;
@@ -47,7 +33,6 @@ export type PaletteColorExtend = {
   darkerChannel: string;
 };
 
-// Extended grey channels
 export type GreyExtend = {
   '50Channel': string;
   '100Channel': string;
@@ -61,33 +46,22 @@ export type GreyExtend = {
   '900Channel': string;
 };
 
-// ----------------------------------------------------------------------
-
-// Primary color
 export const primary = createPaletteChannel(themeConfig.palette.primary);
 
-// Secondary color
 export const secondary = createPaletteChannel(themeConfig.palette.secondary);
 
-// Info color
 export const info = createPaletteChannel(themeConfig.palette.info);
 
-// Success color
 export const success = createPaletteChannel(themeConfig.palette.success);
 
-// Warning color
 export const warning = createPaletteChannel(themeConfig.palette.warning);
 
-// Error color
 export const error = createPaletteChannel(themeConfig.palette.error);
 
-// Common color
 export const common = createPaletteChannel(themeConfig.palette.common);
 
-// Grey color
 export const grey = createPaletteChannel(themeConfig.palette.grey);
 
-// Text color
 export const text = {
   light: createPaletteChannel({
     primary: grey[800],
@@ -96,7 +70,6 @@ export const text = {
   }),
 };
 
-// Background color
 export const background = {
   light: createPaletteChannel({
     paper: '#FFFFFF',
@@ -105,7 +78,6 @@ export const background = {
   }),
 };
 
-// Base action color
 export const baseAction = {
   hover: varAlpha(grey['500Channel'], 0.08),
   selected: varAlpha(grey['500Channel'], 0.16),
@@ -116,14 +88,10 @@ export const baseAction = {
   disabledOpacity: 0.48,
 };
 
-// Action color
 export const action = {
   light: { ...baseAction, active: grey[600] },
 };
 
-// ----------------------------------------------------------------------
-
-// Base palette
 export const basePalette = {
   primary,
   secondary,

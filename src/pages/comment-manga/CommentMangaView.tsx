@@ -34,8 +34,6 @@ import { CommentMangaService } from '@src/services/comment-manga.service';
 import type { ICommentMangaModel } from '@src/types/comment-manga.type';
 import type { IResponsePage } from '@src/types';
 
-// ----------------------------------------------------------------------
-
 const TABLE_HEAD = [
   { id: 'user', label: 'User', width: 180 },
   { id: 'content', label: 'Content', width: 320 },
@@ -47,8 +45,6 @@ const TABLE_HEAD = [
   { id: 'createdAt', label: 'Date', width: 130 },
   { id: 'actions', label: '', width: 50 },
 ];
-
-// ─── Row Component ──────────────────────────────────────────────────────────
 
 function CommentRow({
   row,
@@ -72,7 +68,6 @@ function CommentRow({
 
   return (
     <TableRow hover sx={!row.enable ? { opacity: 0.5 } : undefined}>
-      {/* User */}
       <TableCell>
         <Stack direction="row" alignItems="center" spacing={1.5}>
           <Avatar
@@ -93,7 +88,6 @@ function CommentRow({
         </Stack>
       </TableCell>
 
-      {/* Content */}
       <TableCell>
         <Typography
           variant="body2"
@@ -112,7 +106,6 @@ function CommentRow({
         )}
       </TableCell>
 
-      {/* Manga */}
       <TableCell>
         <Stack direction="row" alignItems="center" spacing={1}>
           <Avatar
@@ -127,22 +120,18 @@ function CommentRow({
         </Stack>
       </TableCell>
 
-      {/* Source */}
       <TableCell>
         <Chip label={row.source} size="small" variant="outlined" />
       </TableCell>
 
-      {/* Likes */}
       <TableCell align="center">
         <Typography variant="body2">{row.likeCount}</Typography>
       </TableCell>
 
-      {/* Replies */}
       <TableCell align="center">
         <Typography variant="body2">{row.replyCount}</Typography>
       </TableCell>
 
-      {/* Enable */}
       <TableCell align="center">
         <Switch
           checked={row.enable}
@@ -152,7 +141,6 @@ function CommentRow({
         />
       </TableCell>
 
-      {/* Date */}
       <TableCell>
         <Typography variant="caption" color="text.secondary">
           {dayjs(row.createdAt).format('DD/MM/YYYY')}
@@ -163,7 +151,6 @@ function CommentRow({
         </Typography>
       </TableCell>
 
-      {/* Actions */}
       <TableCell align="center">
         {row.replyCount > 0 && (
           <Tooltip title="View replies">
@@ -176,8 +163,6 @@ function CommentRow({
     </TableRow>
   );
 }
-
-// ─── Replies Inline Panel ───────────────────────────────────────────────────
 
 function RepliesPanel({
   parentComment,
@@ -308,8 +293,6 @@ function ReplyItem({
   );
 }
 
-// ─── Main View ──────────────────────────────────────────────────────────────
-
 export default function CommentMangaView() {
   const [commentList, setCommentList] = useState<ICommentMangaModel[]>([]);
   const [commentData, setCommentData] = useState<IResponsePage<ICommentMangaModel> | null>(null);
@@ -373,7 +356,6 @@ export default function CommentMangaView() {
     setExpandedComment(null);
   }, []);
 
-  // Client-side search filter (filter currently loaded page)
   const filtered = filterSearch
     ? commentList.filter(
         (c) =>
@@ -393,7 +375,6 @@ export default function CommentMangaView() {
       </Box>
 
       <Card>
-        {/* Toolbar */}
         <Toolbar
           sx={{
             height: 76,
@@ -419,7 +400,6 @@ export default function CommentMangaView() {
           </Typography>
         </Toolbar>
 
-        {/* Table */}
         <TableContainer sx={{ position: 'relative', overflow: 'unset', minHeight: 200 }}>
           <LoadingOverlay loading={loading} />
           <Table sx={{ minWidth: 960 }}>
@@ -462,7 +442,6 @@ export default function CommentMangaView() {
           </Table>
         </TableContainer>
 
-        {/* Pagination */}
         <Box
           sx={{
             p: 2,

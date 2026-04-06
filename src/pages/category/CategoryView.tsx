@@ -78,8 +78,6 @@ const CategoryTableRow = ({ row, selected, onSelectRow, onDeleteClick }: Categor
   </TableRow>
 );
 
-// ----------------------------------------------------------------------
-
 const TABLE_HEAD = [
   { id: 'name', label: 'Name', width: 280 },
   { id: 'image', label: 'Image', width: 100 },
@@ -89,8 +87,6 @@ const TABLE_HEAD = [
   { id: 'index', label: 'Index', align: 'center' as const, width: 80 },
   { id: '', label: '' },
 ];
-
-// ----------------------------------------------------------------------
 
 export const CategoryView = () => {
   const [selected, setSelected] = useState<string[]>([]);

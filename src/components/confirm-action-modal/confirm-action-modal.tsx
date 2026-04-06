@@ -13,8 +13,6 @@ import { Iconify } from 'src/components/iconify';
 
 import type { IconifyName } from 'src/components/iconify';
 
-// ----------------------------------------------------------------------
-
 export interface ConfirmActionConfig {
   key: string;
   label: string;

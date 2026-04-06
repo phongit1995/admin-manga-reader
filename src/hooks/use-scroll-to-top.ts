@@ -2,8 +2,6 @@ import { useEffect } from 'react';
 
 import { usePathname } from './use-pathname';
 
-// ----------------------------------------------------------------------
-
 /**
  * Tự động scroll về đầu trang mỗi khi route thay đổi.
  * Usage: đặt trong App.tsx hoặc layout root.

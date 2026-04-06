@@ -9,8 +9,6 @@ import { ChartLoading } from './components';
 
 import type { ChartProps } from './types';
 
-// ----------------------------------------------------------------------
-
 const LazyChart = lazy(() =>
   import('react-apexcharts').then((module) => ({ default: module.default }))
 );
@@ -37,8 +35,6 @@ export function Chart({ type, series, options, slotProps, className, sx, ...othe
     </ChartRoot>
   );
 }
-
-// ----------------------------------------------------------------------
 
 const ChartRoot = styled('div')(({ theme }) => ({
   width: '100%',

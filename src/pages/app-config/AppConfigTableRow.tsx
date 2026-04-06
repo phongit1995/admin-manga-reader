@@ -37,7 +37,6 @@ export default function AppConfigTableRow({
     }
   };
 
-  // Function to display JSON objects in a readable format
   const formatJsonObject = (obj: object | undefined) => {
     if (!obj) return '-';
     try {

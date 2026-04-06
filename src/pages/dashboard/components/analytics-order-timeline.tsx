@@ -13,8 +13,6 @@ import TimelineItem, { timelineItemClasses } from '@mui/lab/TimelineItem';
 
 import { fDateTime } from 'src/utils/format-time';
 
-// ----------------------------------------------------------------------
-
 type Props = CardProps & {
   title?: string;
   subheader?: string;
@@ -41,8 +39,6 @@ export function AnalyticsOrderTimeline({ title, subheader, list, sx, ...other }:
     </Card>
   );
 }
-
-// ----------------------------------------------------------------------
 
 type ItemProps = TimelineItemProps & {
   lastItem: boolean;

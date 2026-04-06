@@ -86,8 +86,6 @@ const ConfigSourceTableRow = ({ row, onEditClick, onDeleteClick, onToggleEnable 
   );
 };
 
-// ----------------------------------------------------------------------
-
 const TABLE_HEAD = [
   { id: 'name', label: 'Name', width: 180 },
   { id: 'key', label: 'Key', width: 150 },
@@ -97,8 +95,6 @@ const TABLE_HEAD = [
   { id: 'updatedAt', label: 'Updated At' },
   { id: '', label: '' },
 ];
-
-// ----------------------------------------------------------------------
 
 export const ConfigSourceView = () => {
   const [configSourceList, setConfigSourceList] = useState<IConfigSourceModel[]>([]);
@@ -165,23 +161,19 @@ export const ConfigSourceView = () => {
         return;
       }
       
-      // Only send the field that needs updating
       const updateData = {
         enable: value
       };
-      
-      console.log(`Updating enable to ${value}`);
-      
+
       await ConfigSourceService.updateConfigSource(id, updateData);
       
       toast.success('Enable status updated successfully');
-      
-      // Refresh the list
+
       fetchConfigSourceList();
     } catch (error) {
       console.error('Error updating enable status:', error);
       toast.error('Failed to update enable status');
-      throw error; // Re-throw so the component can handle its own state
+      throw error;
     }
   };
 

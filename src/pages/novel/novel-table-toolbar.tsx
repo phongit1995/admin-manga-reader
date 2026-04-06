@@ -17,8 +17,6 @@ import { TYPE_SORT_NOVEL } from '@src/types/novel.type';
 import { ConfirmActionModal } from '@components/confirm-action-modal';
 import type { ConfirmActionConfig } from '@components/confirm-action-modal';
 
-// ----------------------------------------------------------------------
-
 const NOVEL_ACTIONS: Record<string, ConfirmActionConfig> = {
   disable: {
     key: 'disable',

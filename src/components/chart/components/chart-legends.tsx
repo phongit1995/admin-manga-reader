@@ -4,8 +4,6 @@ import { styled } from '@mui/material/styles';
 
 import { chartClasses } from '../classes';
 
-// ----------------------------------------------------------------------
-
 export type ChartLegendsProps = React.ComponentProps<typeof ListRoot> & {
   labels?: string[];
   colors?: string[];
@@ -74,8 +72,6 @@ export function ChartLegends({
     </ListRoot>
   );
 }
-
-// ----------------------------------------------------------------------
 
 const ListRoot = styled('ul')(({ theme }) => ({
   display: 'flex',

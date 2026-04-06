@@ -6,8 +6,6 @@ import Box from '@mui/material/Box';
 
 import { layoutClasses } from '../core/classes';
 
-// ----------------------------------------------------------------------
-
 export type AuthContentProps = BoxProps;
 
 export function AuthContent({ sx, children, className, ...other }: AuthContentProps) {

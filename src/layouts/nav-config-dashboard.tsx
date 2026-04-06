@@ -2,8 +2,6 @@ import { Icon } from '@iconify/react';
 
 import { ERouterConfig } from 'src/config/router.config';
 
-// ----------------------------------------------------------------------
-
 const icon = (name: string, size = 24) => <Icon icon={name} width={size} height={size} />;
 
 export type NavItem = {

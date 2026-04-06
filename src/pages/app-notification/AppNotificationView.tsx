@@ -23,8 +23,7 @@ export default function AppNotificationView() {
   const [openEditModal, setOpenEditModal] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [selectedNotification, setSelectedNotification] = useState<IAppNotificationModel | null>(null);
-  
-  // Pagination states
+
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [notificationData, setNotificationData] = useState<{total: number; data: IAppNotificationModel[]} | null>(null);
@@ -52,8 +51,7 @@ export default function AppNotificationView() {
   useEffect(() => {
     fetchNotificationList(page, rowsPerPage);
   }, [fetchNotificationList, page, rowsPerPage]);
-  
-  // Refresh data after status change
+
   const handleStatusChange = useCallback(() => {
     fetchNotificationList(page, rowsPerPage);
   }, [fetchNotificationList, page, rowsPerPage]);
@@ -86,7 +84,6 @@ export default function AppNotificationView() {
     setSelectedNotification(null);
   };
 
-  // Pagination handlers
   const handleChangePage = useCallback((event: React.ChangeEvent<unknown>, newPage: number) => {
     setPage(newPage - 1); // Pagination component is 1-indexed, but our state is 0-indexed
   }, []);

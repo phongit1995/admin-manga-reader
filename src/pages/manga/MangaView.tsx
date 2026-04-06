@@ -34,8 +34,6 @@ import { TableEmptyRows, TableNoData, CommonTableHead, fDate } from '@components
 import { MangaTableRow } from "./manga-table-row";
 import { MangaTableToolbar } from "./manga-table-toolbar";
 
-// ----------------------------------------------------------------------
-
 const TABLE_HEAD = [
   { id: 'name', label: 'Name', width: 280 },
   { id: 'genres', label: 'Genres', width: 120 },
@@ -47,8 +45,6 @@ const TABLE_HEAD = [
   { id: 'enable', label: 'Enable', align: 'center' as const },
   { id: '', label: '' },
 ];
-
-// ----------------------------------------------------------------------
 
 export default function MangaView() {
   const theme = useTheme();
@@ -68,7 +64,6 @@ export default function MangaView() {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  // Fetch categories and sources
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -255,7 +250,6 @@ export default function MangaView() {
   const emptyRowsCount = mangaList.length === 0 ? rowsPerPage : 0;
   const totalPages = Math.ceil((mangaData?.total || 0) / rowsPerPage);
 
-  // Mobile Card View renderer for each manga
   const renderMangaCard = (manga: IMangaModel) => {
     const isSelected = selected.includes(manga._id);
     

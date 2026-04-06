@@ -103,8 +103,7 @@ export default function EditAppConfigModal({
       }
       
       setLoading(true);
-      
-      // Parse JSON strings to objects for API
+
       let readImageHeaderObj;
       let imageHeaderObj;
       
@@ -129,12 +128,10 @@ export default function EditAppConfigModal({
         setLoading(false);
         return;
       }
-      
-      // Convert form data to match API request type
+
       const requestData: IUpdateAppConfigRequest = {
         source: data.source,
         showFakeApp: data.showFakeApp,
-        // Only include optional fields if they have values
         ...(data.imageResource ? { imageResource: data.imageResource } : {}),
         ...(readImageHeaderObj ? { readImageHeader: readImageHeaderObj } : {}),
         imageHeader: imageHeaderObj

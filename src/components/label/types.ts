@@ -1,7 +1,5 @@
 import type { Theme, SxProps } from '@mui/material/styles';
 
-// ----------------------------------------------------------------------
-
 export type LabelColor =
   | 'default'
   | 'primary'

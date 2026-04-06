@@ -3,8 +3,6 @@ import type { CommonColors } from '@mui/material/styles';
 import type { ThemeCssVariables } from './types';
 import type { PaletteColorNoChannels } from './core/palette';
 
-// ----------------------------------------------------------------------
-
 type ThemeConfig = {
   classesPrefix: string;
   cssVariables: ThemeCssVariables;
@@ -22,20 +20,11 @@ type ThemeConfig = {
 };
 
 export const themeConfig: ThemeConfig = {
-  /** **************************************
-   * Base
-   *************************************** */
   classesPrefix: 'minimal',
-  /** **************************************
-   * Typography
-   *************************************** */
   fontFamily: {
     primary: 'DM Sans Variable',
     secondary: 'Barlow',
   },
-  /** **************************************
-   * Palette
-   *************************************** */
   palette: {
     primary: {
       lighter: '#D0ECFE',
@@ -99,9 +88,6 @@ export const themeConfig: ThemeConfig = {
     },
     common: { black: '#000000', white: '#FFFFFF' },
   },
-  /** **************************************
-   * Css variables
-   *************************************** */
   cssVariables: {
     cssVarPrefix: '',
     colorSchemeSelector: 'data-color-scheme',

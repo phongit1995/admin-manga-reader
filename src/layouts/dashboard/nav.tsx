@@ -20,8 +20,6 @@ import { Scrollbar } from 'src/components/scrollbar';
 
 import type { NavItem } from '../nav-config-dashboard';
 
-// ----------------------------------------------------------------------
-
 export type NavContentProps = {
   data: NavItem[];
   slots?: {
@@ -63,8 +61,6 @@ export function NavDesktop({
     </Box>
   );
 }
-
-// ----------------------------------------------------------------------
 
 export function NavMobile({
   sx,
@@ -111,19 +107,13 @@ export function NavMobile({
   );
 }
 
-// ----------------------------------------------------------------------
-
 export function NavContent({ data, slots, sx }: NavContentProps) {
   const pathname = usePathname();
   const [openItems, setOpenItems] = useState<Record<string, boolean>>({});
 
-  // Initialize expanded state for parent items marked as expanded
-  // and close all other items when navigating
   useEffect(() => {
     const initialOpenState: Record<string, boolean> = {};
-    
-    // Close all items by default when path changes
-    // Only keep open the parent of the active item
+
     data.forEach(item => {
       if (item.children) {
         const isChildActive = item.children.some(child => child.path === pathname);

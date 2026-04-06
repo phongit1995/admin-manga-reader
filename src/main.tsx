@@ -6,8 +6,6 @@ import App from './App';
 import { routesSection } from './routes/sections';
 import { ErrorBoundary } from './routes/components';
 
-// ----------------------------------------------------------------------
-
 const router = createBrowserRouter([
   {
     Component: () => (

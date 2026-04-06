@@ -10,8 +10,6 @@ import { RouterLink } from 'src/routes/components';
 
 import { logoClasses } from './classes';
 
-// ----------------------------------------------------------------------
-
 export type LogoProps = LinkProps & {
   isSingle?: boolean;
   disabled?: boolean;
@@ -186,8 +184,6 @@ export function Logo({
     </LogoRoot>
   );
 }
-
-// ----------------------------------------------------------------------
 
 const LogoRoot = styled(Link)(() => ({
   flexShrink: 0,

@@ -19,8 +19,6 @@ import { ERouterConfig } from 'src/config/router.config';
 import { AdminAuthService } from '@src/services';
 import { _myAccount } from 'src/_mock';
 
-// ----------------------------------------------------------------------
-
 export type AccountPopoverProps = IconButtonProps & {
   data?: {
     label: string;

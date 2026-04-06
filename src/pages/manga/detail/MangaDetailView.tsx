@@ -13,7 +13,6 @@ export default function MangaDetailView() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Simulate loading
         const timer = setTimeout(() => {
             setLoading(false);
         }, 500);

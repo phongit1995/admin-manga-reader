@@ -56,7 +56,6 @@ export function UserTableRow({
     }
   };
 
-  // Check VIP: isVip flag OR vipTime is in the future
   const isVipActive = row.isVip || (row.vipTime && new Date(row.vipTime) > new Date());
 
   const formatDateTime = (dateString: string) => dayjs(dateString).format('DD/MM/YYYY HH:mm');
