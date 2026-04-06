@@ -7,3 +7,4 @@ export * from './admin-user.service';
 export * from './app-update.service';
 export * from './comment-manga.service';
 export * from './chapter-novel.service';
+export * from './analytics.service';

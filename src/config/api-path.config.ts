@@ -53,4 +53,9 @@ export const API_PATH_CONFIG = {
     // Chapter Novel
     CHAPTER_NOVEL: 'v1/admin/chapter-novel',
 
+    // Analytics
+    ANALYTICS_CONFIG: 'v1/admin/analytics/config',
+    ANALYTICS_REPORT: 'v1/admin/analytics/report',
+    ANALYTICS_REALTIME: 'v1/admin/analytics/realtime',
+
 }

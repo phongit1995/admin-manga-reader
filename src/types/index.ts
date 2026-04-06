@@ -8,4 +8,5 @@ export * from './admin-user.type';
 export * from './app-update.type';
 export * from './comment-manga.type';
 export * from './chapter-novel.type';
+export * from './analytics.type';
 

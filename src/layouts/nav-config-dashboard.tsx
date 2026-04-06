@@ -92,6 +92,11 @@ export const navData: NavItem[] = [
         path: ERouterConfig.REDEEM_CODE,
         icon: icon('material-symbols:confirmation-number-outline', 20),
       },
+      {
+        title: 'Analytics Config',
+        path: ERouterConfig.ANALYTICS_CONFIG,
+        icon: icon('material-symbols:analytics-outline', 20),
+      },
     ],
   },
   {

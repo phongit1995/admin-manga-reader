@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
+import Stack from '@mui/material/Stack';
 
 import { DashboardContent } from 'src/layouts/dashboard';
 import { StatisticsService } from '@src/services';
 import type { IStatisticsCommon } from 'src/types';
 
 import { AnalyticsWidgetSummary } from './components/analytics-widget-summary';
+import { AnalyticsRealtime } from './components/analytics-realtime';
 
 export function OverviewAnalyticsView() {
   const [statistics, setStatistics] = useState<IStatisticsCommon | null>(null);
@@ -28,10 +30,10 @@ export function OverviewAnalyticsView() {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric' 
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
     });
   };
 
@@ -104,6 +106,30 @@ export function OverviewAnalyticsView() {
           />
         </Grid>
       </Grid>
+
+      {/* Analytics Realtime — same grid style */}
+      <AnalyticsRealtime>
+        {({ activeUsers30min, activeUsersToday, topCountries, configSelect }) => (
+          <>
+            <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mt: 5, mb: 3 }}>
+              <Typography variant="h5">Realtime Analytics</Typography>
+              {configSelect}
+            </Stack>
+
+            <Grid container spacing={3}>
+              <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                {activeUsers30min}
+              </Grid>
+              <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                {activeUsersToday}
+              </Grid>
+              <Grid size={{ xs: 12, sm: 6, md: 6 }}>
+                {topCountries}
+              </Grid>
+            </Grid>
+          </>
+        )}
+      </AnalyticsRealtime>
     </DashboardContent>
   );
 }

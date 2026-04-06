@@ -14,6 +14,7 @@ export enum ERouterConfig {
     CONFIG_SOURCE        = '/config-source',
     APP_CONFIG           = '/app-config',
     PLATFORM_CONFIG      = '/platform-config',
+    ANALYTICS_CONFIG     = '/analytics-config',
     IN_APP_PURCHASE      = '/in-app-purchase',
 
     // ── Notification ──────────────────────────────────────────────────────
