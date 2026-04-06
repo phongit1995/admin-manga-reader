@@ -19,3 +19,9 @@ export interface ICreateCategoryRequest {
     image: string;
     index: number;
 }
+
+export interface IUpdateCategoryRequest {
+    name?: string;
+    image?: string;
+    index?: number;
+}

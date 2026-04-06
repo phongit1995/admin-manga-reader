@@ -31,6 +31,11 @@ export const navData: NavItem[] = [
     icon: icon('material-symbols:book-outline'),
   },
   {
+    title: 'Manga Comments',
+    path: ERouterConfig.COMMENT_MANGA,
+    icon: icon('solar:chat-round-dots-bold'),
+  },
+  {
     title: 'Category',
     path: ERouterConfig.CATEGORY,
     icon: icon('material-symbols:category-outline'),
@@ -85,7 +90,7 @@ export const navData: NavItem[] = [
       {
         title: 'Redeem Code',
         path: ERouterConfig.REDEEM_CODE,
-        icon: icon('material-symbols:redeem-outline', 20),
+        icon: icon('material-symbols:confirmation-number-outline', 20),
       },
     ],
   },

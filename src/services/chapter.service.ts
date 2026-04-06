@@ -11,5 +11,10 @@ export class ChapterService {
         );
         return response.data;
     }
+
+    static deleteChapter = async (id: string) => {
+        const response = await api.delete(`${API_PATH_CONFIG.CHAPTER}/${id}`);
+        return response.data;
+    }
 }
 

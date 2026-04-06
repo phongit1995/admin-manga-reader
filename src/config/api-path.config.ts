@@ -12,7 +12,6 @@ export const API_PATH_CONFIG = {
     NOVEL: 'v1/admin/novel',
     NOVEL_DISABLE: 'v1/admin/novel/disable',
     NOVEL_ENABLE: 'v1/admin/novel/enable',
-    NOVEL_RESET_IMAGE: 'v1/admin/novel/reset-image',
     
     // Others
     CATEGORY: 'v1/admin/category',
@@ -22,13 +21,10 @@ export const API_PATH_CONFIG = {
     IN_APP_PURCHASE: 'v1/admin/in-app-purchase',
     NOTIFICATION_SOURCE: 'v1/admin/notification-source',
     APP_NOTIFICATION: 'v1/admin/app-notification',
-    SOURCE: 'v1/admin/source',
-    SEARCH: 'v1/admin/search',
-    GENRE: 'v1/admin/genre',
-    AUTHOR: 'v1/admin/author',
     USER: 'v1/admin/user',
     USER_UPDATE_COIN: 'v1/admin/user/:id/coin',
     USER_UPDATE_PASSWORD: 'v1/admin/user/:id/password',
+    USER_DISABLE: 'v1/admin/user/:id/disable',
     STATISTICS_COMMON: 'v1/admin/statistics/common',
 
     // Platform Config
@@ -44,5 +40,17 @@ export const API_PATH_CONFIG = {
     REDEEM_CODE_STATS: 'v1/admin/redeem-code/stats',
     REDEEM_CODE_DISABLE: 'v1/admin/redeem-code/disable',
     REDEEM_CODE_DEVICE_HISTORY: 'v1/admin/redeem-code/device',
-    
+
+    // Admin User Management
+    ADMIN_USER: 'v1/admin/admin-user',
+
+    // App Update
+    APP_UPDATE: 'v1/admin/app-update',
+
+    // Comment Manga
+    COMMENT_MANGA: 'v1/admin/comment-manga',
+
+    // Chapter Novel
+    CHAPTER_NOVEL: 'v1/admin/chapter-novel',
+
 }

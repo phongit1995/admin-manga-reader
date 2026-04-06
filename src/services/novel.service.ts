@@ -19,10 +19,5 @@ export class NovelService {
         return response.data;
     }
 
-    static resetImage = async (ids: string[]) => {
-        const response = await api.put(API_PATH_CONFIG.NOVEL_RESET_IMAGE, { ids });
-        return response.data;
-    }
-    
 }
 

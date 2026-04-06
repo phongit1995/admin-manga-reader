@@ -28,6 +28,7 @@ export const AppNotificationPage  = lazy(() => import('src/pages/app-notificatio
 export const PlatformConfigPage   = lazy(() => import('src/pages/platform-config'));
 export const SendNotificationPage = lazy(() => import('src/pages/send-notification'));
 export const RedeemCodePage       = lazy(() => import('src/pages/redeem-code'));
+export const CommentMangaPage     = lazy(() => import('src/pages/comment-manga'));
 export const SignInPage           = lazy(() => import('src/pages/sign-in'));
 export const Page404              = lazy(() => import('src/pages/not-found'));
 
@@ -77,6 +78,7 @@ export const routesSection: RouteObject[] = [
       { path: ERouterConfig.PLATFORM_CONFIG, element: <PlatformConfigPage /> },
       { path: ERouterConfig.SEND_NOTIFICATION, element: <SendNotificationPage /> },
       { path: ERouterConfig.REDEEM_CODE, element: <RedeemCodePage /> },
+      { path: ERouterConfig.COMMENT_MANGA, element: <CommentMangaPage /> },
     ],
   },
   {

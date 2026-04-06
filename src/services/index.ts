@@ -3,3 +3,7 @@ export * from './manga.service';
 export * from './novel.service';
 export * from './user.service';
 export * from './statistics.service';
+export * from './admin-user.service';
+export * from './app-update.service';
+export * from './comment-manga.service';
+export * from './chapter-novel.service';

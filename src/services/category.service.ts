@@ -2,7 +2,7 @@ import type { IApiResponse } from "src/types";
 
 import { api } from "@api/api";
 import { API_PATH_CONFIG } from "@config/api-path.config";
-import { ICategoryModel, ICreateCategoryRequest } from "@src/types/category.type";
+import { ICategoryModel, ICreateCategoryRequest, IUpdateCategoryRequest } from "@src/types/category.type";
 
 export class CategoryService {
     static getListCategory = async () => {
@@ -12,6 +12,11 @@ export class CategoryService {
 
     static createCategory = async (body:ICreateCategoryRequest) => {
         const response = await api.post<IApiResponse<ICategoryModel>>(API_PATH_CONFIG.CATEGORY, body);
+        return response.data;
+    }
+
+    static updateCategory = async (id: string, body: IUpdateCategoryRequest) => {
+        const response = await api.put<IApiResponse<ICategoryModel>>(API_PATH_CONFIG.CATEGORY + "/" + id, body);
         return response.data;
     }
 

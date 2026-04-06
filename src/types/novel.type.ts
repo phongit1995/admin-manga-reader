@@ -9,7 +9,6 @@ export enum TYPE_SORT_NOVEL {
 
 export interface IListNovelQuery extends IApiPageQuery {
     genres?: string;
-    type?: number;
     sort?: number;
     search?: string;
     status?: number;

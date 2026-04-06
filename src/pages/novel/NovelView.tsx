@@ -210,21 +210,10 @@ export default function NovelView() {
     }
   }, [page, rowsPerPage, fetchNovelList]);
 
-  const handleResetImages = useCallback(async (ids: string[]) => {
-    try {
-      const response = await NovelService.resetImage(ids);
-      if (response) {
-        toast.success(`Successfully reset images for ${ids.length} novel${ids.length > 1 ? 's' : ''}`);
-        fetchNovelList(page, rowsPerPage);
-        setSelected([]);
-      } else {
-        toast.error('Failed to reset images. Please try again.');
-      }
-    } catch (error) {
-      console.error('Error resetting novel images:', error);
-      toast.error('An error occurred while resetting novel images.');
-    }
-  }, [page, rowsPerPage, fetchNovelList]);
+  const handleResetImages = useCallback(async (_ids: string[]) => {
+    // TODO: API endpoint novel/reset-image does not exist in Swagger
+    toast.warning('Reset images is not available for novels.');
+  }, []);
 
   const dataFiltered = novelList;
   const notFound = !dataFiltered.length && !!filterName;

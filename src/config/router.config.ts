@@ -4,6 +4,7 @@ export enum ERouterConfig {
     MANGA_DETAIL         = '/manga/:id',
     NOVEL                = '/novel',
     NOVEL_DETAIL         = '/novel/:id',
+    COMMENT_MANGA        = '/comment-manga',
     CATEGORY             = '/category',
 
     // ── User ─────────────────────────────────────────────────────────────
