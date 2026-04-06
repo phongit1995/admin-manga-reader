@@ -1,12 +1,7 @@
-import { useState, useCallback } from 'react';
 import dayjs from 'dayjs';
 
 import Box from '@mui/material/Box';
 import Checkbox from '@mui/material/Checkbox';
-import IconButton from '@mui/material/IconButton';
-import MenuItem, { menuItemClasses } from '@mui/material/MenuItem';
-import MenuList from '@mui/material/MenuList';
-import Popover from '@mui/material/Popover';
 import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
@@ -16,7 +11,7 @@ import Badge from '@mui/material/Badge';
 
 import { IUserModel } from 'src/types';
 
-import { Iconify } from 'src/components/iconify';
+import { ActionPopover } from '@components/action-popover';
 
 type UserTableRowProps = {
   row: IUserModel;
@@ -35,31 +30,6 @@ export function UserTableRow({
   onChangePassword,
   onViewDetail,
 }: UserTableRowProps) {
-  const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
-
-  const handleOpenPopover = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
-    setOpenPopover(event.currentTarget);
-  }, []);
-
-  const handleClosePopover = useCallback(() => {
-    setOpenPopover(null);
-  }, []);
-
-  const handleChangeCoin = useCallback(() => {
-    handleClosePopover();
-    onChangeCoin();
-  }, [onChangeCoin, handleClosePopover]);
-
-  const handleChangePassword = useCallback(() => {
-    handleClosePopover();
-    onChangePassword();
-  }, [onChangePassword, handleClosePopover]);
-
-  const handleViewDetail = useCallback(() => {
-    handleClosePopover();
-    onViewDetail();
-  }, [onViewDetail, handleClosePopover]);
-
   const getGenderLabel = (gender: number) => {
     switch(gender) {
       case 0:
@@ -92,7 +62,6 @@ export function UserTableRow({
   const formatDateTime = (dateString: string) => dayjs(dateString).format('DD/MM/YYYY HH:mm');
 
   return (
-    <>
       <TableRow hover tabIndex={-1} role="checkbox" selected={selected}>
         <TableCell padding="checkbox">
           <Checkbox disableRipple checked={selected} onChange={onSelectRow} />
@@ -182,51 +151,15 @@ export function UserTableRow({
         </TableCell>
 
         <TableCell align="right">
-          <IconButton onClick={handleOpenPopover}>
-            <Iconify icon="eva:more-vertical-fill" />
-          </IconButton>
+          <ActionPopover
+            width={180}
+            actions={[
+              { label: 'View Detail', icon: 'solar:eye-bold', onClick: onViewDetail },
+              { label: 'Change Coins', icon: 'solar:cart-3-bold', onClick: onChangeCoin },
+              { label: 'Change Password', icon: 'solar:pen-bold', onClick: onChangePassword },
+            ]}
+          />
         </TableCell>
       </TableRow>
-
-      <Popover
-        open={!!openPopover}
-        anchorEl={openPopover}
-        onClose={handleClosePopover}
-        anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-      >
-        <MenuList
-          disablePadding
-          sx={{
-            p: 0.5,
-            gap: 0.5,
-            width: 180,
-            display: 'flex',
-            flexDirection: 'column',
-            [`& .${menuItemClasses.root}`]: {
-              px: 1,
-              gap: 2,
-              borderRadius: 0.75,
-              [`&.${menuItemClasses.selected}`]: { bgcolor: 'action.selected' },
-            },
-          }}
-        >
-          <MenuItem onClick={handleViewDetail}>
-            <Iconify icon="solar:eye-bold" />
-            View Detail
-          </MenuItem>
-
-          <MenuItem onClick={handleChangeCoin}>
-            <Iconify icon="solar:cart-3-bold" />
-            Change Coins
-          </MenuItem>
-
-          <MenuItem onClick={handleChangePassword}>
-            <Iconify icon="solar:pen-bold" />
-            Change Password
-          </MenuItem>
-        </MenuList>
-      </Popover>
-    </>
   );
 }

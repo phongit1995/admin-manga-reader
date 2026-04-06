@@ -15,9 +15,38 @@ import { Iconify } from 'src/components/iconify';
 import { ICategoryModel } from '@src/types/category.type';
 import { TYPE_SORT_MANGA } from '@src/types/manga.type';
 import { IConfigSourceModel } from '@src/types/config-source.type';
-import { MangaConfirmModal, ActionType } from './MangaConfirmModal';
+import { ConfirmActionModal } from '@components/confirm-action-modal';
+import type { ConfirmActionConfig } from '@components/confirm-action-modal';
 
 // ----------------------------------------------------------------------
+
+const MANGA_ACTIONS: Record<string, ConfirmActionConfig> = {
+  disable: {
+    key: 'disable',
+    label: 'Disable',
+    title: 'Disable Selected Manga',
+    actionText: 'disable',
+    color: 'error',
+    icon: 'solar:eye-closed-bold',
+  },
+  enable: {
+    key: 'enable',
+    label: 'Enable',
+    title: 'Enable Selected Manga',
+    actionText: 'enable',
+    color: 'success',
+    icon: 'solar:eye-bold',
+  },
+  resetImages: {
+    key: 'resetImages',
+    label: 'Reset Images',
+    title: 'Reset Images for Selected Manga',
+    actionText: 'reset images for',
+    color: 'info',
+    icon: 'solar:restart-bold',
+    warning: 'This will trigger a new crawl process to update all images.',
+  },
+};
 
 type MangaTableToolbarProps = {
   numSelected: number;
@@ -63,10 +92,10 @@ export function MangaTableToolbar({
   const hasActiveFilters = !!(filterName || selectedCategory || selectedStatus !== '' || selectedSource);
   
   const [openModal, setOpenModal] = useState(false);
-  const [action, setAction] = useState<ActionType | null>(null);
+  const [action, setAction] = useState<ConfirmActionConfig | null>(null);
 
-  const handleOpenModal = (actionType: ActionType) => {
-    setAction(actionType);
+  const handleOpenModal = (actionKey: string) => {
+    setAction(MANGA_ACTIONS[actionKey]);
     setOpenModal(true);
   };
 
@@ -78,7 +107,7 @@ export function MangaTableToolbar({
   const handleConfirmAction = async () => {
     if (!action) return;
     
-    switch (action) {
+    switch (action.key) {
       case 'disable':
         if (onDisable) await onDisable(selectedIds);
         break;
@@ -245,10 +274,11 @@ export function MangaTableToolbar({
       )}
     </Toolbar>
 
-    <MangaConfirmModal
+    <ConfirmActionModal
       open={openModal}
       action={action}
       numSelected={numSelected}
+      entityName="manga"
       onClose={handleCloseModal}
       onConfirm={handleConfirmAction}
     />

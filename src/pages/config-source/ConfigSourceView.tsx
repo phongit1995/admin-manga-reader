@@ -6,8 +6,6 @@ import {
   TableBody,
   TableContainer,
   Typography,
-  CircularProgress,
-  TableHead,
   TableRow,
   TableCell,
   IconButton,
@@ -20,35 +18,10 @@ import { ConfigSourceService } from "@services/config-source.service";
 import { Iconify } from "src/components/iconify";
 import { toast } from "react-toastify";
 import AddConfigSourceModal from "./AddConfigSourceModal";
-import DeleteConfigSourceModal from "./DeleteConfigSourceModal";
+import { ConfirmDeleteModal } from '@components/confirm-delete-modal';
+import { CommonTableHead } from '@components/table';
+import { LoadingOverlay } from '@components/loading-overlay';
 import EditConfigSourceModal from "./EditConfigSourceModal";
-
-// Table components
-interface ConfigSourceTableHeadProps {
-  headLabel: {
-    id: string;
-    label: string;
-    align?: 'left' | 'center' | 'right';
-    width?: number;
-    minWidth?: number;
-  }[];
-}
-
-const ConfigSourceTableHead = ({ headLabel }: ConfigSourceTableHeadProps) => (
-  <TableHead>
-    <TableRow>
-      {headLabel.map((headCell) => (
-        <TableCell
-          key={headCell.id}
-          align={headCell.align || 'left'}
-          sx={{ width: headCell.width, minWidth: headCell.minWidth }}
-        >
-          {headCell.label}
-        </TableCell>
-      ))}
-    </TableRow>
-  </TableHead>
-);
 
 interface ConfigSourceTableRowProps {
   row: IConfigSourceModel;
@@ -236,27 +209,10 @@ export const ConfigSourceView = () => {
 
       <Card> 
         <TableContainer sx={{ position: 'relative', overflow: 'unset', minHeight: 200 }}>
-          {loading && (
-            <Box
-              sx={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundColor: 'rgba(255, 255, 255, 0.7)',
-                zIndex: 2,
-              }}
-            >
-              <CircularProgress />
-            </Box>
-          )}
-          
+          <LoadingOverlay loading={loading} />
+
           <Table sx={{ minWidth: 800 }}>
-            <ConfigSourceTableHead
+            <CommonTableHead
               headLabel={TABLE_HEAD}
             />
             <TableBody>
@@ -295,11 +251,20 @@ export const ConfigSourceView = () => {
         onSuccess={fetchConfigSourceList}
       />
 
-      <DeleteConfigSourceModal
+      <ConfirmDeleteModal
         open={openDeleteModal}
         onClose={handleCloseDeleteModal}
-        configSource={selectedConfigSource}
-        onSuccess={fetchConfigSourceList}
+        title="Delete Config Source"
+        itemName={selectedConfigSource?.name}
+        extraInfo={selectedConfigSource ? [
+          { label: 'Key', value: selectedConfigSource.key },
+        ] : undefined}
+        onConfirm={async () => {
+          if (!selectedConfigSource) return;
+          await ConfigSourceService.deleteConfigSource(selectedConfigSource._id);
+          toast.success('Config Source deleted successfully');
+          fetchConfigSourceList();
+        }}
       />
 
       <EditConfigSourceModal

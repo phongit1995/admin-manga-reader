@@ -9,7 +9,6 @@ import ListItem from '@mui/material/ListItem';
 import { useTheme } from '@mui/material/styles';
 import ListItemButton from '@mui/material/ListItemButton';
 import Drawer, { drawerClasses } from '@mui/material/Drawer';
-import ListItemText from '@mui/material/ListItemText';
 import Collapse from '@mui/material/Collapse';
 import { Icon } from '@iconify/react';
 
@@ -18,8 +17,6 @@ import { RouterLink } from 'src/routes/components';
 
 import { Logo } from 'src/components/logo';
 import { Scrollbar } from 'src/components/scrollbar';
-
-import { NavUpgrade } from '../components/nav-upgrade';
 
 import type { NavItem } from '../nav-config-dashboard';
 
@@ -189,7 +186,7 @@ export function NavContent({ data, slots, sx }: NavContentProps) {
             ]}
           >
             <Box component="span" sx={{ width: 24, height: 24 }}>
-              {isParentActive && item.activeIcon ? item.activeIcon : item.icon}
+              {item.icon}
             </Box>
             
             <Box component="span" sx={{ flexGrow: 1 }}>
@@ -254,7 +251,7 @@ export function NavContent({ data, slots, sx }: NavContentProps) {
                     ]}
                   >
                     <Box component="span" sx={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      {isChildActive && child.activeIcon ? child.activeIcon : child.icon}
+                      {child.icon}
                     </Box>
                     <Box component="span" sx={{ flexGrow: 1 }}>
                       {child.title}
@@ -297,7 +294,7 @@ export function NavContent({ data, slots, sx }: NavContentProps) {
           ]}
         >
           <Box component="span" sx={{ width: 24, height: 24 }}>
-            {isActive && item.activeIcon ? item.activeIcon : item.icon}
+            {item.icon}
           </Box>
 
           <Box component="span" sx={{ flexGrow: 1 }}>
@@ -341,8 +338,6 @@ export function NavContent({ data, slots, sx }: NavContentProps) {
       </Scrollbar>
 
       {slots?.bottomArea}
-
-      <NavUpgrade />
     </>
   );
 }

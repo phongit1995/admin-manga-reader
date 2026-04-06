@@ -1,0 +1,27 @@
+{
+  "env": {
+    "ANTHROPIC_BASE_URL": "https://chat.trollllm.xyz",
+    "ANTHROPIC_API_KEY": "sk-trollllm-4838fed8d3fc22d51bc9fe01833e675d5037f9779108e33d59a669ca3252caa2",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "claude-sonnet-4.6",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "claude-opus-4.6",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "claude-haiku-4.5",
+    "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1"
+  },
+  "permissions": {
+    "allow": [
+      "Bash(cargo new:*)",
+      "Bash(cargo run:*)",
+      "Bash(cd:*)",
+      "Bash(find /d/TEST/CLI -type f \\\\\\(-name *.rs -o -name *.toml -o -name *.json \\\\\\))",
+      "Bash(cargo --version)",
+      "Bash(rustc --version)",
+      "Bash(cargo build:*)",
+      "Bash",
+      "WebSearch",
+      "WebFetch(domain:crates.io)",
+      "WebFetch(domain:github.com)"
+    ],
+    "deny": []
+  },
+  "alwaysThinkingEnabled": false
+}

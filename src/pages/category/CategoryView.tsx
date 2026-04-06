@@ -6,8 +6,6 @@ import {
   TableBody,
   TableContainer,
   Typography,
-  CircularProgress,
-  TableHead,
   TableRow,
   TableCell,
   Checkbox,
@@ -21,39 +19,10 @@ import { ICategoryModel } from "@src/types/category.type";
 import { CategoryService } from "@src/services/category.service";
 import { Iconify } from "src/components/iconify";
 import AddCategory from "./AddCategoryModal";
-import DeleteCategoryModal from "./DeleteCategoryModal";
 import { toast } from "react-toastify";
-
-// Table components
-interface CategoryTableHeadProps {
-  headLabel: {
-    id: string;
-    label: string;
-    align?: 'left' | 'center' | 'right';
-    width?: number;
-    minWidth?: number;
-  }[];
-}
-
-const CategoryTableHead = ({ headLabel }: CategoryTableHeadProps) => (
-  <TableHead>
-    <TableRow>
-      <TableCell padding="checkbox">
-        <Checkbox />
-      </TableCell>
-      
-      {headLabel.map((headCell) => (
-        <TableCell
-          key={headCell.id}
-          align={headCell.align || 'left'}
-          sx={{ width: headCell.width, minWidth: headCell.minWidth }}
-        >
-          {headCell.label}
-        </TableCell>
-      ))}
-    </TableRow>
-  </TableHead>
-);
+import { ConfirmDeleteModal } from '@components/confirm-delete-modal';
+import { CommonTableHead } from '@components/table';
+import { LoadingOverlay } from '@components/loading-overlay';
 
 interface CategoryTableRowProps {
   row: ICategoryModel;
@@ -210,27 +179,10 @@ export const CategoryView = () => {
 
       <Card>
         <TableContainer sx={{ position: 'relative', overflow: 'unset', minHeight: 200 }}>
-          {loading && (
-            <Box
-              sx={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundColor: 'rgba(255, 255, 255, 0.7)',
-                zIndex: 2,
-              }}
-            >
-              <CircularProgress />
-            </Box>
-          )}
-          
+          <LoadingOverlay loading={loading} />
+
           <Table sx={{ minWidth: 800 }}>
-            <CategoryTableHead
+            <CommonTableHead
               headLabel={TABLE_HEAD}
             />
             <TableBody>
@@ -269,11 +221,17 @@ export const CategoryView = () => {
         onSuccess={fetchCategoryList}
       />
 
-      <DeleteCategoryModal
+      <ConfirmDeleteModal
         open={openDeleteModal}
         onClose={handleCloseDeleteModal}
-        category={selectedCategory}
-        onSuccess={fetchCategoryList}
+        title="Delete Category"
+        itemName={selectedCategory?.name}
+        onConfirm={async () => {
+          if (!selectedCategory) return;
+          await CategoryService.deleteCategory(selectedCategory._id);
+          toast.success('Category deleted successfully');
+          fetchCategoryList();
+        }}
       />
     </DashboardContent>
   );

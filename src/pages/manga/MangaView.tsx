@@ -17,7 +17,6 @@ import {
   TableBody,
   TableContainer,
   Typography,
-  CircularProgress,
   Stack,
   Pagination,
   useMediaQuery,
@@ -28,14 +27,12 @@ import {
 } from "@mui/material";
 
 import { DashboardContent } from "src/layouts/dashboard";
+import { LoadingOverlay } from "@components/loading-overlay";
 
-import { TableEmptyRows } from "@components/table";
-import { TableNoData } from "@components/table";
+import { TableEmptyRows, TableNoData, CommonTableHead, fDate } from '@components/table';
 
-import { MangaTableHead } from "./manga-table-head";
 import { MangaTableRow } from "./manga-table-row";
 import { MangaTableToolbar } from "./manga-table-toolbar";
-import { fDate } from "./utils";
 
 // ----------------------------------------------------------------------
 
@@ -377,24 +374,7 @@ export default function MangaView() {
         />
 
         <Box sx={{ position: 'relative', minHeight: 200 }}>
-          {loading && (
-            <Box
-              sx={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundColor: 'rgba(255, 255, 255, 0.7)',
-                zIndex: 2,
-              }}
-            >
-              <CircularProgress />
-            </Box>
-          )}
+          <LoadingOverlay loading={loading} />
           
           {isMobile ? (
             <Box sx={{ p: 2 }}>
@@ -425,7 +405,7 @@ export default function MangaView() {
           ) : (
             <TableContainer sx={{ overflow: 'unset' }}>
               <Table sx={{ minWidth: 800 }}>
-                <MangaTableHead
+                <CommonTableHead
                   rowCount={mangaList.length}
                   numSelected={selected.length}
                   onSelectAllClick={handleSelectAllClick}

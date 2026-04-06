@@ -6,8 +6,6 @@ import {
   TableBody,
   TableContainer,
   Typography,
-  CircularProgress,
-  TableHead,
   TableRow,
   TableCell,
   IconButton,
@@ -18,35 +16,10 @@ import { DashboardContent } from "src/layouts/dashboard";
 import { IInAppPurchaseModel } from "@src/types/in-app-purchase.type";
 import { InAppPurchaseService } from "@src/services/in-app-purchase.service";
 import { Iconify } from "src/components/iconify";
-import DeleteInAppPurchaseModal from "./DeleteInAppPurchaseModal";
+import { ConfirmDeleteModal } from '@components/confirm-delete-modal';
+import { CommonTableHead } from '@components/table';
+import { LoadingOverlay } from '@components/loading-overlay';
 import { toast } from "react-toastify";
-
-// Table components
-interface InAppPurchaseTableHeadProps {
-  headLabel: {
-    id: string;
-    label: string;
-    align?: 'left' | 'center' | 'right';
-    width?: number;
-    minWidth?: number;
-  }[];
-}
-
-const InAppPurchaseTableHead = ({ headLabel }: InAppPurchaseTableHeadProps) => (
-  <TableHead>
-    <TableRow>
-      {headLabel.map((headCell) => (
-        <TableCell
-          key={headCell.id}
-          align={headCell.align || 'left'}
-          sx={{ width: headCell.width, minWidth: headCell.minWidth }}
-        >
-          {headCell.label}
-        </TableCell>
-      ))}
-    </TableRow>
-  </TableHead>
-);
 
 interface InAppPurchaseTableRowProps {
   row: IInAppPurchaseModel;
@@ -179,27 +152,10 @@ export default function InAppPurchaseView() {
 
       <Card>
         <TableContainer sx={{ position: 'relative', overflow: 'unset', minHeight: 200 }}>
-          {loading && (
-            <Box
-              sx={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundColor: 'rgba(255, 255, 255, 0.7)',
-                zIndex: 2,
-              }}
-            >
-              <CircularProgress />
-            </Box>
-          )}
-          
+          <LoadingOverlay loading={loading} />
+
           <Table sx={{ minWidth: 800 }}>
-            <InAppPurchaseTableHead
+            <CommonTableHead
               headLabel={TABLE_HEAD}
             />
             <TableBody>
@@ -261,11 +217,20 @@ export default function InAppPurchaseView() {
         </Box>
       </Card>
 
-      <DeleteInAppPurchaseModal
+      <ConfirmDeleteModal
         open={openDeleteModal}
         onClose={handleCloseDeleteModal}
-        purchase={selectedPurchase}
-        onSuccess={() => fetchPurchaseList(page, rowsPerPage)}
+        title="Delete In-App Purchase"
+        itemName={selectedPurchase?.productId}
+        extraInfo={selectedPurchase ? [
+          { label: 'Transaction ID', value: selectedPurchase.transactionId },
+        ] : undefined}
+        onConfirm={async () => {
+          if (!selectedPurchase) return;
+          await InAppPurchaseService.deleteInAppPurchase(selectedPurchase._id);
+          toast.success('In-App Purchase deleted successfully');
+          fetchPurchaseList(page, rowsPerPage);
+        }}
       />
     </DashboardContent>
   );

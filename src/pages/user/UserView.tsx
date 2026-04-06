@@ -13,7 +13,6 @@ import {
   TableBody,
   TableContainer,
   Typography,
-  CircularProgress,
   Stack,
   Pagination,
   useMediaQuery,
@@ -31,11 +30,10 @@ import {
 } from "@mui/material";
 
 import { DashboardContent } from "src/layouts/dashboard";
+import { LoadingOverlay } from "@components/loading-overlay";
 
-import { TableEmptyRows } from "@components/table";
-import { TableNoData } from "@components/table";
+import { TableEmptyRows, TableNoData, CommonTableHead } from '@components/table';
 
-import { UserTableHead } from "./user-table-head";
 import { UserTableRow } from "./user-table-row";
 import { UserTableToolbar } from "./user-table-toolbar";
 import { UserChangeCoinModal } from "./UserChangeCoinModal";
@@ -306,24 +304,7 @@ export default function UserView() {
         />
 
         <Box sx={{ position: 'relative', minHeight: 200 }}>
-          {loading && (
-            <Box
-              sx={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundColor: 'rgba(255, 255, 255, 0.7)',
-                zIndex: 2,
-              }}
-            >
-              <CircularProgress />
-            </Box>
-          )}
+          <LoadingOverlay loading={loading} />
           
           {isMobile ? (
             <Box sx={{ p: 2 }}>
@@ -354,7 +335,7 @@ export default function UserView() {
           ) : (
             <TableContainer sx={{ overflow: 'unset' }}>
               <Table sx={{ minWidth: 800 }}>
-                <UserTableHead
+                <CommonTableHead
                   rowCount={userList.length}
                   numSelected={selected.length}
                   onSelectAllClick={handleSelectAllClick}

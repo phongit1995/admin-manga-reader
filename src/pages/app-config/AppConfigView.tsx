@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 import AppConfigTable from "./AppConfigTable";
 import AddAppConfigModal from "./AddAppConfigModal";
 import EditAppConfigModal from "./EditAppConfigModal";
-import DeleteAppConfigModal from "./DeleteAppConfigModal";
+import { ConfirmDeleteModal } from '@components/confirm-delete-modal';
 
 export function AppConfigView() {
   const [configList, setConfigList] = useState<IAppConfigModel[]>([]);
@@ -163,11 +163,21 @@ export function AppConfigView() {
         config={selectedConfig}
       />
 
-      <DeleteAppConfigModal
+      <ConfirmDeleteModal
         open={openDeleteModal}
         onClose={handleCloseDeleteModal}
-        config={selectedConfig}
-        onSuccess={() => fetchConfigList(page, rowsPerPage)}
+        title="Delete App Configuration"
+        itemName={selectedConfig?.source}
+        extraInfo={selectedConfig ? [
+          { label: 'Image Resource', value: selectedConfig.imageResource || '-' },
+          { label: 'Show Fake App', value: selectedConfig.showFakeApp ? 'Yes' : 'No' },
+        ] : undefined}
+        onConfirm={async () => {
+          if (!selectedConfig?._id) return;
+          await AppConfigService.deleteAppConfig(selectedConfig._id);
+          toast.success('App Configuration deleted successfully');
+          fetchConfigList(page, rowsPerPage);
+        }}
       />
     </DashboardContent>
   );

@@ -2,8 +2,6 @@ import {
   Table,
   TableBody,
   TableContainer,
-  CircularProgress,
-  TableHead,
   TableRow,
   TableCell,
   Box,
@@ -13,33 +11,8 @@ import { IAppNotificationModel } from "@src/types/app-notification.types";
 import AppNotificationService from "@src/services/app-notification.service";
 import { toast } from "react-toastify";
 import AppNotificationTableRow from "./AppNotificationTableRow";
-
-// Table components
-interface AppNotificationTableHeadProps {
-  headLabel: {
-    id: string;
-    label: string;
-    align?: 'left' | 'center' | 'right';
-    width?: number;
-    minWidth?: number;
-  }[];
-}
-
-const AppNotificationTableHead = ({ headLabel }: AppNotificationTableHeadProps) => (
-  <TableHead>
-    <TableRow>
-      {headLabel.map((headCell) => (
-        <TableCell
-          key={headCell.id}
-          align={headCell.align || 'left'}
-          sx={{ width: headCell.width, minWidth: headCell.minWidth }}
-        >
-          {headCell.label}
-        </TableCell>
-      ))}
-    </TableRow>
-  </TableHead>
-);
+import { CommonTableHead } from '@components/table';
+import { LoadingOverlay } from '@components/loading-overlay';
 
 // ----------------------------------------------------------------------
 
@@ -102,27 +75,10 @@ export default function AppNotificationTable({
   
   return (
     <TableContainer sx={{ position: 'relative', overflow: 'unset', minHeight: 200 }}>
-      {loading && (
-        <Box
-          sx={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: 'rgba(255, 255, 255, 0.7)',
-            zIndex: 2,
-          }}
-        >
-          <CircularProgress />
-        </Box>
-      )}
+      <LoadingOverlay loading={loading} />
       
       <Table sx={{ minWidth: 800 }}>
-        <AppNotificationTableHead
+        <CommonTableHead
           headLabel={TABLE_HEAD}
         />
         <TableBody>

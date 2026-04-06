@@ -15,7 +15,6 @@ import {
   TableBody,
   TableContainer,
   Typography,
-  CircularProgress,
   Stack,
   Pagination,
   useMediaQuery,
@@ -26,14 +25,12 @@ import {
 } from "@mui/material";
 
 import { DashboardContent } from "src/layouts/dashboard";
+import { LoadingOverlay } from "@components/loading-overlay";
 
-import { TableEmptyRows } from "@components/table";
-import { TableNoData } from "@components/table";
+import { TableEmptyRows, TableNoData, CommonTableHead, fDate } from '@components/table';
 
-import { NovelTableHead } from "./novel-table-head";
 import { NovelTableRow } from "./novel-table-row";
 import { NovelTableToolbar } from "./novel-table-toolbar";
-import { fDate } from "./utils";
 
 // ----------------------------------------------------------------------
 
@@ -350,24 +347,7 @@ export default function NovelView() {
         />
 
         <Box sx={{ position: 'relative', minHeight: 200 }}>
-          {loading && (
-            <Box
-              sx={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundColor: 'rgba(255, 255, 255, 0.7)',
-                zIndex: 2,
-              }}
-            >
-              <CircularProgress />
-            </Box>
-          )}
+          <LoadingOverlay loading={loading} />
           
           {isMobile ? (
             <Box sx={{ p: 2 }}>
@@ -398,7 +378,7 @@ export default function NovelView() {
           ) : (
             <TableContainer sx={{ overflow: 'unset' }}>
               <Table sx={{ minWidth: 800 }}>
-                <NovelTableHead
+                <CommonTableHead
                   rowCount={novelList.length}
                   numSelected={selected.length}
                   onSelectAllClick={handleSelectAllClick}

@@ -11,7 +11,7 @@ import { toast } from "react-toastify";
 import { Iconify } from "src/components/iconify";
 import NotificationSourceTable from "./NotificationSourceTable";
 import AddNotificationSourceModal from "./AddNotificationSourceModal";
-import DeleteNotificationSourceModal from "./DeleteNotificationSourceModal";
+import { ConfirmDeleteModal } from '@components/confirm-delete-modal';
 
 export default function NotificationSourceView() {
   const [notificationSourceList, setNotificationSourceList] = useState<INotificationSourceModel[]>([]);
@@ -112,11 +112,17 @@ export default function NotificationSourceView() {
         onSuccess={fetchNotificationSourceList}
       />
 
-      <DeleteNotificationSourceModal
+      <ConfirmDeleteModal
         open={openDeleteModal}
         onClose={handleCloseDeleteModal}
-        onSuccess={fetchNotificationSourceList}
-        notificationSource={selectedNotificationSource}
+        title="Delete Notification Source"
+        itemName={selectedNotificationSource?.name}
+        onConfirm={async () => {
+          if (!selectedNotificationSource) return;
+          await NotificationSourceService.deleteNotificationSource(selectedNotificationSource._id);
+          toast.success('Notification Source deleted successfully');
+          fetchNotificationSourceList();
+        }}
       />
     </DashboardContent>
   );

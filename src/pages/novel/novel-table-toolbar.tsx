@@ -14,9 +14,38 @@ import ButtonGroup from '@mui/material/ButtonGroup';
 import { Iconify } from 'src/components/iconify';
 import { ICategoryModel } from '@src/types/category.type';
 import { TYPE_SORT_NOVEL } from '@src/types/novel.type';
-import { NovelConfirmModal, ActionType } from './NovelConfirmModal';
+import { ConfirmActionModal } from '@components/confirm-action-modal';
+import type { ConfirmActionConfig } from '@components/confirm-action-modal';
 
 // ----------------------------------------------------------------------
+
+const NOVEL_ACTIONS: Record<string, ConfirmActionConfig> = {
+  disable: {
+    key: 'disable',
+    label: 'Disable',
+    title: 'Disable Selected Novel',
+    actionText: 'disable',
+    color: 'error',
+    icon: 'solar:eye-closed-bold',
+  },
+  enable: {
+    key: 'enable',
+    label: 'Enable',
+    title: 'Enable Selected Novel',
+    actionText: 'enable',
+    color: 'success',
+    icon: 'solar:eye-bold',
+  },
+  resetImages: {
+    key: 'resetImages',
+    label: 'Reset Images',
+    title: 'Reset Images for Selected Novel',
+    actionText: 'reset images for',
+    color: 'info',
+    icon: 'solar:restart-bold',
+    warning: 'This will trigger a new crawl process to update all images.',
+  },
+};
 
 type NovelTableToolbarProps = {
   numSelected: number;
@@ -56,10 +85,10 @@ export function NovelTableToolbar({
   const hasActiveFilters = !!(filterName || selectedCategory || selectedStatus !== '');
   
   const [openModal, setOpenModal] = useState(false);
-  const [action, setAction] = useState<ActionType | null>(null);
+  const [action, setAction] = useState<ConfirmActionConfig | null>(null);
 
-  const handleOpenModal = (actionType: ActionType) => {
-    setAction(actionType);
+  const handleOpenModal = (actionKey: string) => {
+    setAction(NOVEL_ACTIONS[actionKey]);
     setOpenModal(true);
   };
 
@@ -71,7 +100,7 @@ export function NovelTableToolbar({
   const handleConfirmAction = async () => {
     if (!action) return;
     
-    switch (action) {
+    switch (action.key) {
       case 'disable':
         if (onDisable) await onDisable(selectedIds);
         break;
@@ -218,10 +247,11 @@ export function NovelTableToolbar({
       )}
     </Toolbar>
 
-    <NovelConfirmModal
+    <ConfirmActionModal
       open={openModal}
       action={action}
       numSelected={numSelected}
+      entityName="novel"
       onClose={handleCloseModal}
       onConfirm={handleConfirmAction}
     />

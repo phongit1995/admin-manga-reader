@@ -1,12 +1,8 @@
-import { useState, useCallback } from 'react';
+import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 
 import Checkbox from '@mui/material/Checkbox';
-import IconButton from '@mui/material/IconButton';
-import MenuItem, { menuItemClasses } from '@mui/material/MenuItem';
-import MenuList from '@mui/material/MenuList';
-import Popover from '@mui/material/Popover';
 import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
@@ -14,7 +10,7 @@ import Typography from '@mui/material/Typography';
 import { IMangaModel } from 'src/types';
 import { ERouterConfig } from 'src/config/router.config';
 
-import { Iconify } from 'src/components/iconify';
+import { ActionPopover } from '@components/action-popover';
 import { Label } from 'src/components/label';
 
 // ----------------------------------------------------------------------
@@ -27,20 +23,10 @@ type MangaTableRowProps = {
 
 export function MangaTableRow({ row, selected, onSelectRow }: MangaTableRowProps) {
   const navigate = useNavigate();
-  const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
 
-  const handleOpenPopover = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
-    setOpenPopover(event.currentTarget);
-  }, []);
-
-  const handleClosePopover = useCallback(() => {
-    setOpenPopover(null);
-  }, []);
-  
   const handleViewDetail = useCallback(() => {
     const detailPath = ERouterConfig.MANGA_DETAIL.replace(':id', row._id);
     navigate(detailPath);
-    setOpenPopover(null);
   }, [navigate, row._id]);
 
   // Map status code to readable status
@@ -63,7 +49,6 @@ export function MangaTableRow({ row, selected, onSelectRow }: MangaTableRowProps
   const formatDate = (dateString: string) => dayjs(dateString).format('DD/MM/YYYY HH:mm:ss');
 
   return (
-    <>
       <TableRow hover tabIndex={-1} role="checkbox" selected={selected}>
         <TableCell padding="checkbox">
           <Checkbox disableRipple checked={selected} onChange={onSelectRow} />
@@ -101,51 +86,14 @@ export function MangaTableRow({ row, selected, onSelectRow }: MangaTableRowProps
         </TableCell>
 
         <TableCell align="right">
-          <IconButton onClick={handleOpenPopover}>
-            <Iconify icon="eva:more-vertical-fill" />
-          </IconButton>
+          <ActionPopover
+            actions={[
+              { label: 'View', icon: 'solar:eye-bold', onClick: handleViewDetail },
+              { label: 'Edit', icon: 'solar:pen-bold', onClick: () => {} },
+              { label: 'Delete', icon: 'solar:trash-bin-trash-bold', onClick: () => {}, color: 'error.main' },
+            ]}
+          />
         </TableCell>
       </TableRow>
-
-      <Popover
-        open={!!openPopover}
-        anchorEl={openPopover}
-        onClose={handleClosePopover}
-        anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-      >
-        <MenuList
-          disablePadding
-          sx={{
-            p: 0.5,
-            gap: 0.5,
-            width: 140,
-            display: 'flex',
-            flexDirection: 'column',
-            [`& .${menuItemClasses.root}`]: {
-              px: 1,
-              gap: 2,
-              borderRadius: 0.75,
-              [`&.${menuItemClasses.selected}`]: { bgcolor: 'action.selected' },
-            },
-          }}
-        >
-          <MenuItem onClick={handleViewDetail}>
-            <Iconify icon="solar:eye-bold" />
-            View
-          </MenuItem>
-
-          <MenuItem onClick={handleClosePopover}>
-            <Iconify icon="solar:pen-bold" />
-            Edit
-          </MenuItem>
-
-          <MenuItem onClick={handleClosePopover} sx={{ color: 'error.main' }}>
-            <Iconify icon="solar:trash-bin-trash-bold" />
-            Delete
-          </MenuItem>
-        </MenuList>
-      </Popover>
-    </>
   );
 } 

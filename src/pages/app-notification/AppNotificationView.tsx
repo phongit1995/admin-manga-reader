@@ -14,7 +14,7 @@ import { Iconify } from "src/components/iconify";
 import AppNotificationTable from "./AppNotificationTable";
 import AddAppNotificationModal from "./AddAppNotificationModal";
 import EditAppNotificationModal from "./EditAppNotificationModal";
-import DeleteAppNotificationModal from "./DeleteAppNotificationModal";
+import { ConfirmDeleteModal } from '@components/confirm-delete-modal';
 
 export default function AppNotificationView() {
   const [notificationList, setNotificationList] = useState<IAppNotificationModel[]>([]);
@@ -169,11 +169,21 @@ export default function AppNotificationView() {
         notification={selectedNotification}
       />
 
-      <DeleteAppNotificationModal
+      <ConfirmDeleteModal
         open={openDeleteModal}
         onClose={handleCloseDeleteModal}
-        notification={selectedNotification}
-        onSuccess={() => fetchNotificationList(page, rowsPerPage)}
+        title="Delete App Notification"
+        itemName={selectedNotification?.message || 'Notification'}
+        extraInfo={selectedNotification ? [
+          { label: 'Package ID', value: selectedNotification.packageId || '-' },
+          { label: 'Platform', value: selectedNotification.platform || '-' },
+        ] : undefined}
+        onConfirm={async () => {
+          if (!selectedNotification?._id) return;
+          await AppNotificationService.deleteAppNotification(selectedNotification._id);
+          toast.success('App Notification deleted successfully');
+          fetchNotificationList(page, rowsPerPage);
+        }}
       />
     </DashboardContent>
   );
